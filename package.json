@@ -7,6 +7,7 @@
     "module-replacements-codemods": "./index.js"
   },
   "scripts": {
+    "test": "node --test test/codemod.test.js",
     "format": "npx @biomejs/biome format --write **/*",
     "lint:types": "tsc"
   },

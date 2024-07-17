@@ -1,4 +1,5 @@
 import jscodeshift from 'jscodeshift';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,40 +16,9 @@ export default function (options) {
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
-			let dirtyFlag = false;
 
-			// Find all require statements for 'is-boolean-object'
-			root
-				.find(j.VariableDeclaration)
-				.filter((path) =>
-					path.value.declarations.some(
-						(decl) =>
-							j.VariableDeclarator.check(decl) &&
-							decl.init &&
-							j.CallExpression.check(decl.init) &&
-							j.Identifier.check(decl.init.callee) &&
-							decl.init.callee.name === 'require' &&
-							decl.init.arguments.length > 0 &&
-							j.Literal.check(decl.init.arguments[0]) &&
-							decl.init.arguments[0].value === 'is-boolean-object',
-					),
-				)
-				.forEach((path) => {
-					// Remove the require statement for 'is-boolean-object'
-					path.prune();
-					dirtyFlag = true;
-				});
-
-			// Remove ESM import statement for 'is-boolean-object'
-			root
-				.find(j.ImportDeclaration, {
-					source: { value: 'is-boolean-object' },
-				})
-				.forEach((path) => {
-					j(path).remove();
-					dirtyFlag = true;
-				});
-
+      removeImport('is-boolean-object', root, j);
+			
 			// Replace all calls to isBoolean with Object.prototype.toString.call
 			root
 				.find(j.CallExpression, {
@@ -91,7 +61,7 @@ export default function (options) {
 					}
 				});
 
-			return dirtyFlag ? root.toSource({ quote: 'single' }) : file.source;
+			return root.toSource({ quote: 'single' });
 		},
 	};
 }

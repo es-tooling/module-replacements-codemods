@@ -1,4 +1,5 @@
 import jscodeshift from 'jscodeshift';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -22,30 +23,8 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			// Find the import or require statement for 'is-whitespace'
-			const importDeclaration = root.find(j.ImportDeclaration, {
-				source: {
-					value: 'is-whitespace',
-				},
-			});
+      removeImport('is-whitespace', root, j);
 
-			const requireDeclaration = root.find(j.VariableDeclarator, {
-				init: {
-					callee: {
-						name: 'require',
-					},
-					arguments: [
-						{
-							value: 'is-whitespace',
-						},
-					],
-				},
-			});
-
-			// If 'is-whitespace' is not found in the imported packages, return the original source code
-			if (importDeclaration.size() === 0 && requireDeclaration.size() === 0) {
-				return root.toSource();
-			}
 
 			// Find the 'isWhitespace' function calls
 			root
@@ -67,10 +46,6 @@ export default function (options) {
 						j.literal(''),
 					);
 				});
-
-			// Remove the import or require statement for 'is-whitespace'
-			importDeclaration.remove();
-			requireDeclaration.remove();
 
 			return root.toSource({ quote: 'single' });
 		},

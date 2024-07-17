@@ -1,4 +1,5 @@
 import jscodeshift from 'jscodeshift';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -17,46 +18,7 @@ export default function (options) {
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			// Remove the require statement for 'is-array-buffer'
-			root.find(j.VariableDeclaration).forEach((path) => {
-				const declarations = path.value.declarations;
-				if (
-					declarations.length === 1 &&
-					j.VariableDeclarator.check(declarations[0])
-				) {
-					const declarator = declarations[0];
-					if (
-						j.CallExpression.check(declarator.init) &&
-						j.Identifier.check(declarator.id)
-					) {
-						const callExpr = declarator.init;
-						if (
-							j.Identifier.check(callExpr.callee) &&
-							callExpr.callee.name === 'require'
-						) {
-							const args = callExpr.arguments;
-							if (
-								args.length === 1 &&
-								j.Literal.check(args[0]) &&
-								args[0].value === 'is-array-buffer'
-							) {
-								j(path).remove();
-								dirtyFlag = true;
-							}
-						}
-					}
-				}
-			});
-
-			// Remove ESM import statement for 'is-array-buffer'
-			root
-				.find(j.ImportDeclaration, {
-					source: { value: 'is-array-buffer' },
-				})
-				.forEach((path) => {
-					j(path).remove();
-					dirtyFlag = true;
-				});
+      removeImport('is-array-buffer', root, j);
 
 			// Replace isArrayBuffer calls with (foo instanceof ArrayBuffer)
 			root

@@ -7,8 +7,8 @@ import isBooleanObject from './is-boolean-object/index.js';
 import isDateObject from './is-date-object/index.js';
 
 export const codemods = {
-    'is-whitespace': isWhitespace,
-    'is-array-buffer': isArrayBuffer,
-    'is-boolean-object': isBooleanObject,
-    'is-date-object': isDateObject
+	'is-whitespace': isWhitespace,
+	'is-array-buffer': isArrayBuffer,
+	'is-boolean-object': isBooleanObject,
+	'is-date-object': isDateObject,
 };

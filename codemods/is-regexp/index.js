@@ -12,20 +12,20 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-array-buffer',
+		name: 'is-regexp',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			removeImport('is-array-buffer', root, j);
+			removeImport('is-regexp', root, j);
 
-			// Replace isArrayBuffer calls with (foo instanceof ArrayBuffer)
+			// Replace isRegexp calls
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isArrayBuffer',
+						name: 'isRegexp',
 					},
 				})
 				.forEach((path) => {
@@ -36,7 +36,7 @@ export default function (options) {
 							'instanceof',
 							// @ts-expect-error
 							arg,
-							j.identifier('ArrayBuffer'),
+							j.identifier('RegExp'),
 						);
             const wrappedExpression = j.parenthesizedExpression(newExpression);
 						j(path).replaceWith(wrappedExpression);

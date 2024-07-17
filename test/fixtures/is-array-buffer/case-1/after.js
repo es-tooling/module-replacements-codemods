@@ -20,7 +20,7 @@ assert(!(new WeakRef({}) instanceof ArrayBuffer));
 assert(!(new FinalizationRegistry(() => {}) instanceof ArrayBuffer));
 assert(!(new SharedArrayBuffer() instanceof ArrayBuffer));
 
-assert(new ArrayBuffer() instanceof ArrayBuffer);
+assert((new ArrayBuffer() instanceof ArrayBuffer));
 
 class MyArrayBuffer extends ArrayBuffer {}
-assert(new MyArrayBuffer() instanceof ArrayBuffer);
+assert((new MyArrayBuffer() instanceof ArrayBuffer));

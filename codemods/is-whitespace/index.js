@@ -23,8 +23,7 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-      removeImport('is-whitespace', root, j);
-
+			removeImport('is-whitespace', root, j);
 
 			// Find the 'isWhitespace' function calls
 			root

@@ -18,7 +18,7 @@ export default function (options) {
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-      removeImport('is-array-buffer', root, j);
+			removeImport('is-array-buffer', root, j);
 
 			// Replace isArrayBuffer calls with (foo instanceof ArrayBuffer)
 			root

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fg from 'fast-glob';
-import jscodeshift from 'jscodeshift';
 import picocolors from 'picocolors';
 import { readFile } from 'fs/promises';
 import { codemods } from './codemods/index.js';
@@ -26,7 +25,6 @@ await Promise.all(entries.map(async (entry) => {
           source,
           filename: entry
         },
-        jscodeshift
       });
 
       if (source !== result) {

@@ -1,4 +1,3 @@
-import jscodeshift from 'jscodeshift';
 import { describe, it } from 'node:test';
 import fs from 'node:fs';
 import assert from 'assert';
@@ -34,7 +33,6 @@ describe('codemod', () => {
 							filename,
 							source: before,
 						},
-						jscodeshift,
 					});
 					fs.writeFileSync(
 						`./test/fixtures/${codemod.name}/${fixture}/result.js`,

@@ -1,5 +1,3 @@
-import type jscodeshift from "jscodeshift";
-
 export interface CodemodOptions {
 }
 
@@ -14,5 +12,5 @@ export interface Codemod {
    * you're trying to replace
    */
   name: string;
-  transform: (options: { file: File, jscodeshift: typeof jscodeshift }) => string | Promise<string>;
+  transform: (options: { file: File }) => string | Promise<string>;
 }

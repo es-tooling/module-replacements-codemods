@@ -1,3 +1,5 @@
+import jscodeshift from 'jscodeshift';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -16,7 +18,7 @@
 export default function (options) {
 	return {
 		name: 'is-whitespace',
-		transform: ({ file, jscodeshift }) => {
+		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 

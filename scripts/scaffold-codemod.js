@@ -44,7 +44,7 @@ fs.writeFileSync(
 export default function(options) {
   return {
     name: '${name}',
-    transform: ({ file, jscodeshift }) => {
+    transform: ({ file }) => {
       return '';
     },
   }

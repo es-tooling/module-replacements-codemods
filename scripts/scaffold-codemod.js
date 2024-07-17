@@ -14,8 +14,6 @@ const name = process.argv[2];
 /** @param {string} s */
 const camelize = (s) => s.replace(/-./g, (x) => x[1].toUpperCase());
 
-console.log(fs.readdirSync('./test/fixtures'));
-
 fs.mkdirSync(`./test/fixtures/${name}/case-1`, { recursive: true });
 fs.writeFileSync(
 	`./test/fixtures/${name}/case-1/before.js`,

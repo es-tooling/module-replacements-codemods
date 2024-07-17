@@ -45,14 +45,16 @@ export default function (options) {
 					}
 				}
 			});
-      
-      // Remove ESM import statement for 'is-array-buffer'
-      root.find(j.ImportDeclaration, {
-        source: { value: 'is-array-buffer' }
-      }).forEach(path => {
-        j(path).remove();
-        dirtyFlag = true;
-      });
+
+			// Remove ESM import statement for 'is-array-buffer'
+			root
+				.find(j.ImportDeclaration, {
+					source: { value: 'is-array-buffer' },
+				})
+				.forEach((path) => {
+					j(path).remove();
+					dirtyFlag = true;
+				});
 
 			// Replace isArrayBuffer calls with (foo instanceof ArrayBuffer)
 			root
@@ -68,6 +70,7 @@ export default function (options) {
 						const arg = args[0];
 						const newExpression = j.binaryExpression(
 							'instanceof',
+							// @ts-expect-error
 							arg,
 							j.identifier('ArrayBuffer'),
 						);

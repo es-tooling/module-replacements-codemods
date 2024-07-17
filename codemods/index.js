@@ -16,6 +16,8 @@ import arrayPrototypeMap from './array.prototype.map/index.js';
 
 import arrayPrototypeFilter from './array.prototype.filter/index.js';
 
+import arrayIncludes from './array-includes/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -26,4 +28,5 @@ export const codemods = {
 	'is-regexp': isRegexp,
 	'array.prototype.map': arrayPrototypeMap,
 	'array.prototype.filter': arrayPrototypeFilter,
+	'array-includes': arrayIncludes,
 };

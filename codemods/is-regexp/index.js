@@ -38,7 +38,7 @@ export default function (options) {
 							arg,
 							j.identifier('RegExp'),
 						);
-            const wrappedExpression = j.parenthesizedExpression(newExpression);
+						const wrappedExpression = j.parenthesizedExpression(newExpression);
 						j(path).replaceWith(wrappedExpression);
 						dirtyFlag = true;
 					}

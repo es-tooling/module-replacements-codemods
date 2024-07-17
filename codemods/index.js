@@ -12,6 +12,8 @@ import isString from './is-string/index.js';
 
 import isRegexp from './is-regexp/index.js';
 
+import arrayPrototypeMap from './array.prototype.map/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -20,4 +22,5 @@ export const codemods = {
 	'is-number-object': isNumberObject,
 	'is-string': isString,
 	'is-regexp': isRegexp,
+	'array.prototype.map': arrayPrototypeMap,
 };

@@ -36,6 +36,10 @@ describe('codemod', () => {
 						},
 						jscodeshift,
 					});
+					fs.writeFileSync(
+						`./test/fixtures/${codemod.name}/${fixture}/result.js`,
+						result,
+					);
 				} catch (e) {
 					throw new Error(
 						`Codemod "${codemod.name}" failed on fixture "${fixture}"`,

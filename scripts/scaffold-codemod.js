@@ -34,8 +34,6 @@ fs.mkdirSync(`./codemods/${name}`);
 fs.writeFileSync(
 	`./codemods/${name}/index.js`,
 	`
-import { DEFAULT_GLOB } from '../../CONSTANTS.js';
-
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -48,7 +46,6 @@ import { DEFAULT_GLOB } from '../../CONSTANTS.js';
 export default function(options) {
   return {
     name: '${name}',
-    glob: options?.glob ?? DEFAULT_GLOB,
     transform: ({ file, jscodeshift }) => {
       return '';
     },

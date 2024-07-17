@@ -1,5 +1,3 @@
-import { DEFAULT_GLOB } from '../../CONSTANTS.js';
-
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions

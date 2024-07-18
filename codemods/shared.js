@@ -36,7 +36,9 @@ export function removeImport(name, root, j) {
   const identifier =
     importDeclaration.paths().length > 0
       ? importDeclaration.get().node.specifiers[0].local.name
-      : requireDeclaration.find(j.Identifier).get().node.name;
+      : requireDeclaration.paths().length > 0
+      ? requireDeclaration.find(j.Identifier).get().node.name
+      : null;
 
   importDeclaration.remove();
   requireDeclaration.remove();

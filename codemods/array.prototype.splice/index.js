@@ -17,19 +17,19 @@ export default function(options) {
       const j = jscodeshift;
       const root = j(file.source);
       let dirtyFlag = false;
-  
-      removeImport('array.prototype.splice', root, j);
-  
+
+      const { identifier } = removeImport('array.prototype.splice', root, j);
+
       root.find(j.CallExpression, {
           callee: {
               type: 'Identifier',
-              name: 'splice',
+              name: identifier,
           },
       }).forEach((path) => {
           const args = path.value.arguments;
           if (args.length > 1) {
               const [array, ...elements] = args;
-  
+
               const newExpression = j.callExpression(
                   //@ts-ignore
                   j.memberExpression(array, j.identifier('splice')),
@@ -39,7 +39,7 @@ export default function(options) {
               dirtyFlag = true;
           }
       });
-  
+
       return dirtyFlag ? root.toSource(options) : file.source;
     },
   }

@@ -1,5 +1,5 @@
-var map = require("array.prototype.map");
-var assert = require("assert");
+var map = require('array.prototype.map');
+var assert = require('assert');
 
 assert.deepEqual(
   map([1, 1, 1], function (x) {

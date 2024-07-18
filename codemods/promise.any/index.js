@@ -32,7 +32,6 @@ export default function (options) {
 					if (args.length === 1) {
 						const newExpression = j.callExpression(
 							j.memberExpression(j.identifier('Promise'), j.identifier('any')),
-							//@ts-ignore
 							args,
 						);
 						j(path).replaceWith(newExpression);

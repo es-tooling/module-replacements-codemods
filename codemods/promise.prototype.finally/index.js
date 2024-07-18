@@ -12,13 +12,13 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'promise.allsettled',
+		name: 'promise.prototype.finally',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			const { identifier } = removeImport('promise.allsettled', root, j);
+			const { identifier } = removeImport('promise.prototype.finally', root, j);
 
 			root
 				.find(j.CallExpression, {
@@ -29,13 +29,12 @@ export default function (options) {
 				})
 				.forEach((path) => {
 					const args = path.value.arguments;
-					if (args.length === 1) {
+					if (args.length === 2) {
+						const [promise, callback] = args;
 						const newExpression = j.callExpression(
-							j.memberExpression(
-								j.identifier('Promise'),
-								j.identifier('allSettled'),
-							),
-							args,
+							//@ts-ignore
+							j.memberExpression(promise, j.identifier('finally')),
+							[callback],
 						);
 						j(path).replaceWith(newExpression);
 						dirtyFlag = true;

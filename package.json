@@ -10,7 +10,8 @@
     "test": "node --test test/codemod.test.js",
     "test:watch": "node --test --watch test/codemod.test.js",
     "format": "npx @biomejs/biome format --write **/*",
-    "lint:types": "tsc"
+    "lint:types": "tsc",
+    "postinstall": "node scripts/which.js"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +30,7 @@
     "@biomejs/biome": "1.8.3",
     "@types/jscodeshift": "^0.11.11",
     "@types/node": "^20.14.11",
-    "module-replacements": "^2.1.0",
+    "module-replacements": "^2.2.0",
     "typescript": "~5.5.3"
   }
 }

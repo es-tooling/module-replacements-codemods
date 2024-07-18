@@ -38,6 +38,8 @@ import functionPrototypeName from './function.prototype.name/index.js';
 
 import functionsHaveNames from './functions-have-names/index.js';
 
+import gopd from './gopd/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -59,4 +61,5 @@ export const codemods = {
 	'array.prototype.every': arrayPrototypeEvery,
 	'function.prototype.name': functionPrototypeName,
 	'functions-have-names': functionsHaveNames,
+	gopd: gopd,
 };

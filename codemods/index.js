@@ -46,6 +46,12 @@ import hasSymbols from './has-symbols/index.js';
 
 import hasTostringtag from './has-tostringtag/index.js';
 
+import promiseAllsettled from './promise.allsettled/index.js';
+
+import promiseAny from './promise.any/index.js';
+
+import promisePrototypeFinally from './promise.prototype.finally/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -71,4 +77,7 @@ export const codemods = {
 	'has-proto': hasProto,
 	'has-symbols': hasSymbols,
 	'has-tostringtag': hasTostringtag,
+	'promise.allsettled': promiseAllsettled,
+	'promise.any': promiseAny,
+	'promise.prototype.finally': promisePrototypeFinally,
 };

@@ -1,4 +1,4 @@
-var map = require('array.prototype.map');
+import map from 'array.prototype.map'
 var assert = require('assert');
 
 assert.deepEqual(

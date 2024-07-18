@@ -1,5 +1,5 @@
-var filter = require("array.prototype.filter");
-var assert = require("assert");
+var filter = require('array.prototype.filter');
+var assert = require('assert');
 
 assert.deepEqual(
   filter([1, 2, 3], function (x) {

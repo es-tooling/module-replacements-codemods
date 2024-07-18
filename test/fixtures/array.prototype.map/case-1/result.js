@@ -1,4 +1,4 @@
-var assert = require("assert");
+var assert = require('assert');
 
 assert.deepEqual(
   [1, 1, 1].map(function (x) {

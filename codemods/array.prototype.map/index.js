@@ -1,5 +1,5 @@
-import jscodeshift from "jscodeshift";
-import { removeImport } from "../shared.js";
+import jscodeshift from 'jscodeshift';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,19 +12,19 @@ import { removeImport } from "../shared.js";
  */
 export default function (options) {
   return {
-    name: "array.prototype.map",
+    name: 'array.prototype.map',
     transform: ({ file }) => {
       const j = jscodeshift;
       const root = j(file.source);
       let dirtyFlag = false;
 
-      removeImport("array.prototype.map", root, j);
+      const { identifier } = removeImport('array.prototype.map', root, j);
 
       root
         .find(j.CallExpression, {
           callee: {
-            type: "Identifier",
-            name: "map",
+            type: 'Identifier',
+            name: identifier,
           },
         })
         .forEach((path) => {
@@ -34,7 +34,7 @@ export default function (options) {
 
             const newExpression = j.callExpression(
               //@ts-ignore
-              j.memberExpression(array, j.identifier("map")),
+              j.memberExpression(array, j.identifier('map')),
               [callback],
             );
             j(path).replaceWith(newExpression);

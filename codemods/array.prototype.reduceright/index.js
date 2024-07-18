@@ -18,12 +18,12 @@ export default function(options) {
       const root = j(file.source);
       let dirtyFlag = false;
 
-      removeImport('array.prototype.reduceright', root, j);
+      const { identifier } = removeImport('array.prototype.reduceright', root, j);
 
       root.find(j.CallExpression, {
           callee: {
               type: 'Identifier',
-              name: 'reduceRight',
+              name: identifier,
           },
       }).forEach((path) => {
           const args = path.value.arguments;

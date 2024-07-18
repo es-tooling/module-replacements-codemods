@@ -36,6 +36,8 @@ import arrayPrototypeEvery from './array.prototype.every/index.js';
 
 import functionPrototypeName from './function.prototype.name/index.js';
 
+import functionsHaveNames from './functions-have-names/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -56,4 +58,5 @@ export const codemods = {
 	'array.prototype.reduceright': arrayPrototypeReduceright,
 	'array.prototype.every': arrayPrototypeEvery,
 	'function.prototype.name': functionPrototypeName,
+	'functions-have-names': functionsHaveNames,
 };

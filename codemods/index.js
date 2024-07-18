@@ -40,6 +40,12 @@ import functionsHaveNames from './functions-have-names/index.js';
 
 import gopd from './gopd/index.js';
 
+import hasProto from './has-proto/index.js';
+
+import hasSymbols from './has-symbols/index.js';
+
+import hasTostringtag from './has-tostringtag/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -62,4 +68,7 @@ export const codemods = {
 	'function.prototype.name': functionPrototypeName,
 	'functions-have-names': functionsHaveNames,
 	gopd: gopd,
+	'has-proto': hasProto,
+	'has-symbols': hasSymbols,
+	'has-tostringtag': hasTostringtag,
 };

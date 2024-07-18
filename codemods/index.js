@@ -32,6 +32,8 @@ import arrayPrototypeSlice from './array.prototype.slice/index.js';
 
 import arrayPrototypeReduceright from './array.prototype.reduceright/index.js';
 
+import arrayPrototypeEvery from './array.prototype.every/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -50,4 +52,5 @@ export const codemods = {
     'is-negative-zero': isNegativeZero,
     'array.prototype.slice': arrayPrototypeSlice,
     'array.prototype.reduceright': arrayPrototypeReduceright,
+    'array.prototype.every': arrayPrototypeEvery,
 };

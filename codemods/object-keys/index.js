@@ -1,6 +1,5 @@
 import jscodeshift from "jscodeshift";
 import { removeImport } from "../shared.js";
-import { log } from "console";
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod

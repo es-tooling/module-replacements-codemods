@@ -28,6 +28,8 @@ import arrayPrototypeSome from './array.prototype.some/index.js';
 
 import isNegativeZero from './is-negative-zero/index.js';
 
+import arrayPrototypeSlice from './array.prototype.slice/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -44,4 +46,5 @@ export const codemods = {
     'array.prototype.splice': arrayPrototypeSplice,
     'array.prototype.some': arrayPrototypeSome,
     'is-negative-zero': isNegativeZero,
+    'array.prototype.slice': arrayPrototypeSlice,
 };

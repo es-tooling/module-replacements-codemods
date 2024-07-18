@@ -4,21 +4,9 @@ This repository aims to provide automated codemods for the modules provided in [
 
 ## Status
 
-The status of this project is **in development**. There's is a very barebones CLI implemented, mostly just to have something there. The goal of this repository, at the current time, is mainly to gather as many codemods for the packages in [module replacements](https://github.com/es-tooling/module-replacements) or [polyfills](https://github.com/esm-dev/esm.sh/tree/main/server/embed/polyfills/npm) as we can and to have a centralized place where people can [collaborate](#contributing) on those codemods.
+The status of this project is **in development**. There's is a very barebones CLI implemented, mostly just to have something there, and it's also not published to NPM yet, because the name/home of this project is still TBD. The goal of this repository, at the current time, is mainly to gather as many codemods for the packages in [module replacements](https://github.com/es-tooling/module-replacements) or [polyfills](https://github.com/esm-dev/esm.sh/tree/main/server/embed/polyfills/npm) as we can and to have a centralized place where people can [collaborate](#contributing) on those codemods.
 
 Once we have a substantial amount of codemods implemented (or in parallel), we can work on creating an actually well-designed CLI so people can start using the codemods in their projects and remove package bloat.
-
-## Usage
-
-In your project, run:
-
-```
-npx module-replacements-codemods
-```
-
-> Note, the CLI currently is very barebones and simple. See the project [status](#status) for more details.
-
-And it will automatically clean up any unneeded dependencies.
 
 ## Contributing
 

@@ -48,6 +48,8 @@ import hasTostringtag from './has-tostringtag/index.js';
 
 import promiseAllsettled from './promise.allsettled/index.js';
 
+import promiseAny from './promise.any/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -74,4 +76,5 @@ export const codemods = {
 	'has-symbols': hasSymbols,
 	'has-tostringtag': hasTostringtag,
 	'promise.allsettled': promiseAllsettled,
+	'promise.any': promiseAny,
 };

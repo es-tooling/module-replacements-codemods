@@ -22,6 +22,8 @@ import objectKeys from './object-keys/index.js';
 
 import arrayPrototypeUnshift from './array.prototype.unshift/index.js';
 
+import arrayPrototypeSplice from './array.prototype.splice/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -34,5 +36,6 @@ export const codemods = {
     'array.prototype.filter': arrayPrototypeFilter,
     'array-includes': arrayIncludes,
     'object-keys': objectKeys,
-    'array.prototype.unshift': arrayPrototypeUnshift
+    'array.prototype.unshift': arrayPrototypeUnshift,
+    'array.prototype.splice': arrayPrototypeSplice
 };

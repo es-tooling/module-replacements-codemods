@@ -31,6 +31,21 @@ export function removeImport(name, root, j) {
 		},
 	});
 
+	// Require statements without declarations like `Object.is = require("object-is");`
+	const requireAssignment = root.find(j.AssignmentExpression, {
+		operator: '=',
+		right: {
+			callee: {
+				name: 'require',
+			},
+			arguments: [
+				{
+					value: name,
+				},
+			],
+		},
+	});
+
 	// Return the identifier name, e.g. 'fn' in `import { fn } from 'is-boolean-object'`
 	// or `var fn = require('is-boolean-object')`
 	const identifier =
@@ -38,10 +53,13 @@ export function removeImport(name, root, j) {
 			? importDeclaration.get().node.specifiers[0].local.name
 			: requireDeclaration.paths().length > 0
 				? requireDeclaration.find(j.Identifier).get().node.name
-				: null;
+				: requireAssignment.paths().length > 0
+					? requireAssignment.find(j.Identifier).get().node.name
+					: null;
 
 	importDeclaration.remove();
 	requireDeclaration.remove();
+	requireAssignment.remove();
 
 	return { identifier };
 }

@@ -1,0 +1,23 @@
+const isNumber = require('is-number');
+
+console.log(isNumber(5e3));
+console.log(isNumber(0xff));
+console.log(isNumber(-1.1));
+console.log(isNumber(0));
+console.log(isNumber(1));
+console.log(isNumber(1.1));
+console.log(isNumber(10));
+console.log(isNumber(10.1));
+console.log(isNumber(100));
+console.log(isNumber('-1.1'));
+console.log(isNumber('0'));
+console.log(isNumber('012'));
+console.log(isNumber('0xff'));
+console.log(isNumber('1'));
+console.log(isNumber('1.1'));
+console.log(isNumber('10'));
+console.log(isNumber('10.10'));
+console.log(isNumber('100'));
+console.log(isNumber('5e3'));
+console.log(isNumber(parseInt('012')));
+console.log(isNumber(parseFloat('012')));

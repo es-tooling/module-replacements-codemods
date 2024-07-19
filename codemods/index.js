@@ -84,6 +84,12 @@ import isTravis from './is-travis/index.js';
 
 import isNumber from './is-number/index.js';
 
+import has from './has/index.js';
+
+import hasown from './hasown/index.js';
+
+import hasOwnProp from './has-own-prop/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -128,4 +134,7 @@ export const codemods = {
 	'is-windows': isWindows,
 	'is-travis': isTravis,
 	'is-number': isNumber,
+	has: has,
+	hasown: hasown,
+	'has-own-prop': hasOwnProp,
 };

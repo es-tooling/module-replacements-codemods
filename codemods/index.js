@@ -58,6 +58,8 @@ import arrayPrototypeAt from './array.prototype.at/index.js';
 
 import arrayPrototypeConcat from './array.prototype.concat/index.js';
 
+import arrayPrototypeEntries from './array.prototype.entries/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -89,4 +91,5 @@ export const codemods = {
     'for-each': forEach,
     'array.prototype.at': arrayPrototypeAt,
     'array.prototype.concat': arrayPrototypeConcat,
+    'array.prototype.entries': arrayPrototypeEntries,
 };

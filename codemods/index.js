@@ -60,6 +60,8 @@ import arrayPrototypeConcat from './array.prototype.concat/index.js';
 
 import arrayPrototypeEntries from './array.prototype.entries/index.js';
 
+import arrayPrototypeFind from './array.prototype.find/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -92,4 +94,5 @@ export const codemods = {
     'array.prototype.at': arrayPrototypeAt,
     'array.prototype.concat': arrayPrototypeConcat,
     'array.prototype.entries': arrayPrototypeEntries,
+    'array.prototype.find': arrayPrototypeFind,
 };

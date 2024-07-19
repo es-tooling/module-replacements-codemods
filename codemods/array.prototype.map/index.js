@@ -1,5 +1,5 @@
 import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { transformArrayMethod } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -11,38 +11,20 @@ import { removeImport } from '../shared.js';
  * @returns {Codemod}
  */
 export default function (options) {
-  return {
-    name: 'array.prototype.map',
-    transform: ({ file }) => {
-      const j = jscodeshift;
-      const root = j(file.source);
-      let dirtyFlag = false;
+	return {
+		name: 'array.prototype.map',
+		transform: ({ file }) => {
+			const j = jscodeshift;
+			const root = j(file.source);
 
-      const { identifier } = removeImport('array.prototype.map', root, j);
+      const dirty = transformArrayMethod(
+        'array.prototype.map',
+        'map',
+        root,
+        j,
+      );
 
-      root
-        .find(j.CallExpression, {
-          callee: {
-            type: 'Identifier',
-            name: identifier,
-          },
-        })
-        .forEach((path) => {
-          const args = path.value.arguments;
-          if (args.length === 2) {
-            const [array, callback] = args;
-
-            const newExpression = j.callExpression(
-              //@ts-ignore
-              j.memberExpression(array, j.identifier('map')),
-              [callback],
-            );
-            j(path).replaceWith(newExpression);
-            dirtyFlag = true;
-          }
-        });
-
-      return dirtyFlag ? root.toSource(options) : file.source;
-    },
-  };
+			return dirty ? root.toSource(options) : file.source;
+		},
+	};
 }

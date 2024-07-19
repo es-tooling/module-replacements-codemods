@@ -45,3 +45,40 @@ export function removeImport(name, root, j) {
 
   return { identifier };
 }
+
+/**
+ * @param {string} method - e.g. `array.prototype.flatMap`
+ * @param {string} identifierName - e.g. `flatMap`
+ * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * @returns 
+ */
+export function transformArrayMethod(method, identifierName, root, j) {
+  const { identifier } = removeImport(method, root, j);
+
+  let dirtyFlag = false;
+  root
+    .find(j.CallExpression, {
+      callee: {
+        type: "Identifier",
+        name: identifier,
+      },
+    })
+    .forEach((path) => {
+      const [arrayArg, indexArg] = path.node.arguments;
+      if (
+        j.Identifier.check(arrayArg) ||
+        j.ArrayExpression.check(arrayArg)
+      ) {
+        path.replace(
+          j.callExpression(
+            j.memberExpression(arrayArg, j.identifier(identifierName)),
+            [indexArg]
+          )
+        );
+        dirtyFlag = true;
+      }
+    });
+
+  return dirtyFlag;
+}

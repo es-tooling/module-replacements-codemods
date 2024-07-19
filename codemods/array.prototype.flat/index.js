@@ -1,5 +1,5 @@
 import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { transformArrayMethod } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -16,33 +16,15 @@ export default function (options) {
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
-			let dirtyFlag = false;
 
-			const { identifier } = removeImport('array.prototype.flat', root, j);
+      const dirty = transformArrayMethod(
+        'array.prototype.flat',
+        'flat',
+        root,
+        j,
+      );
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length === 2) {
-						const [array, callback] = args;
-
-						const newExpression = j.callExpression(
-							//@ts-ignore
-							j.memberExpression(array, j.identifier('flat')),
-							[callback],
-						);
-						j(path).replaceWith(newExpression);
-						dirtyFlag = true;
-					}
-				});
-
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return dirty ? root.toSource(options) : file.source;
 		},
 	};
 }

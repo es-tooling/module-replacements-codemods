@@ -64,6 +64,10 @@ import arrayPrototypeFind from './array.prototype.find/index.js';
 
 import arrayPrototypeFindIndex from './array.prototype.findIndex/index.js';
 
+import arrayPrototypeFlat from './array.prototype.flat/index.js';
+
+import arrayPrototypeFlatMap from './array.prototype.flatMap/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -98,4 +102,6 @@ export const codemods = {
     'array.prototype.entries': arrayPrototypeEntries,
     'array.prototype.find': arrayPrototypeFind,
     'array.prototype.findIndex': arrayPrototypeFindIndex,
+    'array.prototype.flat': arrayPrototypeFlat,
+    'array.prototype.flatMap': arrayPrototypeFlatMap,
 };

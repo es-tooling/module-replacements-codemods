@@ -76,6 +76,8 @@ import isBuiltinModule from './is-builtin-module/index.js';
 
 import arrayFrom from './array.from/index.js';
 
+import isEven from './is-even/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -116,4 +118,5 @@ export const codemods = {
 	'array.prototype.forEach': arrayPrototypeForEach,
 	'is-builtin-module': isBuiltinModule,
 	'array.from': arrayFrom,
+	'is-even': isEven,
 };

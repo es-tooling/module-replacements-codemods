@@ -11,7 +11,8 @@
     "test:watch": "node --test --watch test/codemod.test.js",
     "format": "biome format --write **/*",
     "lint:types": "tsc",
-    "postinstall": "node scripts/which.js"
+    "postinstall": "npm run which",
+    "which": "node scripts/which.js"
   },
   "keywords": [],
   "author": "",

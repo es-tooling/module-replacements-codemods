@@ -56,6 +56,8 @@ import forEach from './for-each/index.js';
 
 import arrayPrototypeAt from './array.prototype.at/index.js';
 
+import arrayPrototypeConcat from './array.prototype.concat/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -86,4 +88,5 @@ export const codemods = {
     'promise.prototype.finally': promisePrototypeFinally,
     'for-each': forEach,
     'array.prototype.at': arrayPrototypeAt,
+    'array.prototype.concat': arrayPrototypeConcat,
 };

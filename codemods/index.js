@@ -8,6 +8,8 @@ import isDateObject from './is-date-object/index.js';
 
 import isNumberObject from './is-number-object/index.js';
 
+import isOdd from './is-odd/index.js';
+
 import isString from './is-string/index.js';
 
 import isRegexp from './is-regexp/index.js';
@@ -80,6 +82,7 @@ export const codemods = {
 	'is-boolean-object': isBooleanObject,
 	'is-date-object': isDateObject,
 	'is-number-object': isNumberObject,
+	'is-odd': isOdd,
 	'is-string': isString,
 	'is-regexp': isRegexp,
 	'array.prototype.map': arrayPrototypeMap,

@@ -72,6 +72,8 @@ import arrayPrototypeForEach from './array.prototype.forEach/index.js';
 
 import isBuiltinModule from './is-builtin-module/index.js';
 
+import arrayFrom from './array.from/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -110,4 +112,5 @@ export const codemods = {
 	'array.prototype.flatMap': arrayPrototypeFlatMap,
 	'array.prototype.forEach': arrayPrototypeForEach,
 	'is-builtin-module': isBuiltinModule,
+	'array.from': arrayFrom,
 };

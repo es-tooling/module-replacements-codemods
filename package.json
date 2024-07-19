@@ -9,7 +9,7 @@
   "scripts": {
     "test": "node --test test/codemod.test.js",
     "test:watch": "node --test --watch test/codemod.test.js",
-    "format": "npx @biomejs/biome format --write **/*",
+    "format": "biome format --write **/*",
     "lint:types": "tsc",
     "postinstall": "node scripts/which.js"
   },

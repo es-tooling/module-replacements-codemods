@@ -11,39 +11,39 @@
  * @returns {RemoveImport}
  */
 export function removeImport(name, root, j) {
-  // Find the import or require statement for 'is-boolean-object'
-  const importDeclaration = root.find(j.ImportDeclaration, {
-    source: {
-      value: name,
-    },
-  });
+	// Find the import or require statement for 'is-boolean-object'
+	const importDeclaration = root.find(j.ImportDeclaration, {
+		source: {
+			value: name,
+		},
+	});
 
-  const requireDeclaration = root.find(j.VariableDeclarator, {
-    init: {
-      callee: {
-        name: "require",
-      },
-      arguments: [
-        {
-          value: name,
-        },
-      ],
-    },
-  });
+	const requireDeclaration = root.find(j.VariableDeclarator, {
+		init: {
+			callee: {
+				name: 'require',
+			},
+			arguments: [
+				{
+					value: name,
+				},
+			],
+		},
+	});
 
-  // Return the identifier name, e.g. 'fn' in `import { fn } from 'is-boolean-object'`
-  // or `var fn = require('is-boolean-object')`
-  const identifier =
-    importDeclaration.paths().length > 0
-      ? importDeclaration.get().node.specifiers[0].local.name
-      : requireDeclaration.paths().length > 0
-      ? requireDeclaration.find(j.Identifier).get().node.name
-      : null;
+	// Return the identifier name, e.g. 'fn' in `import { fn } from 'is-boolean-object'`
+	// or `var fn = require('is-boolean-object')`
+	const identifier =
+		importDeclaration.paths().length > 0
+			? importDeclaration.get().node.specifiers[0].local.name
+			: requireDeclaration.paths().length > 0
+				? requireDeclaration.find(j.Identifier).get().node.name
+				: null;
 
-  importDeclaration.remove();
-  requireDeclaration.remove();
+	importDeclaration.remove();
+	requireDeclaration.remove();
 
-  return { identifier };
+	return { identifier };
 }
 
 /**
@@ -51,34 +51,31 @@ export function removeImport(name, root, j) {
  * @param {string} identifierName - e.g. `flatMap`
  * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
- * @returns 
+ * @returns
  */
 export function transformArrayMethod(method, identifierName, root, j) {
-  const { identifier } = removeImport(method, root, j);
+	const { identifier } = removeImport(method, root, j);
 
-  let dirtyFlag = false;
-  root
-    .find(j.CallExpression, {
-      callee: {
-        type: "Identifier",
-        name: identifier,
-      },
-    })
-    .forEach((path) => {
-      const [arrayArg, indexArg] = path.node.arguments;
-      if (
-        j.Identifier.check(arrayArg) ||
-        j.ArrayExpression.check(arrayArg)
-      ) {
-        path.replace(
-          j.callExpression(
-            j.memberExpression(arrayArg, j.identifier(identifierName)),
-            [indexArg]
-          )
-        );
-        dirtyFlag = true;
-      }
-    });
+	let dirtyFlag = false;
+	root
+		.find(j.CallExpression, {
+			callee: {
+				type: 'Identifier',
+				name: identifier,
+			},
+		})
+		.forEach((path) => {
+			const [arrayArg, indexArg] = path.node.arguments;
+			if (j.Identifier.check(arrayArg) || j.ArrayExpression.check(arrayArg)) {
+				path.replace(
+					j.callExpression(
+						j.memberExpression(arrayArg, j.identifier(identifierName)),
+						[indexArg],
+					),
+				);
+				dirtyFlag = true;
+			}
+		});
 
-  return dirtyFlag;
+	return dirtyFlag;
 }

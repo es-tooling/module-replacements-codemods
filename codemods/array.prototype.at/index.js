@@ -10,10 +10,10 @@ import { transformArrayMethod } from '../shared.js';
  * @NOTE
  * `array.prototype.at` supports passing a callback, e.g.:
  * `var results = at(arr, (x, i) => x);`
- * 
+ *
  * We don't support that for now, but the most common usage seems to be similar
  * to the native usage
- * 
+ *
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
@@ -24,12 +24,7 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-      const dirty = transformArrayMethod(
-        'array.prototype.at',
-        'at',
-        root,
-        j,
-      );
+			const dirty = transformArrayMethod('array.prototype.at', 'at', root, j);
 
 			return dirty ? root.toSource(options) : file.source;
 		},

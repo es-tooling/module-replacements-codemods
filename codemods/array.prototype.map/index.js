@@ -17,12 +17,7 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-      const dirty = transformArrayMethod(
-        'array.prototype.map',
-        'map',
-        root,
-        j,
-      );
+			const dirty = transformArrayMethod('array.prototype.map', 'map', root, j);
 
 			return dirty ? root.toSource(options) : file.source;
 		},

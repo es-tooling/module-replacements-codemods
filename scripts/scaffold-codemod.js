@@ -71,4 +71,7 @@ root.find(j.ObjectExpression).forEach((path) => {
 	);
 });
 
-fs.writeFileSync('./codemods/index.js', root.toSource({ quote: 'single', trailingComma: true }));
+fs.writeFileSync(
+	'./codemods/index.js',
+	root.toSource({ quote: 'single', trailingComma: true }),
+);

@@ -17,12 +17,12 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-      const dirty = transformArrayMethod(
-        'array.prototype.findIndex',
-        'findIndex',
-        root,
-        j,
-      );
+			const dirty = transformArrayMethod(
+				'array.prototype.findIndex',
+				'findIndex',
+				root,
+				j,
+			);
 
 			return dirty ? root.toSource(options) : file.source;
 		},

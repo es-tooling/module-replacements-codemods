@@ -1,5 +1,5 @@
-import jscodeshift from "jscodeshift";
-import { removeImport } from "../shared.js";
+import jscodeshift from 'jscodeshift';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,12 +12,12 @@ import { removeImport } from "../shared.js";
  */
 export default function (options) {
 	return {
-		name: "object-keys",
+		name: 'object-keys',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			let { identifier } = removeImport("object-keys", root, j);
+			let { identifier } = removeImport('object-keys', root, j);
 
 			// Replace `$identifier(obj)` with `Object.keys(obj)`
 			root
@@ -28,30 +28,30 @@ export default function (options) {
 				})
 				.replaceWith(({ node }) => {
 					return j.callExpression(
-						j.memberExpression(j.identifier("Object"), j.identifier("keys")),
-						node.arguments
+						j.memberExpression(j.identifier('Object'), j.identifier('keys')),
+						node.arguments,
 					);
 				});
 
 			// Remove recommended usage of `var keys = Object.keys || require("object-keys")`
 			const logicalExpressionRequire = root.find(j.VariableDeclarator, {
 				init: {
-					type: "LogicalExpression",
+					type: 'LogicalExpression',
 					left: {
 						object: {
-							name: "Object",
+							name: 'Object',
 						},
 						property: {
-							name: "keys",
+							name: 'keys',
 						},
 					},
 					right: {
 						callee: {
-							name: "require",
+							name: 'require',
 						},
 						arguments: [
 							{
-								value: "object-keys",
+								value: 'object-keys',
 							},
 						],
 					},
@@ -74,8 +74,8 @@ export default function (options) {
 				})
 				.replaceWith(({ node }) => {
 					return j.callExpression(
-						j.memberExpression(j.identifier("Object"), j.identifier("keys")),
-						node.arguments
+						j.memberExpression(j.identifier('Object'), j.identifier('keys')),
+						node.arguments,
 					);
 				});
 

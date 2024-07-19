@@ -54,6 +54,8 @@ import promisePrototypeFinally from './promise.prototype.finally/index.js';
 
 import forEach from './for-each/index.js';
 
+import arrayPrototypeAt from './array.prototype.at/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -83,4 +85,5 @@ export const codemods = {
     'promise.any': promiseAny,
     'promise.prototype.finally': promisePrototypeFinally,
     'for-each': forEach,
+    'array.prototype.at': arrayPrototypeAt,
 };

@@ -80,6 +80,8 @@ import isEven from './is-even/index.js';
 
 import isWindows from './is-windows/index.js';
 
+import isTravis from './is-travis/index.js';
+
 export const codemods = {
     'is-whitespace': isWhitespace,
     'is-array-buffer': isArrayBuffer,
@@ -122,4 +124,5 @@ export const codemods = {
     'array.from': arrayFrom,
     'is-even': isEven,
     'is-windows': isWindows,
+    'is-travis': isTravis,
 };

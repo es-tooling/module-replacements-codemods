@@ -7,6 +7,13 @@ import { removeImport } from "../shared.js";
  */
 
 /**
+ * @NOTE
+ * `array.prototype.at` supports passing a callback, e.g.:
+ * `var results = at(arr, (x, i) => x);`
+ * 
+ * We don't support that for now, but the most common usage seems to be similar
+ * to the native usage
+ * 
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
@@ -42,7 +49,7 @@ export default function (options) {
             dirtyFlag = true;
           }
         });
-        
+
       return dirtyFlag ? root.toSource(options) : file.source;
     },
   };

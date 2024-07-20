@@ -102,6 +102,8 @@ import objectFromentries from './object.fromentries/index.js';
 
 import objectValues from './object.values/index.js';
 
+import stringPrototypeMatchall from './string.prototype.matchall/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -155,4 +157,5 @@ export const codemods = {
 	'number.isnan': numberIsnan,
 	'object.fromentries': objectFromentries,
 	'object.values': objectValues,
+	'string.prototype.matchall': stringPrototypeMatchall,
 };

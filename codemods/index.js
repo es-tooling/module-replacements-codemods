@@ -90,6 +90,8 @@ import hasown from './hasown/index.js';
 
 import hasOwnProp from './has-own-prop/index.js';
 
+import objectAssign from './object-assign/index.js';
+
 import objectEntries from './object.entries/index.js';
 
 import objectIs from './object-is/index.js';
@@ -145,6 +147,7 @@ export const codemods = {
 	has: has,
 	hasown: hasown,
 	'has-own-prop': hasOwnProp,
+	'object-assign': objectAssign,
 	'object.entries': objectEntries,
 	'object-is': objectIs,
 	'is-nan': isNan,

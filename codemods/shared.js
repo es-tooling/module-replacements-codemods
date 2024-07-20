@@ -2,6 +2,8 @@
  * type definition for return type object
  * @typedef {Object} RemoveImport
  * @property {string} identifier - the name of the module as it was imported or required. for example, `keys` in `import keys from 'object-keys'`
+ * @typedef {Object} ReplaceDefaultImport
+ * @property {string} identifier - the name of the module as it was imported or required. for example, `keys` in `import keys from 'object-keys'`
  */
 
 /**
@@ -75,6 +77,69 @@ export function removeImport(name, root, j) {
 	requireDeclaration.remove();
 	requireAssignment.remove();
 	sideEffectRequireExpression.remove();
+
+	return { identifier };
+}
+
+/**
+ * Replaces import declarations that use default specifiers
+ * Finds and replaces:
+ * - `import React from 'react';`
+ * - `var React = require('react');`
+ *
+ * Todo: This function does not handle `Object.React = require('react)` yet
+ *
+ * @param {string} name - old package name to replace import/require calls for
+ * @param {string} newSpecifier - new specifier name
+ * @param {string} newName - new package name
+ * @param {import("jscodeshift").Collection} root - package name to replace import/require calls for
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * @returns {ReplaceDefaultImport}
+ */
+export function replaceDefaultImport(name, newSpecifier, newName, root, j) {
+	const importDeclaration = root.find(j.ImportDeclaration, {
+		source: {
+			value: name,
+		},
+	});
+
+	const requireDeclaration = root.find(j.VariableDeclarator, {
+		init: {
+			callee: {
+				name: 'require',
+			},
+			arguments: [
+				{
+					value: name,
+				},
+			],
+		},
+	});
+
+	const identifier =
+		importDeclaration.paths().length > 0
+			? importDeclaration.get().node.specifiers[0].local.name
+			: requireDeclaration.paths().length > 0
+				? requireDeclaration.find(j.Identifier).get().node.name
+				: null;
+
+	importDeclaration.forEach((path) => {
+		j(path).replaceWith(
+			j.importDeclaration(
+				[j.importDefaultSpecifier(j.identifier(newSpecifier))],
+				j.stringLiteral(newName),
+			),
+		);
+	});
+
+	requireDeclaration.forEach((path) => {
+		const newExpression = j.assignmentExpression(
+			'=',
+			j.identifier(newSpecifier),
+			j.callExpression(j.identifier('require'), [j.literal(newName)]),
+		);
+		j(path).replaceWith(newExpression);
+	});
 
 	return { identifier };
 }

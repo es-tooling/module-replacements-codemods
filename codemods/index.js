@@ -126,6 +126,8 @@ import arrayPrototypeJoin from './array.prototype.join/index.js';
 
 import arrayPrototypeIndexof from './array.prototype.indexof/index.js';
 
+import arrayPrototypeValues from './array.prototype.values/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -191,4 +193,5 @@ export const codemods = {
 	'array.prototype.push': arrayPrototypePush,
 	'array.prototype.join': arrayPrototypeJoin,
 	'array.prototype.indexof': arrayPrototypeIndexof,
+	'array.prototype.values': arrayPrototypeValues,
 };

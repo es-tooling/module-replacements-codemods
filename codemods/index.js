@@ -136,6 +136,8 @@ import arrayPrototypeWith from './array.prototype.with/index.js';
 
 import arrayEvery from './array-every/index.js';
 
+import arrayOf from './array.of/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -206,4 +208,5 @@ export const codemods = {
 	'array.prototype.tospliced': arrayPrototypeTospliced,
 	'array.prototype.with': arrayPrototypeWith,
 	'array-every': arrayEvery,
+	'array.of': arrayOf,
 };

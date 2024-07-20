@@ -104,6 +104,8 @@ import objectValues from './object.values/index.js';
 
 import stringPrototypeMatchall from './string.prototype.matchall/index.js';
 
+import stringPrototypeRepeat from './string.prototype.repeat/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -158,4 +160,5 @@ export const codemods = {
 	'object.fromentries': objectFromentries,
 	'object.values': objectValues,
 	'string.prototype.matchall': stringPrototypeMatchall,
+	'string.prototype.repeat': stringPrototypeRepeat,
 };

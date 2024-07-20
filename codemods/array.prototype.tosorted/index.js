@@ -12,14 +12,14 @@ import { transformArrayMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.findlast',
+		name: 'array.prototype.tosorted',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
 			const dirty = transformArrayMethod(
-				'array.prototype.findlast',
-				'findLast',
+				'array.prototype.tosorted',
+				'toSorted',
 				root,
 				j,
 			);

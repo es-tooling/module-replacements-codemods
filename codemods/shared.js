@@ -83,12 +83,12 @@ export function transformArrayMethod(method, identifierName, root, j) {
 			},
 		})
 		.forEach((path) => {
-			const [arrayArg, indexArg] = path.node.arguments;
+			const [arrayArg, ...otherArgs] = path.node.arguments;
 			if (j.Identifier.check(arrayArg) || j.ArrayExpression.check(arrayArg)) {
 				path.replace(
 					j.callExpression(
 						j.memberExpression(arrayArg, j.identifier(identifierName)),
-						[indexArg],
+						otherArgs,
 					),
 				);
 				dirtyFlag = true;

@@ -122,6 +122,8 @@ import arrayPrototypeReduce from './array.prototype.reduce/index.js';
 
 import arrayPrototypePush from './array.prototype.push/index.js';
 
+import arrayPrototypeJoin from './array.prototype.join/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -185,4 +187,5 @@ export const codemods = {
 	'array.prototype.toreversed': arrayPrototypeToreversed,
 	'array.prototype.reduce': arrayPrototypeReduce,
 	'array.prototype.push': arrayPrototypePush,
+	'array.prototype.join': arrayPrototypeJoin,
 };

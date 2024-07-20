@@ -118,6 +118,8 @@ import arrayPrototypeFindlastindex from './array.prototype.findlastindex/index.j
 
 import arrayPrototypeToreversed from './array.prototype.toreversed/index.js';
 
+import arrayPrototypeReduce from './array.prototype.reduce/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -179,4 +181,5 @@ export const codemods = {
 	'filter-array': filterArray,
 	'array.prototype.findlastindex': arrayPrototypeFindlastindex,
 	'array.prototype.toreversed': arrayPrototypeToreversed,
+	'array.prototype.reduce': arrayPrototypeReduce,
 };

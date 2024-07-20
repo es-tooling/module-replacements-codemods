@@ -98,6 +98,10 @@ import isNan from './is-nan/index.js';
 
 import numberIsnan from './number.isnan/index.js';
 
+import objectFromentries from './object.fromentries/index.js';
+
+import objectValues from './object.values/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -149,4 +153,6 @@ export const codemods = {
 	'object-is': objectIs,
 	'is-nan': isNan,
 	'number.isnan': numberIsnan,
+	'object.fromentries': objectFromentries,
+	'object.values': objectValues,
 };

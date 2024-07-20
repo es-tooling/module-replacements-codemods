@@ -9,7 +9,18 @@ There are many jokes in the software development ecosystem about the size of `no
 <img src="nodemodules.png" alt="Heaviest objects in the world ranked from lightest to heaviest starting with the sun a neutron star a black hole and finally node modules" style="max-width: 200px; display: block; margin-left: auto; margin-right: auto;">
 
 
-This project aims to automate the cleanup of these dependencies for projects by implementing codemods to replace them. This will speed up the ecosystem cleanup efforts a lot by automating the process. For those of you who are unsure what codemods are, codemods are automatic transformations that run on your codebase programmatically. What that means is that you give a codemod some input source code, and it will output changed code, like for example cleanup of dependencies.
+This project aims to automate the cleanup of these dependencies for projects by implementing codemods to replace them. This will speed up the ecosystem cleanup efforts a lot by automating the process. For those of you who are unsure what codemods are, codemods are automatic transformations that run on your codebase programmatically. What that means is that you give a codemod some input source code, and it will output changed code, like for example cleanup of dependencies. For example, a codemod for `is-even` would result in:
+
+Before:
+```js
+const isEven = require('is-even');
+isEven(0);
+```
+
+After:
+```js
+(0 % 2 === 0);
+```
 
 There are a lot of [packages](https://github.com/es-tooling/module-replacements) to create codemods for. While creating codemods for these packages is not very hard, there is simply _a lot_ of them, so we're looking for contributions! The codemods typically are very small and straightforward to implement; even if you've never written one before. With the help of [codemod.studio](https://codemod.com/studio) and the [contributing](#contributing) instructions down below, you should get up and running in no time. Being able to create codemods is a great skill to have in your developer toolset, but it's also really fun and satisfying to implement one, and at the same time you'll be contributing to a better ecosystem!
 

@@ -108,6 +108,10 @@ import stringPrototypeMatchall from './string.prototype.matchall/index.js';
 
 import stringPrototypeRepeat from './string.prototype.repeat/index.js';
 
+import arrayPrototypeFindlast from './array.prototype.findlast/index.js';
+
+import arrayPrototypeTosorted from './array.prototype.tosorted/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -164,4 +168,6 @@ export const codemods = {
 	'object.values': objectValues,
 	'string.prototype.matchall': stringPrototypeMatchall,
 	'string.prototype.repeat': stringPrototypeRepeat,
+	'array.prototype.findlast': arrayPrototypeFindlast,
+	'array.prototype.tosorted': arrayPrototypeTosorted,
 };

@@ -22,6 +22,8 @@ After:
 (0 % 2 === 0);
 ```
 
+For more examples of before/after's, take a look at the [test/fixtures](https://github.com/thepassle/module-replacements-codemods/tree/main/test/fixtures) folder, where you can see which replacements all of the codemods do.
+
 There are a lot of [packages](https://github.com/es-tooling/module-replacements) to create codemods for. While creating codemods for these packages is not very hard, there is simply _a lot_ of them, so we're looking for contributions! The codemods typically are very small and straightforward to implement; even if you've never written one before. With the help of [codemod.studio](https://codemod.com/studio) and the [contributing](#contributing) instructions down below, you should get up and running in no time. Being able to create codemods is a great skill to have in your developer toolset, but it's also really fun and satisfying to implement one, and at the same time you'll be contributing to a better ecosystem!
 
 

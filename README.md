@@ -6,7 +6,8 @@ This repository aims to provide automated codemods for the modules provided in [
 
 There are many jokes in the software development ecosystem about the size of `node_modules` and JavaScript dependencies in general, for example dependencies like `is-even`, or `is-odd`. Fortunately, there are many individuals who are working on improving this situation (like for example the [e18e initiative](https://e18e.dev/)), but there are also individuals actively adding more and more unnecessary dependencies to popular projects that get millions of downloads, leading to bloated `node_modules` folders with tons of dependencies.
 
-![Heaviest objects in the world ranked from lightest to heaviest starting with the sun a neutron star a black hole and finally node modules](nodemodules.png)
+<img src="nodemodules.png" alt="Heaviest objects in the world ranked from lightest to heaviest starting with the sun a neutron star a black hole and finally node modules" style="max-width: 200px; display: block; margin-left: auto; margin-right: auto;">
+
 
 This project aims to automate the cleanup of these dependencies for projects by implementing codemods to replace them. This will speed up the ecosystem cleanup efforts a lot by automating the process. For those of you who are unsure what codemods are, codemods are automatic transformations that run on your codebase programmatically. What that means is that you give a codemod some input source code, and it will output changed code, like for example cleanup of dependencies.
 

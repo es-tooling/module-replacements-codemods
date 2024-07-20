@@ -130,6 +130,8 @@ import arrayPrototypeValues from './array.prototype.values/index.js';
 
 import arrayPrototypeKeys from './array.prototype.keys/index.js';
 
+import arrayPrototypeTospliced from './array.prototype.tospliced/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -197,4 +199,5 @@ export const codemods = {
 	'array.prototype.indexof': arrayPrototypeIndexof,
 	'array.prototype.values': arrayPrototypeValues,
 	'array.prototype.keys': arrayPrototypeKeys,
+	'array.prototype.tospliced': arrayPrototypeTospliced,
 };

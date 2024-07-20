@@ -94,6 +94,10 @@ import objectEntries from './object.entries/index.js';
 
 import objectIs from './object-is/index.js';
 
+import isNan from './is-nan/index.js';
+
+import numberIsnan from './number.isnan/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -143,4 +147,6 @@ export const codemods = {
 	'has-own-prop': hasOwnProp,
 	'object.entries': objectEntries,
 	'object-is': objectIs,
+	'is-nan': isNan,
+	'number.isnan': numberIsnan,
 };

@@ -140,6 +140,8 @@ import arrayOf from './array.of/index.js';
 
 import arrayMap from './array-map/index.js';
 
+import indexOf from './index-of/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -212,4 +214,5 @@ export const codemods = {
 	'array-every': arrayEvery,
 	'array.of': arrayOf,
 	'array-map': arrayMap,
+	'index-of': indexOf,
 };

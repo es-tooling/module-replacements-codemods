@@ -112,6 +112,8 @@ import arrayPrototypeFindlast from './array.prototype.findlast/index.js';
 
 import arrayPrototypeTosorted from './array.prototype.tosorted/index.js';
 
+import filterArray from './filter-array/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -170,4 +172,5 @@ export const codemods = {
 	'string.prototype.repeat': stringPrototypeRepeat,
 	'array.prototype.findlast': arrayPrototypeFindlast,
 	'array.prototype.tosorted': arrayPrototypeTosorted,
+	'filter-array': filterArray,
 };

@@ -112,6 +112,38 @@ import arrayPrototypeFindlast from './array.prototype.findlast/index.js';
 
 import arrayPrototypeTosorted from './array.prototype.tosorted/index.js';
 
+import filterArray from './filter-array/index.js';
+
+import arrayPrototypeFindlastindex from './array.prototype.findlastindex/index.js';
+
+import arrayPrototypeToreversed from './array.prototype.toreversed/index.js';
+
+import arrayPrototypeReduce from './array.prototype.reduce/index.js';
+
+import arrayPrototypePush from './array.prototype.push/index.js';
+
+import arrayPrototypeJoin from './array.prototype.join/index.js';
+
+import arrayPrototypeIndexof from './array.prototype.indexof/index.js';
+
+import arrayPrototypeValues from './array.prototype.values/index.js';
+
+import arrayPrototypeKeys from './array.prototype.keys/index.js';
+
+import arrayPrototypeTospliced from './array.prototype.tospliced/index.js';
+
+import arrayPrototypeWith from './array.prototype.with/index.js';
+
+import arrayEvery from './array-every/index.js';
+
+import arrayOf from './array.of/index.js';
+
+import arrayMap from './array-map/index.js';
+
+import indexOf from './index-of/index.js';
+
+import lastIndexOf from './last-index-of/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -170,4 +202,20 @@ export const codemods = {
 	'string.prototype.repeat': stringPrototypeRepeat,
 	'array.prototype.findlast': arrayPrototypeFindlast,
 	'array.prototype.tosorted': arrayPrototypeTosorted,
+	'filter-array': filterArray,
+	'array.prototype.findlastindex': arrayPrototypeFindlastindex,
+	'array.prototype.toreversed': arrayPrototypeToreversed,
+	'array.prototype.reduce': arrayPrototypeReduce,
+	'array.prototype.push': arrayPrototypePush,
+	'array.prototype.join': arrayPrototypeJoin,
+	'array.prototype.indexof': arrayPrototypeIndexof,
+	'array.prototype.values': arrayPrototypeValues,
+	'array.prototype.keys': arrayPrototypeKeys,
+	'array.prototype.tospliced': arrayPrototypeTospliced,
+	'array.prototype.with': arrayPrototypeWith,
+	'array-every': arrayEvery,
+	'array.of': arrayOf,
+	'array-map': arrayMap,
+	'index-of': indexOf,
+	'last-index-of': lastIndexOf,
 };

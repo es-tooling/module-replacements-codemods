@@ -144,6 +144,8 @@ import indexOf from './index-of/index.js';
 
 import lastIndexOf from './last-index-of/index.js';
 
+import arrayBufferByteLength from './array-buffer-byte-length/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -218,4 +220,5 @@ export const codemods = {
 	'array-map': arrayMap,
 	'index-of': indexOf,
 	'last-index-of': lastIndexOf,
+	'array-buffer-byte-length': arrayBufferByteLength,
 };

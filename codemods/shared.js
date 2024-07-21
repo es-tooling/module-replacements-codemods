@@ -212,7 +212,6 @@ export function transformStringMethod(method, identifierName, root, j) {
 	return dirtyFlag;
 }
 
-
 /**
  * @param {import("jscodeshift").ASTPath<import("jscodeshift").CallExpression>} path -  jscodeshift path
  * @param {string} instanceName - e.g. `Uint8Array`

@@ -146,6 +146,8 @@ import lastIndexOf from './last-index-of/index.js';
 
 import errorCause from './error-cause/index.js';
 
+import leftPad from './left-pad/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -221,4 +223,5 @@ export const codemods = {
 	'index-of': indexOf,
 	'last-index-of': lastIndexOf,
 	'error-cause': errorCause,
+	'left-pad': leftPad,
 };

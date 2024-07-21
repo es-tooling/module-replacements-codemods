@@ -1,0 +1,1 @@
+// This file will contain the actual result of the codemod transformation after running the tests, this is expected to be equal to the `after.js` file. This file exists for easy debugging purposes.

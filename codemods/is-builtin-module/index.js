@@ -17,23 +17,72 @@ export default function (options) {
 			const root = j(file.source);
 			let dirtyFlag = false;
 
+			const importDeclaration = root.find(j.ImportDeclaration, {
+				source: { value: 'is-builtin-module' },
+			});
+
+			const requireDeclaration = root.find(j.VariableDeclarator, {
+				init: {
+					callee: {
+						name: 'require',
+					},
+					arguments: [
+						{
+							value: 'is-builtin-module',
+						},
+					],
+				},
+			});
+
+			// These cases are too complex and too niche to handle
+			if (importDeclaration.size() >= 1 && requireDeclaration.size() >= 1) {
+				console.warn(
+					'[WARNING] Refusing to replace `is-builtin-module` because the code mixes import and require statements. Please only use either `import` or `require` and re-run this codemod.',
+				);
+				return file.source;
+			}
+
+			if (importDeclaration.size() > 1 || requireDeclaration.size() > 1) {
+				console.warn(
+					'[WARNING] Refusing to replace `is-builtin-module` because it is imported multiple times. Please import it only once and re-run this codemod.',
+				);
+				return file.source;
+			}
+
+			let importName = 'isBuiltin';
+
 			// Replace import statement
-			root
-				.find(j.ImportDeclaration, {
-					source: { value: 'is-builtin-module' },
-				})
-				.forEach((path) => {
-					path.value.source.value = 'node:module';
-					path.value.specifiers = [
-						j.importSpecifier(j.identifier('isBuiltin')),
-					];
-					dirtyFlag = true;
+			importDeclaration.forEach((path) => {
+				const name = path.value.specifiers?.[0].local?.name;
+				if (name) importName = name;
+				path.value.source.value = 'node:module';
+				path.value.specifiers = [j.importSpecifier(j.identifier('isBuiltin'))];
+				dirtyFlag = true;
+			});
+
+			// Replace require statement
+			requireDeclaration.forEach((path) => {
+				// @ts-expect-error
+				importName = path.value.id.name;
+				path.value.id = j.objectPattern.from({
+					properties: [
+						j.property.from({
+							key: j.identifier('isBuiltin'),
+							value: j.identifier('isBuiltin'),
+							shorthand: true,
+							kind: 'init',
+						}),
+					],
 				});
+				// @ts-expect-error
+				path.value.init.arguments[0].value = 'node:module';
+				dirtyFlag = true;
+			});
 
 			// Replace function calls
 			root
 				.find(j.CallExpression, {
-					callee: { name: 'isBuiltinModule' },
+					callee: { name: importName },
 				})
 				.forEach((path) => {
 					// @ts-expect-error

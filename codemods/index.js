@@ -320,8 +320,8 @@ export const getCodemods = async () => {
 			codemods
 				.filter((codemod) => codemod.isDirectory())
 				.map(async (codemod) => {
-					const codemodFn = await import(`./${codemod.name}/index.js`);
-					return [codemod, codemodFn.default];
+					const codemodObj = await import(`./${codemod.name}/index.js`);
+					return [codemod.name, codemodObj.default];
 				}),
 		),
 	);

@@ -198,6 +198,8 @@ import stringRaw from './string.raw/index.js';
 
 import isPrimitive from './is-primitive/index.js';
 
+import { readdir } from 'node:fs/promises';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -299,4 +301,28 @@ export const codemods = {
 	'string.prototype.trimright': stringPrototypeTrimright,
 	'string.raw': stringRaw,
 	'is-primitive': isPrimitive,
+};
+
+/**
+ * @typedef {import('../types.js').Codemod} Codemod
+ * @typedef {import('../types.js').CodemodOptions} CodemodOptions
+ */
+
+/**
+ * @returns {Promise<Record<string, (opts?: CodemodOptions) => Codemod>>}
+ */
+export const getCodemods = async () => {
+	const codemods = await readdir('./codemods', {
+		withFileTypes: true,
+	});
+	return Object.fromEntries(
+		await Promise.all(
+			codemods
+				.filter((codemod) => codemod.isDirectory())
+				.map(async (codemod) => {
+					const codemodFn = await import(`./${codemod.name}/index.js`);
+					return [codemod, codemodFn.default];
+				}),
+		),
+	);
 };

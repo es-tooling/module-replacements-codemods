@@ -168,6 +168,8 @@ import stringPrototypePadright from './string.prototype.padright/index.js';
 
 import stringPrototypePadstart from './string.prototype.padstart/index.js';
 
+import stringPrototypeReplaceall from './string.prototype.replaceall/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -254,4 +256,5 @@ export const codemods = {
 	'string.prototype.padleft': stringPrototypePadleft,
 	'string.prototype.padright': stringPrototypePadright,
 	'string.prototype.padstart': stringPrototypePadstart,
+	'string.prototype.replaceall': stringPrototypeReplaceall,
 };

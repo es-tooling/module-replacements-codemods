@@ -144,6 +144,8 @@ import indexOf from './index-of/index.js';
 
 import lastIndexOf from './last-index-of/index.js';
 
+import errorCause from './error-cause/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -218,4 +220,5 @@ export const codemods = {
 	'array-map': arrayMap,
 	'index-of': indexOf,
 	'last-index-of': lastIndexOf,
+	'error-cause': errorCause,
 };

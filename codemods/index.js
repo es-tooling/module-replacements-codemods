@@ -186,6 +186,8 @@ import stringPrototypeTrimright from './string.prototype.trimright/index.js';
 
 import stringRaw from './string.raw/index.js';
 
+import isPrimitive from './is-primitive/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -281,4 +283,5 @@ export const codemods = {
 	'string.prototype.trimleft': stringPrototypeTrimleft,
 	'string.prototype.trimright': stringPrototypeTrimright,
 	'string.raw': stringRaw,
+	'is-primitive': isPrimitive,
 };

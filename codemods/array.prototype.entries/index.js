@@ -36,7 +36,7 @@ export default function (options) {
 							// Replace the call expression with a method call on the argument
 							j(path).replaceWith(
 								j.callExpression(
-									j.memberExpression(arg, j.identifier(identifier)),
+									j.memberExpression(arg, j.identifier('entries')),
 									[],
 								),
 							);

@@ -10,15 +10,15 @@ import { removeImport } from '../shared.js';
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function(options) {
-  return {
-    name: 'function-bind',
-    transform: ({ file }) => {
-      const j = jscodeshift;
-      const root = j(file.source);
+export default function (options) {
+	return {
+		name: 'function-bind',
+		transform: ({ file }) => {
+			const j = jscodeshift;
+			const root = j(file.source);
 			const { identifier: _ } = removeImport('function-bind', root, j);
 
 			return root.toSource(options);
 		},
-  }
-};
+	};
+}

@@ -235,5 +235,5 @@ export const codemods = {
 	'pad-left': padLeft,
 	md5: md5,
 	'array-buffer-byte-length': arrayBufferByteLength,
-    'function-bind': functionBind,
+	'function-bind': functionBind,
 };

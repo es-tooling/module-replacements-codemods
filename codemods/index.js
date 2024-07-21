@@ -152,6 +152,8 @@ import padLeft from './pad-left/index.js';
 
 import md5 from './md5/index.js';
 
+import arrayBufferByteLength from './array-buffer-byte-length/index.js';
+
 import arrayBufferPrototypeSlice from './arraybuffer.prototype.slice/index.js';
 
 export const codemods = {
@@ -232,5 +234,6 @@ export const codemods = {
 	'left-pad': leftPad,
 	'pad-left': padLeft,
 	md5: md5,
+	'array-buffer-byte-length': arrayBufferByteLength,
 	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
 };

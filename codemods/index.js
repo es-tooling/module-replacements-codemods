@@ -160,6 +160,8 @@ import stringPrototypeAt from './string.prototype.at/index.js';
 
 import stringPrototypeLastindexof from './string.prototype.lastindexof/index.js';
 
+import stringPrototypePadend from './string.prototype.padend/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -242,4 +244,5 @@ export const codemods = {
 	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
 	'string.prototype.at': stringPrototypeAt,
 	'string.prototype.lastindexof': stringPrototypeLastindexof,
+	'string.prototype.padend': stringPrototypePadend,
 };

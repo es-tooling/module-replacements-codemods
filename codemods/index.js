@@ -64,13 +64,13 @@ import arrayPrototypeEntries from './array.prototype.entries/index.js';
 
 import arrayPrototypeFind from './array.prototype.find/index.js';
 
-import arrayPrototypeFindIndex from './array.prototype.findIndex/index.js';
+import arrayPrototypeFindIndex from './array.prototype.findindex/index.js';
 
 import arrayPrototypeFlat from './array.prototype.flat/index.js';
 
-import arrayPrototypeFlatMap from './array.prototype.flatMap/index.js';
+import arrayPrototypeFlatMap from './array.prototype.flatmap/index.js';
 
-import arrayPrototypeForEach from './array.prototype.forEach/index.js';
+import arrayPrototypeForEach from './array.prototype.foreach/index.js';
 
 import isBuiltinModule from './is-builtin-module/index.js';
 

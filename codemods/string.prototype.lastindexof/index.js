@@ -12,12 +12,17 @@ import { transformStringMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'string.prototype.at',
+		name: 'string.prototype.lastindexof',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			const dirty = transformStringMethod('string.prototype.at', 'at', root, j);
+			const dirty = transformStringMethod(
+				'string.prototype.lastindexof',
+				'lastIndexOf',
+				root,
+				j,
+			);
 
 			return dirty ? root.toSource(options) : file.source;
 		},

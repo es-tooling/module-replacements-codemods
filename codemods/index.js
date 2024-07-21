@@ -168,6 +168,8 @@ import functionBind from './function-bind/index.js';
 
 import arrayBufferPrototypeSlice from './arraybuffer.prototype.slice/index.js';
 
+import stringPrototypeAt from './string.prototype.at/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -254,4 +256,5 @@ export const codemods = {
 	'typedarray.prototype.slice': typedArrayPrototypeSlice,
 	'function-bind': functionBind,
 	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
+	'string.prototype.at': stringPrototypeAt,
 };

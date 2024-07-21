@@ -166,6 +166,8 @@ import typedArrayPrototypeSlice from './typedarray.prototype.slice/index.js';
 
 import functionBind from './function-bind/index.js';
 
+import arrayBufferPrototypeSlice from './arraybuffer.prototype.slice/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -251,4 +253,5 @@ export const codemods = {
 	'typed-array-length': typedArrayLength,
 	'typedarray.prototype.slice': typedArrayPrototypeSlice,
 	'function-bind': functionBind,
+	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
 };

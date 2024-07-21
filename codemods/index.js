@@ -144,6 +144,14 @@ import indexOf from './index-of/index.js';
 
 import lastIndexOf from './last-index-of/index.js';
 
+import errorCause from './error-cause/index.js';
+
+import leftPad from './left-pad/index.js';
+
+import padLeft from './pad-left/index.js';
+
+import md5 from './md5/index.js';
+
 import arrayBufferByteLength from './array-buffer-byte-length/index.js';
 
 export const codemods = {
@@ -220,5 +228,9 @@ export const codemods = {
 	'array-map': arrayMap,
 	'index-of': indexOf,
 	'last-index-of': lastIndexOf,
-	'array-buffer-byte-length': arrayBufferByteLength,
+	'error-cause': errorCause,
+	'left-pad': leftPad,
+	'pad-left': padLeft,
+	md5: md5,
+  'array-buffer-byte-length': arrayBufferByteLength,
 };

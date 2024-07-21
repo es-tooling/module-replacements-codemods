@@ -154,6 +154,16 @@ import md5 from './md5/index.js';
 
 import arrayBufferByteLength from './array-buffer-byte-length/index.js';
 
+import typedArrayBuffer from './typed-array-buffer/index.js';
+
+import typedArrayByteLength from './typed-array-byte-length/index.js';
+
+import typedArrayByteOffset from './typed-array-byte-offset/index.js';
+
+import typedArrayLength from './typed-array-length/index.js';
+
+import typedArrayPrototypeSlice from './typedarray.prototype.slice/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -233,4 +243,9 @@ export const codemods = {
 	'pad-left': padLeft,
 	md5: md5,
 	'array-buffer-byte-length': arrayBufferByteLength,
+	'typed-array-buffer': typedArrayBuffer,
+	'typed-array-byte-length': typedArrayByteLength,
+	'typed-array-byte-offset': typedArrayByteOffset,
+	'typed-array-length': typedArrayLength,
+	'typedarray.prototype.slice': typedArrayPrototypeSlice,
 };

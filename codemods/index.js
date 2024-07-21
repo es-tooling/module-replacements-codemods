@@ -154,6 +154,8 @@ import md5 from './md5/index.js';
 
 import arrayBufferByteLength from './array-buffer-byte-length/index.js';
 
+import functionBind from './function-bind/index.js';
+
 import arrayBufferPrototypeSlice from './arraybuffer.prototype.slice/index.js';
 
 import stringPrototypeAt from './string.prototype.at/index.js';
@@ -263,6 +265,7 @@ export const codemods = {
 	'pad-left': padLeft,
 	md5: md5,
 	'array-buffer-byte-length': arrayBufferByteLength,
+	'function-bind': functionBind,
 	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
 	'string.prototype.at': stringPrototypeAt,
 	'string.prototype.lastindexof': stringPrototypeLastindexof,

@@ -166,6 +166,8 @@ import stringPrototypePadleft from './string.prototype.padleft/index.js';
 
 import stringPrototypePadright from './string.prototype.padright/index.js';
 
+import stringPrototypePadstart from './string.prototype.padstart/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -251,4 +253,5 @@ export const codemods = {
 	'string.prototype.padend': stringPrototypePadend,
 	'string.prototype.padleft': stringPrototypePadleft,
 	'string.prototype.padright': stringPrototypePadright,
+	'string.prototype.padstart': stringPrototypePadstart,
 };

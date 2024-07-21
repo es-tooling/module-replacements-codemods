@@ -45,9 +45,9 @@ await Promise.all(
 					);
 				}
 			} catch (e) {
-				// @ts-expect-error
 				console.log(
 					picocolors.red(
+						// @ts-expect-error
 						`\n- Codemod "${name}" failed for "${entry}" with error: \n\n  ${e.stack}`,
 					),
 				);

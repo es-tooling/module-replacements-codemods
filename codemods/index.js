@@ -148,6 +148,8 @@ import errorCause from './error-cause/index.js';
 
 import leftPad from './left-pad/index.js';
 
+import padLeft from './pad-left/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -224,4 +226,5 @@ export const codemods = {
 	'last-index-of': lastIndexOf,
 	'error-cause': errorCause,
 	'left-pad': leftPad,
+	'pad-left': padLeft,
 };

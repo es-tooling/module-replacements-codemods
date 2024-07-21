@@ -1,5 +1,5 @@
 import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { removeImport, transformInstanceProperty } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -16,6 +16,7 @@ export default function (options) {
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
+			// let dirty = false;
 
 			const { identifier } = removeImport('data-view-buffer', root, j);
 
@@ -27,10 +28,7 @@ export default function (options) {
 					},
 				})
 				.forEach((path) => {
-					const [arg, ...otherArgs] = path.node.arguments;
-					if (j.Identifier.check(arg) || j.Literal.check(arg)) {
-						path.replace(j.memberExpression(arg, j.identifier('buffer')));
-					}
+					transformInstanceProperty(path, 'DataView', 'buffer', j);
 				});
 
 			return root.toSource(options);

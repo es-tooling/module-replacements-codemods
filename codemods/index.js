@@ -156,6 +156,36 @@ import arrayBufferByteLength from './array-buffer-byte-length/index.js';
 
 import functionBind from './function-bind/index.js';
 
+import arrayBufferPrototypeSlice from './arraybuffer.prototype.slice/index.js';
+
+import stringPrototypeAt from './string.prototype.at/index.js';
+
+import stringPrototypeLastindexof from './string.prototype.lastindexof/index.js';
+
+import stringPrototypePadend from './string.prototype.padend/index.js';
+
+import stringPrototypePadleft from './string.prototype.padleft/index.js';
+
+import stringPrototypePadright from './string.prototype.padright/index.js';
+
+import stringPrototypePadstart from './string.prototype.padstart/index.js';
+
+import stringPrototypeReplaceall from './string.prototype.replaceall/index.js';
+
+import stringPrototypeSplit from './string.prototype.split/index.js';
+
+import stringPrototypeTrim from './string.prototype.trim/index.js';
+
+import stringPrototypeTrimend from './string.prototype.trimend/index.js';
+
+import stringPrototypeTrimstart from './string.prototype.trimstart/index.js';
+
+import stringPrototypeTrimleft from './string.prototype.trimleft/index.js';
+
+import stringPrototypeTrimright from './string.prototype.trimright/index.js';
+
+import stringRaw from './string.raw/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -236,4 +266,19 @@ export const codemods = {
 	md5: md5,
 	'array-buffer-byte-length': arrayBufferByteLength,
 	'function-bind': functionBind,
+	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
+	'string.prototype.at': stringPrototypeAt,
+	'string.prototype.lastindexof': stringPrototypeLastindexof,
+	'string.prototype.padend': stringPrototypePadend,
+	'string.prototype.padleft': stringPrototypePadleft,
+	'string.prototype.padright': stringPrototypePadright,
+	'string.prototype.padstart': stringPrototypePadstart,
+	'string.prototype.replaceall': stringPrototypeReplaceall,
+	'string.prototype.split': stringPrototypeSplit,
+	'string.prototype.trim': stringPrototypeTrim,
+	'string.prototype.trimend': stringPrototypeTrimend,
+	'string.prototype.trimstart': stringPrototypeTrimstart,
+	'string.prototype.trimleft': stringPrototypeTrimleft,
+	'string.prototype.trimright': stringPrototypeTrimright,
+	'string.raw': stringRaw,
 };

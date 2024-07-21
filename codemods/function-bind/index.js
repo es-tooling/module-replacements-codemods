@@ -16,8 +16,8 @@ export default function (options) {
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
-			
-      removeImport('function-bind', root, j);
+
+			removeImport('function-bind', root, j);
 
 			return root.toSource(options);
 		},

@@ -150,6 +150,8 @@ import leftPad from './left-pad/index.js';
 
 import padLeft from './pad-left/index.js';
 
+import md5 from './md5/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -227,4 +229,5 @@ export const codemods = {
 	'error-cause': errorCause,
 	'left-pad': leftPad,
 	'pad-left': padLeft,
+	md5: md5,
 };

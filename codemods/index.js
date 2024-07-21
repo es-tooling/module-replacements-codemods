@@ -158,6 +158,8 @@ import arrayBufferPrototypeSlice from './arraybuffer.prototype.slice/index.js';
 
 import stringPrototypeAt from './string.prototype.at/index.js';
 
+import stringPrototypeLastindexof from './string.prototype.lastindexof/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -239,4 +241,5 @@ export const codemods = {
 	'array-buffer-byte-length': arrayBufferByteLength,
 	'arraybuffer.prototype.slice': arrayBufferPrototypeSlice,
 	'string.prototype.at': stringPrototypeAt,
+	'string.prototype.lastindexof': stringPrototypeLastindexof,
 };

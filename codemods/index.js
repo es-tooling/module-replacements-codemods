@@ -184,6 +184,16 @@ import stringPrototypeReplaceall from './string.prototype.replaceall/index.js';
 
 import stringPrototypeSplit from './string.prototype.split/index.js';
 
+import stringPrototypeTrim from './string.prototype.trim/index.js';
+
+import stringPrototypeTrimend from './string.prototype.trimend/index.js';
+
+import stringPrototypeTrimstart from './string.prototype.trimstart/index.js';
+
+import stringPrototypeTrimleft from './string.prototype.trimleft/index.js';
+
+import stringPrototypeTrimright from './string.prototype.trimright/index.js';
+
 export const codemods = {
 	'is-whitespace': isWhitespace,
 	'is-array-buffer': isArrayBuffer,
@@ -278,4 +288,9 @@ export const codemods = {
 	'string.prototype.padstart': stringPrototypePadstart,
 	'string.prototype.replaceall': stringPrototypeReplaceall,
 	'string.prototype.split': stringPrototypeSplit,
+	'string.prototype.trim': stringPrototypeTrim,
+	'string.prototype.trimend': stringPrototypeTrimend,
+	'string.prototype.trimstart': stringPrototypeTrimstart,
+	'string.prototype.trimleft': stringPrototypeTrimleft,
+	'string.prototype.trimright': stringPrototypeTrimright,
 };

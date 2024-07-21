@@ -46,6 +46,20 @@ export function removeImport(name, root, j) {
 		},
 	});
 
+	// Side effect requires statements like `require("error-cause/auto");`
+	const sideEffectRequireExpression = root.find(j.ExpressionStatement, {
+		expression: {
+			callee: {
+				name: 'require',
+			},
+			arguments: [
+				{
+					value: name,
+				},
+			],
+		},
+	});
+
 	// Return the identifier name, e.g. 'fn' in `import { fn } from 'is-boolean-object'`
 	// or `var fn = require('is-boolean-object')`
 	const identifier =
@@ -60,6 +74,7 @@ export function removeImport(name, root, j) {
 	importDeclaration.remove();
 	requireDeclaration.remove();
 	requireAssignment.remove();
+	sideEffectRequireExpression.remove();
 
 	return { identifier };
 }

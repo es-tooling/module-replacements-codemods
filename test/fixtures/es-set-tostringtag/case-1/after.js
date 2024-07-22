@@ -5,7 +5,7 @@ const sentinel = {};
 
 Object.defineProperty(obj, Symbol.toStringTag, {
   configurable: true,
-  value: sentinel,
+  value: sentinel
 });
 
 assert.equal(
@@ -22,7 +22,7 @@ assert.equal(String(tagged), "[object already tagged]", "toStringTag works");
 
 Object.defineProperty(tagged, Symbol.toStringTag, {
   configurable: true,
-  value: "new tag",
+  value: "new tag"
 });
 assert.equal(
   String(tagged),

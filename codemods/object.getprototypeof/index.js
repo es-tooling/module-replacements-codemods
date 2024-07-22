@@ -10,11 +10,11 @@ import { removeImport } from '../shared.js';
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function(options) {
-  return {
-    name: 'object.getprototypeof',
-    transform: ({ file }) => {
-      const j = jscodeshift;
+export default function (options) {
+	return {
+		name: 'object.getprototypeof',
+		transform: ({ file }) => {
+			const j = jscodeshift;
 			const root = j(file.source);
 
 			const { identifier } = removeImport('object.getprototypeof', root, j);
@@ -27,12 +27,15 @@ export default function(options) {
 				})
 				.replaceWith(({ node }) => {
 					return j.callExpression(
-						j.memberExpression(j.identifier('Object'), j.identifier('getPrototypeOf')),
+						j.memberExpression(
+							j.identifier('Object'),
+							j.identifier('getPrototypeOf'),
+						),
 						node.arguments,
 					);
 				});
 
 			return root.toSource(options);
-    },
-  }
-};
+		},
+	};
+}

@@ -12,12 +12,28 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'object.keys',
+		name: 'object.defineproperties',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('object.keys', root, j);
+			const { identifier } = removeImport('object.defineproperties', root, j);
+
+			root
+				.find(j.CallExpression, {
+					callee: {
+						name: identifier,
+					},
+				})
+				.replaceWith(({ node }) => {
+					return j.callExpression(
+						j.memberExpression(
+							j.identifier('Object'),
+							j.identifier('defineProperties'),
+						),
+						node.arguments,
+					);
+				});
 
 			return root.toSource(options);
 		},

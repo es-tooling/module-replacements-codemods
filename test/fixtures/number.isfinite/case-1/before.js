@@ -1,3 +1,5 @@
+require("number.isfinite");
+
 const assert = require("assert");
 
 assert.ok(Number.isFinite(3)); // true

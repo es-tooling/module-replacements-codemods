@@ -1,3 +1,5 @@
+require("number.parseint");
+
 const assert = require("assert");
 
 assert.equal(Number.parseInt("-3"), -3); // -3

@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  typecheck:
+  test:
 
     runs-on: ubuntu-latest
 

@@ -1,9 +1,10 @@
 import { describe, it } from 'node:test';
 import fs from 'node:fs';
 import assert from 'assert';
-import { codemods } from '../codemods/index.js';
+import { getCodemods } from '../codemods/index.js';
 
-describe('codemod', () => {
+describe('codemod', async () => {
+	const codemods = await getCodemods();
 	for (const [name, codemodFn] of Object.entries(codemods)) {
 		const codemod = codemodFn();
 

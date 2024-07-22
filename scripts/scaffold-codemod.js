@@ -51,27 +51,3 @@ export default function(options) {
 };
 `,
 );
-
-const index = fs.readFileSync('./codemods/index.js', 'utf8');
-
-const j = jscodeshift;
-const root = j(index);
-
-const newImport = j.importDeclaration(
-	[j.importDefaultSpecifier(j.identifier(camelize(name)))],
-	j.literal(`./${name}/index.js`),
-);
-
-root.find(j.ImportDeclaration).at(-1).insertAfter(newImport);
-
-root.find(j.ObjectExpression).forEach((path) => {
-	const properties = path.node.properties;
-	properties.push(
-		j.property('init', j.literal(name), j.identifier(camelize(name))),
-	);
-});
-
-fs.writeFileSync(
-	'./codemods/index.js',
-	root.toSource({ quote: 'single', trailingComma: true }),
-);

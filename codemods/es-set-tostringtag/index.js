@@ -29,6 +29,9 @@ export default function (options) {
 				})
 				.forEach((path) => {
 					const args = path.value.arguments;
+					const arg =
+						args[1].type === 'SpreadElement' ? args[1].argument : args[1];
+
 					const newExpression = j.callExpression(
 						j.memberExpression(
 							j.identifier('Object'),
@@ -46,8 +49,7 @@ export default function (options) {
 									j.identifier('configurable'),
 									j.booleanLiteral(true),
 								),
-								// @ts-expect-error
-								j.property('init', j.identifier('value'), args[1]),
+								j.property('init', j.identifier('value'), arg),
 							]),
 						],
 					);

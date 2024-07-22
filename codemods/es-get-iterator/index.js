@@ -29,10 +29,12 @@ export default function (options) {
 				})
 				.forEach((path) => {
 					const args = path.value.arguments;
+					const arg =
+						args[0].type === 'SpreadElement' ? args[0].argument : args[0];
+
 					const newExpression = j.optionalCallExpression(
 						j.memberExpression(
-							// @ts-expect-error
-							args[0],
+							arg,
 							j.memberExpression(
 								j.identifier('Symbol'),
 								j.identifier('iterator'),

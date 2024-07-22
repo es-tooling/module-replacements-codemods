@@ -282,3 +282,34 @@ export function transformStringMethod(method, identifierName, root, j) {
 
 	return dirtyFlag;
 }
+
+/**
+ * @param {string} importName - e.g. `math.acosh/polyfill`
+ * @param {string} methodName - e.g. `acosh`
+ * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * @returns {boolean} - true if the method was found and transformed, false otherwise
+ */
+export function transformMathPolyfill(importName, methodName, root, j) {
+	const { identifier } = removeImport(importName, root, j);
+
+	let dirtyFlag = false;
+	root
+		.find(j.CallExpression, {
+			callee: {
+				type: 'Identifier',
+				name: identifier,
+			},
+		})
+		.forEach((path) => {
+			path.replace(
+				j.callExpression(
+					j.memberExpression(j.identifier('Math'), j.identifier(methodName)),
+					path.node.arguments,
+				),
+			);
+			dirtyFlag = true;
+		});
+
+	return dirtyFlag;
+}

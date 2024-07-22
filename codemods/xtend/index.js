@@ -27,6 +27,7 @@ export default function (options) {
 				})
 				.replaceWith(({ node }) => {
 					return j.objectExpression(
+            //@ts-ignore
 						node.arguments.map((arg) => j.spreadElement(arg)),
 					);
 				});

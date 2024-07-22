@@ -179,6 +179,77 @@ export function transformArrayMethod(method, identifierName, root, j) {
 }
 
 /**
+ * @param {import("jscodeshift").ASTPath<import("jscodeshift").CallExpression>} path -  jscodeshift path
+ * @param {string} instanceName - e.g. `Uint8Array`
+ * @param {string} propertyName - e.g. `length`
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * @returns
+ */
+export function transformInstanceProperty(path, instanceName, propertyName, j) {
+	let dirtyFlag = false;
+	const [instanceArg] = path.node.arguments;
+
+	if (
+		j.Identifier.check(instanceArg) ||
+		isNewInstanceOf(instanceArg, instanceName, j)
+	) {
+		path.replace(
+			// @ts-expect-error Unsure if it's possible in jsdoc to both assert the node type and
+			// return a boolean
+			j.memberExpression(instanceArg, j.identifier(propertyName)),
+		);
+
+		dirtyFlag = true;
+	}
+
+	return dirtyFlag;
+}
+
+/**
+ * @param {import("jscodeshift").ASTPath<import("jscodeshift").CallExpression>} path -  jscodeshift path
+ * @param {string} instanceName - e.g. `Uint8Array`
+ * @param {string} methodName - e.g. `slice`
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * @returns
+ */
+export function transformInstanceMethod(path, instanceName, methodName, j) {
+	let dirtyFlag = false;
+	const [instanceArg, ...otherArgs] = path.node.arguments;
+
+	if (
+		j.Identifier.check(instanceArg) ||
+		isNewInstanceOf(instanceArg, instanceName, j)
+	) {
+		path.replace(
+			j.callExpression(
+				// @ts-expect-error Unsure if it's possible in jsdoc to both assert the node type and
+				// return a boolean
+				j.memberExpression(instanceArg, j.identifier(methodName)),
+				otherArgs,
+			),
+		);
+
+		dirtyFlag = true;
+	}
+
+	return dirtyFlag;
+}
+
+/**
+ * @param {import("jscodeshift").Node} node - jscodeshift node
+ * @param {string} name - e.g. `TypedArray`
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * @returns
+ */
+function isNewInstanceOf(node, name, j) {
+	return (
+		j.NewExpression.check(node) &&
+		node.callee.type === 'Identifier' &&
+		node.callee.name === name
+	);
+}
+
+/**
  * @param {string} method - e.g. `array.prototype.flatMap`
  * @param {string} identifierName - e.g. `flatMap`
  * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for

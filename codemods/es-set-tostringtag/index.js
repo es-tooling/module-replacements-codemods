@@ -76,8 +76,14 @@ export default function (options) {
 									j.identifier('configurable'),
 									j.literal(true),
 								),
+								j.property(
+									'init',
+									j.identifier('enumerable'),
+									j.literal(false),
+								),
 								// @ts-ignore
 								j.property('init', j.identifier('value'), tag),
+								j.property('init', j.identifier('writable'), j.literal(false)),
 							]),
 						],
 					);

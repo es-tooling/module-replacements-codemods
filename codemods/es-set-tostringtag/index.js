@@ -27,18 +27,45 @@ export default function (options) {
 						name: identifier,
 					},
 				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					const arg =
-						args[1].type === 'SpreadElement' ? args[1].argument : args[1];
+				.replaceWith((path) => {
+					const [obj, tag, options] = path.node.arguments;
 
-					const newExpression = j.callExpression(
+					const force =
+						options &&
+						j.ObjectExpression.check(options) &&
+						options.properties.some(
+							(prop) =>
+								j.Property.check(prop) &&
+								j.Identifier.check(prop.key) &&
+								prop.key.name === 'force' &&
+								j.Literal.check(prop.value) &&
+								prop.value.value === true,
+						);
+
+					const condition = j.unaryExpression(
+						'!',
+						j.callExpression(
+							j.memberExpression(
+								j.identifier('Object'),
+								j.identifier('hasOwn'),
+							),
+							[
+								obj,
+								j.memberExpression(
+									j.identifier('Symbol'),
+									j.identifier('toStringTag'),
+								),
+							],
+						),
+					);
+
+					const definePropertyCall = j.callExpression(
 						j.memberExpression(
 							j.identifier('Object'),
 							j.identifier('defineProperty'),
 						),
 						[
-							args[0],
+							obj,
 							j.memberExpression(
 								j.identifier('Symbol'),
 								j.identifier('toStringTag'),
@@ -47,14 +74,19 @@ export default function (options) {
 								j.property(
 									'init',
 									j.identifier('configurable'),
-									j.booleanLiteral(true),
+									j.literal(true),
 								),
-								j.property('init', j.identifier('value'), arg),
+								// @ts-ignore
+								j.property('init', j.identifier('value'), tag),
 							]),
 						],
 					);
-					j(path).replaceWith(newExpression);
+
 					dirtyFlag = true;
+
+					return force
+						? definePropertyCall
+						: j.logicalExpression('&&', condition, definePropertyCall);
 				});
 
 			return dirtyFlag ? root.toSource(options) : file.source;

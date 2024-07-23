@@ -18,13 +18,13 @@ export default function (options) {
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			removeImport('array-includes', root, j);
+			const { identifier } = removeImport('array-includes', root, j);
 
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'includes',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

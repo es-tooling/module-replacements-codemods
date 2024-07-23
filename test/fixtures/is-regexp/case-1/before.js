@@ -1,10 +1,10 @@
-import isRegexp from 'is-regexp';
+import banana from 'is-regexp';
 
-console.log(isRegexp('unicorn'));
+console.log(banana('unicorn'));
 //=> false
 
-console.log(isRegexp(/unicorn/));
+console.log(banana(/unicorn/));
 //=> true
 
-console.log(isRegexp(new RegExp('unicorn')));
+console.log(banana(new RegExp('unicorn')));
 //=> true

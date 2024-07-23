@@ -17,7 +17,7 @@ export default function (options) {
 
 			const root = j(file.source);
 
-			removeImport('is-negative-zero', root, j);
+			const { identifier } = removeImport('is-negative-zero', root, j);
 
 			root
 				.find(j.LogicalExpression, {
@@ -32,7 +32,7 @@ export default function (options) {
 					},
 					right: {
 						type: 'CallExpression',
-						callee: { name: 'isNegativeZero' },
+						callee: { name: identifier },
 					},
 				})
 				.replaceWith((path) => {
@@ -43,7 +43,7 @@ export default function (options) {
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isNegativeZero',
+						name: identifier,
 					},
 				})
 				.replaceWith((path) => {

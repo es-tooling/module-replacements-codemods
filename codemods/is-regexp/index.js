@@ -18,14 +18,14 @@ export default function (options) {
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			removeImport('is-regexp', root, j);
+			const { identifier } = removeImport('is-regexp', root, j);
 
 			// Replace isRegexp calls
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isRegexp',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

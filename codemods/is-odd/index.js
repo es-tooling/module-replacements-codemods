@@ -17,13 +17,13 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('is-odd', root, j);
+			const { identifier } = removeImport('is-odd', root, j);
 
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isOdd',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

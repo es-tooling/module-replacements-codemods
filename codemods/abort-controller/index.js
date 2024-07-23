@@ -1,5 +1,5 @@
-import jscodeshift from "jscodeshift";
-import { removeImport } from "../shared.js";
+import jscodeshift from 'jscodeshift';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -11,15 +11,15 @@ import { removeImport } from "../shared.js";
  * @returns {Codemod}
  */
 export default function (options) {
-  return {
-    name: "abort-controller",
-    transform: ({ file }) => {
-      const j = jscodeshift;
-      const root = j(file.source);
+	return {
+		name: 'abort-controller',
+		transform: ({ file }) => {
+			const j = jscodeshift;
+			const root = j(file.source);
 
-      removeImport("abort-controller", root, j);
+			removeImport('abort-controller', root, j);
 
-      return root.toSource(options);
-    },
-  };
+			return root.toSource(options);
+		},
+	};
 }

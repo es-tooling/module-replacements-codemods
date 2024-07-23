@@ -17,14 +17,14 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('is-string', root, j);
+			const { identifier } = removeImport('is-string', root, j);
 
 			// Replace all calls to isString with Object.prototype.toString.call
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isString',
+						name: identifier,
 					},
 				})
 				.replaceWith((path) => {

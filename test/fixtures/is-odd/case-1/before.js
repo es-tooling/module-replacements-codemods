@@ -1,7 +1,7 @@
-import isOdd from 'is-odd';
+import banana from 'is-odd';
 
-console.log(isOdd(1));
+console.log(banana(1));
 //=> false
 
-console.log(isOdd(4));
+console.log(banana(4));
 //=> true

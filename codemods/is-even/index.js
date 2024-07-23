@@ -17,13 +17,13 @@ export default function (options) {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('is-even', root, j);
+			const { identifier } = removeImport('is-even', root, j);
 
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isEven',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

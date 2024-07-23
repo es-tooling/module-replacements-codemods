@@ -1,25 +1,25 @@
-var isNegativeZero = require('is-negative-zero');
+var banana = require('is-negative-zero');
 
-isNegativeZero(undefined);
-isNegativeZero(-0);
-isNegativeZero(undefined);
-isNegativeZero(null);
-isNegativeZero(false);
-isNegativeZero(true);
-isNegativeZero(0);
-isNegativeZero(42);
-isNegativeZero(Infinity);
-isNegativeZero(-Infinity);
-isNegativeZero(NaN);
-isNegativeZero('foo');
-isNegativeZero(function () {});
-isNegativeZero([]);
-isNegativeZero({});
+banana(undefined);
+banana(-0);
+banana(undefined);
+banana(null);
+banana(false);
+banana(true);
+banana(0);
+banana(42);
+banana(Infinity);
+banana(-Infinity);
+banana(NaN);
+banana('foo');
+banana(function () {});
+banana([]);
+banana({});
 
-k = Object.is(null, -0) || isNegativeZero(null);
+k = Object.is(null, -0) || banana(null);
 
-let a = isNegativeZero(x) + y;
-let b = x * isNegativeZero(y);
-let c = isNegativeZero(x) === true;
+let a = banana(x) + y;
+let b = x * banana(y);
+let c = banana(x) === true;
 
-[0, 1,2].map((v) => isNegativeZero(v));
+[0, 1,2].map((v) => banana(v));

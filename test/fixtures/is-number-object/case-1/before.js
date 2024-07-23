@@ -1,19 +1,19 @@
-var isNumber = require('is-number-object');
+var banana = require('is-number-object');
 var assert = require('assert');
 
-assert.notOk(isNumber(undefined));
-assert.notOk(isNumber(null));
-assert.notOk(isNumber(false));
-assert.notOk(isNumber(true));
-assert.notOk(isNumber('foo'));
-assert.notOk(isNumber(function () {}));
-assert.notOk(isNumber([]));
-assert.notOk(isNumber({}));
-assert.notOk(isNumber(/a/g));
-assert.notOk(isNumber(new RegExp('a', 'g')));
-assert.notOk(isNumber(new Date()));
+assert.notOk(banana(undefined));
+assert.notOk(banana(null));
+assert.notOk(banana(false));
+assert.notOk(banana(true));
+assert.notOk(banana('foo'));
+assert.notOk(banana(function () {}));
+assert.notOk(banana([]));
+assert.notOk(banana({}));
+assert.notOk(banana(/a/g));
+assert.notOk(banana(new RegExp('a', 'g')));
+assert.notOk(banana(new Date()));
 
-assert.ok(isNumber(42));
-assert.ok(isNumber(NaN));
-assert.ok(isNumber(Infinity));
-assert.ok(isNumber(new Number(42)));
+assert.ok(banana(42));
+assert.ok(banana(NaN));
+assert.ok(banana(Infinity));
+assert.ok(banana(new Number(42)));

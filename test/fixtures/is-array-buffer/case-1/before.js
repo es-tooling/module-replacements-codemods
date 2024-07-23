@@ -1,27 +1,27 @@
 var assert = require('assert');
-var isArrayBuffer = require('is-array-buffer');
+var banana = require('is-array-buffer');
 
-assert(!isArrayBuffer(function () {}));
-assert(!isArrayBuffer(null));
+assert(!banana(function () {}));
+assert(!banana(null));
 assert(
-	!isArrayBuffer(function* () {
+	!banana(function* () {
 		yield 42;
 		return Infinity;
 	}),
 );
-assert(!isArrayBuffer(Symbol('foo')));
-assert(!isArrayBuffer(1n));
-assert(!isArrayBuffer(Object(1n)));
+assert(!banana(Symbol('foo')));
+assert(!banana(1n));
+assert(!banana(Object(1n)));
 
-assert(!isArrayBuffer(new Set()));
-assert(!isArrayBuffer(new WeakSet()));
-assert(!isArrayBuffer(new Map()));
-assert(!isArrayBuffer(new WeakMap()));
-assert(!isArrayBuffer(new WeakRef({})));
-assert(!isArrayBuffer(new FinalizationRegistry(() => {})));
-assert(!isArrayBuffer(new SharedArrayBuffer()));
+assert(!banana(new Set()));
+assert(!banana(new WeakSet()));
+assert(!banana(new Map()));
+assert(!banana(new WeakMap()));
+assert(!banana(new WeakRef({})));
+assert(!banana(new FinalizationRegistry(() => {})));
+assert(!banana(new SharedArrayBuffer()));
 
-assert(isArrayBuffer(new ArrayBuffer()));
+assert(banana(new ArrayBuffer()));
 
 class MyArrayBuffer extends ArrayBuffer {}
-assert(isArrayBuffer(new MyArrayBuffer()));
+assert(banana(new MyArrayBuffer()));

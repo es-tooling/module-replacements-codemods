@@ -81,6 +81,97 @@ export function removeImport(name, root, j) {
 	return { identifier };
 }
 
+export const DEFAULT_IMPORT = Symbol('DEFAULT_IMPORT');
+export const NAMESPACE_IMPORT = Symbol('NAMESPACE_IMPORT');
+
+/**
+ * Analyzes an `import` or `require` statement to detect which names are being
+ * imported and what identifiers is the developer assigning them to. Returns a
+ * map with the package exports as keys and developer-assigned names as values.
+ *
+ * The map may optionally contain the special symbol {@link DEFAULT_IMPORT} if
+ * the package is imported like:
+ *
+ *   - import a from 'pkg'
+ *   or
+ *   - import a, { b } from 'pkg'
+ *
+ * The map may optionally contain the special symbol {@link NAMESPACE_IMPORT}
+ * if the package is imported like:
+ *
+ *   - import * as a from 'pkg'
+ *
+ * @param {string} packageName - package name to retrieve its identifier map
+ * @param {import("jscodeshift").Collection} root - jcodeshift tree of the file containing the import
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ */
+export function getImportIdentifierMap(packageName, root, j) {
+	/**
+	 * @type {Record<string, string | undefined> & {
+	 *   [DEFAULT_IMPORT]?: string
+	 *   [NAMESPACE_IMPORT]?: string
+	 * }}
+	 */
+	const map = {};
+
+	// Scan named imports e.g.
+	// import { x as a, y as b } from 'pkg'
+	root
+		.find(j.ImportDeclaration, {
+			source: {
+				value: packageName,
+			},
+		})
+		.forEach((path) => {
+			if (path.value.type !== 'ImportDeclaration') return;
+			path.value.specifiers?.forEach((specifier) => {
+				if (!specifier.local) return;
+
+				if (specifier.type === 'ImportSpecifier') {
+					map[specifier.imported.name] = specifier.local.name;
+				} else if (specifier.type === 'ImportDefaultSpecifier') {
+					map[DEFAULT_IMPORT] = specifier.local.name;
+				} else if (specifier.type === 'ImportNamespaceSpecifier') {
+					map[NAMESPACE_IMPORT] = specifier.local.name;
+				}
+			});
+		});
+
+	// Scan require imports e.g.
+	// var { x: a } = require('pkg')
+	root
+		.find(j.VariableDeclarator, {
+			init: {
+				callee: {
+					name: 'require',
+				},
+				arguments: [
+					{
+						value: packageName,
+					},
+				],
+			},
+		})
+		.forEach((path) => {
+			if (path.value.id.type === 'Identifier') {
+				map[DEFAULT_IMPORT] = path.value.id.name;
+				map[NAMESPACE_IMPORT] = path.value.id.name;
+			} else if (path.value.id.type === 'ObjectPattern') {
+				path.value.id.properties.forEach((property) => {
+					if (
+						property.type !== 'Property' ||
+						property.key.type !== 'Identifier' ||
+						property.value.type !== 'Identifier'
+					)
+						return;
+					map[property.key.name] = property.value.name;
+				});
+			}
+		});
+
+	return map;
+}
+
 /**
  * Replaces import declarations that use default specifiers
  * Finds and replaces:

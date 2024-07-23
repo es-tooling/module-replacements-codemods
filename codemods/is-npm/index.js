@@ -1,5 +1,9 @@
 import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import {
+	getImportIdentifierMap,
+	NAMESPACE_IMPORT,
+	removeImport,
+} from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -18,70 +22,18 @@ export default function (options) {
 			const root = j(file.source);
 			let isDirty = false;
 
-			const { identifier } = removeImport('is-npm', root, j);
+			const identifiers = getImportIdentifierMap('is-npm', root, j);
 
-			if (identifier) {
-				isDirty = true;
-
-				root
-					.find(j.Identifier, { name: 'isNpm' })
-					.replaceWith(
-						j.logicalExpression(
-							'||',
-							j.logicalExpression(
-								'&&',
-								j.memberExpression(
-									j.memberExpression(
-										j.identifier('process'),
-										j.identifier('env'),
-									),
-									j.identifier('npm_config_user_agent'),
-								),
-								j.callExpression(
-									j.memberExpression(
-										j.memberExpression(
-											j.memberExpression(
-												j.identifier('process'),
-												j.identifier('env'),
-											),
-											j.identifier('npm_config_user_agent'),
-										),
-										j.identifier('startsWith'),
-									),
-									[j.literal('npm')],
-								),
-							),
-							j.logicalExpression(
-								'&&',
-								j.memberExpression(
-									j.memberExpression(
-										j.identifier('process'),
-										j.identifier('env'),
-									),
-									j.identifier('npm_package_json'),
-								),
-								j.callExpression(
-									j.memberExpression(
-										j.memberExpression(
-											j.memberExpression(
-												j.identifier('process'),
-												j.identifier('env'),
-											),
-											j.identifier('npm_package_json'),
-										),
-										j.identifier('endsWith'),
-									),
-									[j.literal('package.json')],
-								),
-							),
-						),
-					);
-
-				root
-					.find(j.Identifier, { name: 'isYarn' })
-					.replaceWith(
-						j.logicalExpression(
-							'&&',
+			const isNpmLogicalExpression = j.logicalExpression(
+				'||',
+				j.logicalExpression(
+					'&&',
+					j.memberExpression(
+						j.memberExpression(j.identifier('process'), j.identifier('env')),
+						j.identifier('npm_config_user_agent'),
+					),
+					j.callExpression(
+						j.memberExpression(
 							j.memberExpression(
 								j.memberExpression(
 									j.identifier('process'),
@@ -89,101 +41,122 @@ export default function (options) {
 								),
 								j.identifier('npm_config_user_agent'),
 							),
-							j.callExpression(
-								j.memberExpression(
-									j.memberExpression(
-										j.memberExpression(
-											j.identifier('process'),
-											j.identifier('env'),
-										),
-										j.identifier('npm_config_user_agent'),
-									),
-									j.identifier('startsWith'),
-								),
-								[j.literal('yarn')],
-							),
+							j.identifier('startsWith'),
 						),
-					);
+						[j.literal('npm')],
+					),
+				),
+				j.logicalExpression(
+					'&&',
+					j.memberExpression(
+						j.memberExpression(j.identifier('process'), j.identifier('env')),
+						j.identifier('npm_package_json'),
+					),
+					j.callExpression(
+						j.memberExpression(
+							j.memberExpression(
+								j.memberExpression(
+									j.identifier('process'),
+									j.identifier('env'),
+								),
+								j.identifier('npm_package_json'),
+							),
+							j.identifier('endsWith'),
+						),
+						[j.literal('package.json')],
+					),
+				),
+			);
 
-				root
-					.find(j.Identifier, { name: 'isNpmOrYarn' })
-					.replaceWith(
-						j.logicalExpression(
-							'||',
-							j.logicalExpression(
-								'||',
-								j.logicalExpression(
-									'&&',
-									j.memberExpression(
-										j.memberExpression(
-											j.identifier('process'),
-											j.identifier('env'),
-										),
-										j.identifier('npm_config_user_agent'),
-									),
-									j.callExpression(
-										j.memberExpression(
-											j.memberExpression(
-												j.memberExpression(
-													j.identifier('process'),
-													j.identifier('env'),
-												),
-												j.identifier('npm_config_user_agent'),
-											),
-											j.identifier('startsWith'),
-										),
-										[j.literal('npm')],
-									),
-								),
-								j.logicalExpression(
-									'&&',
-									j.memberExpression(
-										j.memberExpression(
-											j.identifier('process'),
-											j.identifier('env'),
-										),
-										j.identifier('npm_package_json'),
-									),
-									j.callExpression(
-										j.memberExpression(
-											j.memberExpression(
-												j.memberExpression(
-													j.identifier('process'),
-													j.identifier('env'),
-												),
-												j.identifier('npm_package_json'),
-											),
-											j.identifier('endsWith'),
-										),
-										[j.literal('package.json')],
-									),
-								),
-							),
-							j.logicalExpression(
-								'&&',
-								j.memberExpression(
-									j.memberExpression(
-										j.identifier('process'),
-										j.identifier('env'),
-									),
-									j.identifier('npm_config_user_agent'),
-								),
-								j.callExpression(
-									j.memberExpression(
-										j.memberExpression(
-											j.memberExpression(
-												j.identifier('process'),
-												j.identifier('env'),
-											),
-											j.identifier('npm_config_user_agent'),
-										),
-										j.identifier('startsWith'),
-									),
-									[j.literal('yarn')],
-								),
-							),
+			const isYarnLogicalExpression = j.logicalExpression(
+				'&&',
+				j.memberExpression(
+					j.memberExpression(j.identifier('process'), j.identifier('env')),
+					j.identifier('npm_config_user_agent'),
+				),
+				j.callExpression(
+					j.memberExpression(
+						j.memberExpression(
+							j.memberExpression(j.identifier('process'), j.identifier('env')),
+							j.identifier('npm_config_user_agent'),
 						),
-					);
+						j.identifier('startsWith'),
+					),
+					[j.literal('yarn')],
+				),
+			);
+
+			const isNpmOrYarnLogicalExpression = j.logicalExpression(
+				'||',
+				isNpmLogicalExpression,
+				isYarnLogicalExpression,
+			);
+
+			root
+				.find(j.Identifier, { name: identifiers.isNpm })
+				.forEach(() => (isDirty = true))
+				.replaceWith(isNpmLogicalExpression);
+
+			if (identifiers[NAMESPACE_IMPORT]) {
+				root
+					.find(j.MemberExpression, {
+						object: {
+							name: identifiers[NAMESPACE_IMPORT],
+							type: 'Identifier',
+						},
+						property: {
+							name: 'isNpm',
+							type: 'Identifier',
+						},
+					})
+					.forEach(() => (isDirty = true))
+					.replaceWith(isNpmLogicalExpression);
+			}
+
+			root
+				.find(j.Identifier, { name: identifiers.isYarn })
+				.forEach(() => (isDirty = true))
+				.replaceWith(isYarnLogicalExpression);
+
+			if (identifiers[NAMESPACE_IMPORT]) {
+				root
+					.find(j.MemberExpression, {
+						object: {
+							name: identifiers[NAMESPACE_IMPORT],
+							type: 'Identifier',
+						},
+						property: {
+							name: 'isYarn',
+							type: 'Identifier',
+						},
+					})
+					.forEach(() => (isDirty = true))
+					.replaceWith(isYarnLogicalExpression);
+			}
+
+			root
+				.find(j.Identifier, { name: identifiers.isNpmOrYarn })
+				.forEach(() => (isDirty = true))
+				.replaceWith(isNpmOrYarnLogicalExpression);
+
+			if (identifiers[NAMESPACE_IMPORT]) {
+				root
+					.find(j.MemberExpression, {
+						object: {
+							name: identifiers[NAMESPACE_IMPORT],
+							type: 'Identifier',
+						},
+						property: {
+							name: 'isNpmOrYarn',
+							type: 'Identifier',
+						},
+					})
+					.forEach(() => (isDirty = true))
+					.replaceWith(isNpmOrYarnLogicalExpression);
+			}
+
+			if (isDirty) {
+				removeImport('is-npm', root, j);
 			}
 
 			return isDirty ? root.toSource(options) : file.source;

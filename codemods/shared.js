@@ -404,3 +404,61 @@ export function transformMathPolyfill(importName, methodName, root, j) {
 
 	return dirtyFlag;
 }
+
+
+/**
+ * @param {string} importName = e.g., `define-properties`
+ * @param {string} identifier = e.g., `supportsDescriptors`
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ */
+export function getVariableExpressionHasIdentifier(importName, identifier, root, j) {
+	const requireDeclaration = root.find(j.VariableDeclarator, {
+		init: {
+			callee: {
+				name: 'require',
+			},
+			arguments: [
+				{
+					value: importName,
+				},
+			],
+		},
+	});
+
+	if (!requireDeclaration) return false;
+
+	const supportsDescriptorsIdentifier = requireDeclaration.find(j.Identifier, {
+		name: identifier
+	});
+
+	if (!supportsDescriptorsIdentifier) return false;
+
+
+	return true;
+}
+
+/**
+ * @param {string} importName = e.g., `define-properties`
+ * @param {import("jscodeshift").Literal} value = e.g., true or "string value"
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ */
+export function replaceRequireMemberExpression(importName, value, root, j) {
+	const requireDeclaration = root.find(j.MemberExpression, {
+		object: {
+			callee: {
+				name: 'require',
+			},
+			arguments: [
+				{
+					value: importName,
+				},
+			],
+		},
+	}).forEach(path => {
+		j(path).replaceWith(j.literal(value));
+	});
+
+	return true;
+}

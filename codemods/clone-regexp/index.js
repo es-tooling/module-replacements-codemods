@@ -28,19 +28,15 @@ export default function (options) {
 				})
 				.replaceWith((path) => {
 					const args = path.node.arguments;
-					if (args.length === 0) {
-						return j.newExpression(j.identifier('RegExp'), []);
-					}
-					if (args.length === 1) {
-						return j.newExpression(j.identifier('RegExp'), [args[0]]);
-					}
+					const arg = args.length >= 1 ? [args[0]] : [];
+					const newRegExp = j.newExpression(j.identifier('RegExp'), arg);
 					if (args.length === 2) {
-						const newExpression = j.newExpression(j.identifier('RegExp'), [
-							args[0],
-						]);
-						newExpression.comments = [j.commentBlock(' Todo ', false, true)];
-						return newExpression;
+						console.warn(
+							'[WARNING] Options are being passed to `clone-regexp`. Please modify the new regular expression accordingly.',
+						);
+						newRegExp.comments = [j.commentBlock(' Todo ', false, true)];
 					}
+					return newRegExp;
 				})
 				.toSource({ quote: 'single' });
 		},

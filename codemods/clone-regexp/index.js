@@ -30,7 +30,7 @@ export default function (options) {
 					const args = path.node.arguments;
 					const arg = args.length >= 1 ? [args[0]] : [];
 					const newRegExp = j.newExpression(j.identifier('RegExp'), arg);
-					if (args.length === 2) {
+					if (args.length >= 2) {
 						console.warn(
 							'[WARNING] Options are being passed to `clone-regexp`. Please modify the new regular expression accordingly.',
 						);

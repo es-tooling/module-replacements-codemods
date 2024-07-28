@@ -413,34 +413,28 @@ export function transformMathPolyfill(importName, methodName, root, j) {
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
  */
 export function getVariableExpressionHasIdentifier(importName, identifier, root, j) {
-	const requireDeclaration = root.find(j.VariableDeclarator, {
+	const requireDeclarationWithProperty = root.find(j.VariableDeclarator, {
 		init: {
-			callee: {
-				name: 'require',
-			},
-			arguments: [
-				{
-					value: importName,
+			object: {
+				callee: {
+					name: 'require',
 				},
-			],
+			},
+			property: {
+				name: identifier,
+			},
+
 		},
-	});
+	})
 
-	if (!requireDeclaration) return false;
+	const source = root.toSource();
 
-	const supportsDescriptorsIdentifier = requireDeclaration.find(j.Identifier, {
-		name: identifier
-	});
-
-	if (!supportsDescriptorsIdentifier) return false;
-
-
-	return true;
+	return requireDeclarationWithProperty.length > 0;
 }
 
 /**
  * @param {string} importName = e.g., `define-properties`
- * @param {import("jscodeshift").Literal} value = e.g., true or "string value"
+ * @param {string | boolean | null | number | RegExp} value = e.g., true or "string value"
  * @param {import("jscodeshift").Collection} root
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
  */

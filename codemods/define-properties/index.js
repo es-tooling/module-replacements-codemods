@@ -5,7 +5,7 @@ import jscodeshift from 'jscodeshift';
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
  */
 
-import { getVariableExpressionHasIdentifier, removeImport, replaceDefaultImport, replaceRequireMemberExpression } from '../shared.js';
+import { DEFAULT_IMPORT, getImportIdentifierMap, getVariableExpressionHasIdentifier, removeImport, replaceDefaultImport, replaceRequireMemberExpression } from '../shared.js';
 
 /**
  * @param {CodemodOptions} [options]
@@ -15,7 +15,6 @@ export default function (options) {
   return {
     name: 'define-properties',
     transform: ({ file }) => {
-      let dirty = false;
       const j = jscodeshift;
       const root = j(file.source);
       const variableExpressionHasIdentifier = getVariableExpressionHasIdentifier('define-properties', 'supportsDescriptors', root, j);
@@ -23,12 +22,41 @@ export default function (options) {
       // Use case 1: require('define-properties').supportsDescriptors
       if (variableExpressionHasIdentifier) {
         const didReplace = replaceRequireMemberExpression('define-properties', true, root, j);
-        dirty = didReplace;
+        return didReplace ? root.toSource(options) : file.source;
       }
 
+      const map = getImportIdentifierMap('define-properties', root, j);
 
-      const cause = root.toSource(options);
-      return dirty ? root.toSource(options) : file.source;
+      const identifier = map[DEFAULT_IMPORT];
+
+      const callExpressions = root.find(j.CallExpression, {
+        callee: {
+          name: identifier
+        }
+      })
+
+      
+      if (!callExpressions.length) {
+        removeImport('define-properties', root, j);
+        return root.toSource(options);
+      }
+      
+      let transformCount = 0;
+
+      callExpressions.forEach((path) => {
+        const node = path.node;
+        // Use case 2: define(object, map);
+        if (node.arguments.length === 2) {
+          // in here, create a new function once for defineProperties, and then swap all instance over to use it.
+        }
+
+        // Use case 3: define(object, map, predicates);
+        if (node.arguments.length === 3) {
+          // in here, create a comment before the define call, and leave it alone
+        }
+      })
+
+      return file.source;
     },
   }
 };

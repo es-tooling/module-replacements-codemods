@@ -81,6 +81,51 @@ export function removeImport(name, root, j) {
 	return { identifier };
 }
 
+/**
+ * @param {string} code - code to insert after the last import
+ * @param {import("jscodeshift").Collection} root - jscodeshift tree of the file containing the import
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ * 
+ */
+export function insertAfterImports(code, root, j) {
+	const importDeclarations = root.find(j.ImportDeclaration);
+
+	if (importDeclarations.length) { 
+		const lastItem = importDeclarations.at(-1).get();
+		j(lastItem).insertAfter(code);
+		return;
+	}
+
+	const requireDeclarations = root.find(j.VariableDeclarator, {
+		init: {
+			callee: {
+				name: 'require',
+			},
+		}
+	});
+
+	if (requireDeclarations.length) {
+		const lastItem = requireDeclarations.at(-1).get();
+		j(lastItem).insertAfter(code);
+		return;
+	}
+
+	const requireAssignments = root.find(j.AssignmentExpression, {
+		operator: '=',
+		right: {
+			callee: {
+				name: 'require',
+			},
+		},
+	}).length;
+
+	if (requireAssignments) {
+		const lastItem = requireAssignments.at(-1).get();
+		j(lastItem).insertAfter(code);
+		return;
+	}
+}
+
 export const DEFAULT_IMPORT = Symbol('DEFAULT_IMPORT');
 export const NAMESPACE_IMPORT = Symbol('NAMESPACE_IMPORT');
 

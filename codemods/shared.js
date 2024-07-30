@@ -126,11 +126,20 @@ export function insertAfterImports(code, root, j) {
 	}
 
 	const sortedNodes = allNodes.sort((a, b) => {
-		return a.loc.start.line - b.loc.start.line;
+		const aStart = a.loc?.start.line ?? 0;
+		const bStart = b.loc?.start.line ?? 0;
+		return aStart - bStart;
 	});
 
 	const bottomMostNode = sortedNodes[sortedNodes.length - 1];
-	const node = getAncestorOnLine(bottomMostNode.loc.end.line, root, j);
+
+	const endLine = bottomMostNode.loc?.end.line;
+
+	if (!endLine) {
+		return;
+	}
+
+	const node = getAncestorOnLine(endLine, root, j);
 	j(node).insertAfter(code);
 }
 
@@ -517,8 +526,7 @@ export function replaceRequireMemberExpression(importName, value, root, j) {
 
 /**
  *
- * @param {import("jscodeshift").CommentBlock} comment
- * @param {number} startLine
+ * @param {number} line
  * @param {import("jscodeshift").Collection} root
  * @param {import("jscodeshift").JSCodeshift} j
  */

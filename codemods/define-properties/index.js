@@ -16,6 +16,11 @@ import { dir } from 'console';
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
  */
 
+/**
+ *
+ * @param {string} name
+ * @returns
+ */
 const definePropertiesTemplate = (name) => `
 const ${name} = function (object, map) {
   let propKeys = Object.keys(map);
@@ -98,7 +103,10 @@ export default function (options) {
 						insertAfterImports(defineFunction, root, j);
 					}
 
-					node.callee.name = newIdentifier;
+					// Not all call expressions have a name property, but node.callee should be of type Identifi
+					if ('name' in node.callee) {
+						node.callee.name = newIdentifier;
+					}
 
 					transformCount++;
 					dirty = true;
@@ -111,7 +119,10 @@ export default function (options) {
 						true,
 						false,
 					);
-					insertCommentAboveNode(comment, node.loc?.start.line, root, j);
+
+					const startLine = node.loc?.start.line ?? 0;
+
+					insertCommentAboveNode(comment, startLine, root, j);
 
 					dirty = true;
 				}

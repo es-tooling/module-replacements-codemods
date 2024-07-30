@@ -90,7 +90,7 @@ export function removeImport(name, root, j) {
 export function insertAfterImports(code, root, j) {
 	const importDeclarations = root.find(j.ImportDeclaration);
 
-	if (importDeclarations.length) { 
+	if (importDeclarations.length) {
 		const lastItem = importDeclarations.at(-1).get();
 		j(lastItem).insertAfter(code);
 		return;
@@ -500,4 +500,24 @@ export function replaceRequireMemberExpression(importName, value, root, j) {
 	});
 
 	return true;
+}
+
+/**
+ * 
+ * @param {import("jscodeshift").CommentBlock} comment 
+ * @param {number} startLine
+ * @param {import("jscodeshift").Collection} root 
+ * @param {import("jscodeshift").JSCodeshift} j 
+ */
+export function insertCommentAboveNode(comment, startLine, root, j) {
+	const node = root.find(j.Node, {
+		loc: {
+			start: {
+				line: startLine,
+			}
+		}
+	}).at(0).get()
+
+	node.value.comments = node.value.comments || [];
+	node.value.comments.push(comment);
 }

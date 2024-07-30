@@ -1,11 +1,11 @@
 const define = require('define-properties');
 const assert = require('assert');
 
-const res2 = /*
+/*
  This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.
  details can be found here: xxx
 */
-define({ a: 1, b: 2, c: 3 }, {
+const res2 = define({ a: 1, b: 2, c: 3 }, {
   a: 10,
   b: 20,
   c: 30

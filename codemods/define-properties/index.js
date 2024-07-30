@@ -1,5 +1,5 @@
 import jscodeshift from 'jscodeshift';
-import { DEFAULT_IMPORT, getImportIdentifierMap, getVariableExpressionHasIdentifier, insertAfterImports, removeImport, replaceDefaultImport, replaceRequireMemberExpression } from '../shared.js';
+import { DEFAULT_IMPORT, getImportIdentifierMap, getVariableExpressionHasIdentifier, insertAfterImports, insertCommentAboveNode, removeImport, replaceDefaultImport, replaceRequireMemberExpression } from '../shared.js';
 import { dir } from 'console';
 
 /**
@@ -86,11 +86,9 @@ export default function (options) {
 
         // Use case 3: define(object, map, predicates);
         if (node.arguments.length === 3) {
-          // add a function (insert comment before block);
-
-          node.comments = node.comments || [];
-          node.comments.push(j.commentBlock('\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: xxx\n', true, false));
-
+          const comment = j.commentBlock('\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: xxx\n', true, false);
+          insertCommentAboveNode(comment, node.loc?.start.line, root, j)
+          
           dirty = true;
         }
       })

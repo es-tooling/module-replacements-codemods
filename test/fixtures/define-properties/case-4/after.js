@@ -36,7 +36,7 @@ $define({ a: 1, b: 2 }, {
 
 /*
  This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.
- details can be found here: xxx
+ details can be found here: https://github.com/es-tooling/module-replacements-codemods/issues/66 
 */
 define({ a: 1, b: 2, c: 3 }, {
   a: 10,

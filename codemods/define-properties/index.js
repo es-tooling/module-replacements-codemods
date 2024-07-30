@@ -115,7 +115,7 @@ export default function (options) {
 				// Use case 3: define(object, map, predicates);
 				if (node.arguments.length === 3) {
 					const comment = j.commentBlock(
-						'\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: xxx\n',
+						'\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: https://github.com/es-tooling/module-replacements-codemods/issues/66 \n',
 						true,
 						false,
 					);

@@ -26,7 +26,7 @@ assert.deepEqual(Object.getOwnPropertyDescriptor(res1, 'c'), {
   configurable: true,
   enumerable: false,
   value: 30,
-  writable: false
+  writable: true
 });
 
 const object2 = { a: 1, b: 2 };

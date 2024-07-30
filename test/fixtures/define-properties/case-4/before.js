@@ -20,7 +20,7 @@ const $define = function (object, map) {
       value,
       configurable: true,
       enumerable: false,
-      writable: false,
+      writable: true,
     })
   }
 

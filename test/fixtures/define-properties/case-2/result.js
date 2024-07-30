@@ -17,7 +17,7 @@ const $define = function (object, map) {
       value,
       configurable: true,
       enumerable: false,
-      writable: false,
+      writable: true,
     })
   }
 
@@ -49,7 +49,7 @@ assert.deepEqual(Object.getOwnPropertyDescriptor(res1, 'c'), {
   configurable: true,
   enumerable: false,
   value: 30,
-  writable: false
+  writable: true
 });
 
 const object2 = { a: 1, b: 2 };

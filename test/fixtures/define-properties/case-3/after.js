@@ -24,5 +24,5 @@ assert.deepEqual(Object.getOwnPropertyDescriptor(res2, 'b'), {
   configurable: true,
   enumerable: false,
   value: 20,
-  writable: false
+  writable: true
 });

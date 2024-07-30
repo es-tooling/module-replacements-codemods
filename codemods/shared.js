@@ -85,7 +85,7 @@ export function removeImport(name, root, j) {
  * @param {string} code - code to insert after the last import
  * @param {import("jscodeshift").Collection} root - jscodeshift tree of the file containing the import
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
- * 
+ *
  */
 export function insertAfterImports(code, root, j) {
 	const importDeclarations = root.find(j.ImportDeclaration);
@@ -94,7 +94,7 @@ export function insertAfterImports(code, root, j) {
 			callee: {
 				name: 'require',
 			},
-		}
+		},
 	});
 	const requireAssignments = root.find(j.AssignmentExpression, {
 		operator: '=',
@@ -105,14 +105,14 @@ export function insertAfterImports(code, root, j) {
 		},
 	});
 
-		// Side effect requires statements like `require("error-cause/auto");`
-		const sideEffectRequireExpression = root.find(j.ExpressionStatement, {
-			expression: {
-				callee: {
-					name: 'require',
-				}
+	// Side effect requires statements like `require("error-cause/auto");`
+	const sideEffectRequireExpression = root.find(j.ExpressionStatement, {
+		expression: {
+			callee: {
+				name: 'require',
 			},
-		});
+		},
+	});
 
 	const allNodes = [
 		...importDeclarations.nodes(),
@@ -458,14 +458,18 @@ export function transformMathPolyfill(importName, methodName, root, j) {
 	return dirtyFlag;
 }
 
-
 /**
  * @param {string} importName = e.g., `define-properties`
  * @param {string} identifier = e.g., `supportsDescriptors`
  * @param {import("jscodeshift").Collection} root
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
  */
-export function getVariableExpressionHasIdentifier(importName, identifier, root, j) {
+export function getVariableExpressionHasIdentifier(
+	importName,
+	identifier,
+	root,
+	j,
+) {
 	const requireDeclarationWithProperty = root.find(j.VariableDeclarator, {
 		init: {
 			object: {
@@ -476,9 +480,8 @@ export function getVariableExpressionHasIdentifier(importName, identifier, root,
 			property: {
 				name: identifier,
 			},
-
 		},
-	})
+	});
 
 	const source = root.toSource();
 
@@ -492,47 +495,52 @@ export function getVariableExpressionHasIdentifier(importName, identifier, root,
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
  */
 export function replaceRequireMemberExpression(importName, value, root, j) {
-	const requireDeclaration = root.find(j.MemberExpression, {
-		object: {
-			callee: {
-				name: 'require',
-			},
-			arguments: [
-				{
-					value: importName,
+	const requireDeclaration = root
+		.find(j.MemberExpression, {
+			object: {
+				callee: {
+					name: 'require',
 				},
-			],
-		},
-	}).forEach(path => {
-		j(path).replaceWith(j.literal(value));
-	});
+				arguments: [
+					{
+						value: importName,
+					},
+				],
+			},
+		})
+		.forEach((path) => {
+			j(path).replaceWith(j.literal(value));
+		});
 
 	return true;
 }
 
 /**
- * 
- * @param {import("jscodeshift").CommentBlock} comment 
+ *
+ * @param {import("jscodeshift").CommentBlock} comment
  * @param {number} startLine
- * @param {import("jscodeshift").Collection} root 
- * @param {import("jscodeshift").JSCodeshift} j 
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j
  */
 export function getAncestorOnLine(line, root, j) {
-	return root.find(j.Node, {
-		loc: {
-			start: {
-				line,
-			}
-		}
-	}).at(0).get()
+	return root
+		.find(j.Node, {
+			loc: {
+				start: {
+					line,
+				},
+			},
+		})
+		.at(0)
+		.get();
 }
 
 /**
- * 
- * @param {import("jscodeshift").CommentBlock} comment 
+ *
+ * @param {import("jscodeshift").CommentBlock} comment
  * @param {number} startLine
- * @param {import("jscodeshift").Collection} root 
- * @param {import("jscodeshift").JSCodeshift} j 
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j
  */
 export function insertCommentAboveNode(comment, startLine, root, j) {
 	const node = getAncestorOnLine(startLine, root, j);

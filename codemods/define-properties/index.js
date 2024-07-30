@@ -1,5 +1,14 @@
 import jscodeshift from 'jscodeshift';
-import { DEFAULT_IMPORT, getImportIdentifierMap, getVariableExpressionHasIdentifier, insertAfterImports, insertCommentAboveNode, removeImport, replaceDefaultImport, replaceRequireMemberExpression } from '../shared.js';
+import {
+	DEFAULT_IMPORT,
+	getImportIdentifierMap,
+	getVariableExpressionHasIdentifier,
+	insertAfterImports,
+	insertCommentAboveNode,
+	removeImport,
+	replaceDefaultImport,
+	replaceRequireMemberExpression,
+} from '../shared.js';
 import { dir } from 'console';
 
 /**
@@ -29,75 +38,90 @@ const ${name} = function (object, map) {
   }
 
   return object;
-};`
+};`;
 
 /**
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
 export default function (options) {
-  return {
-    name: 'define-properties',
-    transform: ({ file }) => {
-      const j = jscodeshift;
-      const root = j(file.source);
-      const variableExpressionHasIdentifier = getVariableExpressionHasIdentifier('define-properties', 'supportsDescriptors', root, j);
+	return {
+		name: 'define-properties',
+		transform: ({ file }) => {
+			const j = jscodeshift;
+			const root = j(file.source);
+			const variableExpressionHasIdentifier =
+				getVariableExpressionHasIdentifier(
+					'define-properties',
+					'supportsDescriptors',
+					root,
+					j,
+				);
 
-      // Use case 1: require('define-properties').supportsDescriptors
-      if (variableExpressionHasIdentifier) {
-        const didReplace = replaceRequireMemberExpression('define-properties', true, root, j);
-        return didReplace ? root.toSource(options) : file.source;
-      }
+			// Use case 1: require('define-properties').supportsDescriptors
+			if (variableExpressionHasIdentifier) {
+				const didReplace = replaceRequireMemberExpression(
+					'define-properties',
+					true,
+					root,
+					j,
+				);
+				return didReplace ? root.toSource(options) : file.source;
+			}
 
-      const map = getImportIdentifierMap('define-properties', root, j);
+			const map = getImportIdentifierMap('define-properties', root, j);
 
-      const identifier = map[DEFAULT_IMPORT];
+			const identifier = map[DEFAULT_IMPORT];
 
-      const callExpressions = root.find(j.CallExpression, {
-        callee: {
-          name: identifier
-        }
-      })
+			const callExpressions = root.find(j.CallExpression, {
+				callee: {
+					name: identifier,
+				},
+			});
 
-      if (!callExpressions.length) {
-        removeImport('define-properties', root, j);
-        return root.toSource(options);
-      }
+			if (!callExpressions.length) {
+				removeImport('define-properties', root, j);
+				return root.toSource(options);
+			}
 
-      let transformCount = 0;
-      let dirty = false
+			let transformCount = 0;
+			let dirty = false;
 
-      callExpressions.forEach((path) => {
-        const node = path.node;
-        const newIdentifier = `$${identifier}`;
+			callExpressions.forEach((path) => {
+				const node = path.node;
+				const newIdentifier = `$${identifier}`;
 
-        // Use case 2: define(object, map);
-        if (node.arguments.length === 2) {
-          if (transformCount === 0) {
-            const defineFunction = definePropertiesTemplate(newIdentifier);
-            insertAfterImports(defineFunction, root, j);
-          }
+				// Use case 2: define(object, map);
+				if (node.arguments.length === 2) {
+					if (transformCount === 0) {
+						const defineFunction = definePropertiesTemplate(newIdentifier);
+						insertAfterImports(defineFunction, root, j);
+					}
 
-          node.callee.name = newIdentifier;
+					node.callee.name = newIdentifier;
 
-          transformCount++;
-          dirty = true;
-        }
+					transformCount++;
+					dirty = true;
+				}
 
-        // Use case 3: define(object, map, predicates);
-        if (node.arguments.length === 3) {
-          const comment = j.commentBlock('\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: xxx\n', true, false);
-          insertCommentAboveNode(comment, node.loc?.start.line, root, j)
-          
-          dirty = true;
-        }
-      })
+				// Use case 3: define(object, map, predicates);
+				if (node.arguments.length === 3) {
+					const comment = j.commentBlock(
+						'\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: xxx\n',
+						true,
+						false,
+					);
+					insertCommentAboveNode(comment, node.loc?.start.line, root, j);
 
-      if (transformCount === callExpressions.length) {
-        removeImport('define-properties', root, j);
-      }
+					dirty = true;
+				}
+			});
 
-      return dirty ? root.toSource(options) : file.source;
-    },
-  }
-};
+			if (transformCount === callExpressions.length) {
+				removeImport('define-properties', root, j);
+			}
+
+			return dirty ? root.toSource(options) : file.source;
+		},
+	};
+}

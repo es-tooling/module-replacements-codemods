@@ -1,6 +1,9 @@
 const define = require('define-properties');
 const assert = require('assert');
 
+require("fake/auto");
+import fake from "fake";
+
 const $define = function (object, map) {
   let propKeys = Object.keys(map);
   propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));

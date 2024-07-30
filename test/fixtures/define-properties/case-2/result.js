@@ -1,27 +1,28 @@
-const assert = require('assert'),
+const assert = require('assert');
 
-      const $define = function (object, map) {
-        let propKeys = Object.keys(map);
-        propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));
 
-        for (var i = 0; i < propKeys.length; i += 1) {
-          const propKey = propKeys[i];
-          const value = map[propKey];
+const $define = function (object, map) {
+  let propKeys = Object.keys(map);
+  propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));
 
-          if (propKey in object) {
-            continue;
-          }
+  for (var i = 0; i < propKeys.length; i += 1) {
+    const propKey = propKeys[i];
+    const value = map[propKey];
 
-          Object.defineProperty(object, propKey, {
-            value,
-            configurable: true,
-            enumerable: false,
-            writable: false,
-          })
-        }
+    if (propKey in object) {
+      continue;
+    }
 
-        return object;
-      };;
+    Object.defineProperty(object, propKey, {
+      value,
+      configurable: true,
+      enumerable: false,
+      writable: false,
+    })
+  }
+
+  return object;
+};
 
 const object1 = { a: 1, b: 2 };
 

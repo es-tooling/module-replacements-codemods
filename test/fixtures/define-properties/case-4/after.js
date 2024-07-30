@@ -1,7 +1,33 @@
 const define = require('define-properties');
 const assert = require('assert');
 
-define({ a: 1, b: 2 }, {
+require("fake/auto");
+import fake from "fake";
+
+const $define = function (object, map) {
+  let propKeys = Object.keys(map);
+  propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));
+
+  for (var i = 0; i < propKeys.length; i += 1) {
+    const propKey = propKeys[i];
+    const value = map[propKey];
+
+    if (propKey in object) {
+      continue;
+    }
+
+    Object.defineProperty(object, propKey, {
+      value,
+      configurable: true,
+      enumerable: false,
+      writable: false,
+    })
+  }
+
+  return object;
+};
+
+$define({ a: 1, b: 2 }, {
   a: 10,
   b: 20,
   c: 30,

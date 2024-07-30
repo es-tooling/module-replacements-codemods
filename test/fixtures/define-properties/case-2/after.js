@@ -1,5 +1,6 @@
 const assert = require('assert');
 
+
 const $define = function (object, map) {
   let propKeys = Object.keys(map);
   propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));
@@ -51,10 +52,9 @@ assert.deepEqual(Object.getOwnPropertyDescriptor(res1, 'c'), {
   writable: false
 });
 
-
 const object2 = { a: 1, b: 2 };
 
-const res2 = $define(object2, {
+$define(object2, {
   c: 30
 })
 

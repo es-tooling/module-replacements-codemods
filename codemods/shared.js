@@ -89,13 +89,6 @@ export function removeImport(name, root, j) {
  */
 export function insertAfterImports(code, root, j) {
 	const importDeclarations = root.find(j.ImportDeclaration);
-
-	if (importDeclarations.length) {
-		const lastItem = importDeclarations.at(-1).get();
-		j(lastItem).insertAfter(code);
-		return;
-	}
-
 	const requireDeclarations = root.find(j.VariableDeclarator, {
 		init: {
 			callee: {
@@ -103,13 +96,6 @@ export function insertAfterImports(code, root, j) {
 			},
 		}
 	});
-
-	if (requireDeclarations.length) {
-		const lastItem = requireDeclarations.at(-1).get();
-		j(lastItem).insertAfter(code);
-		return;
-	}
-
 	const requireAssignments = root.find(j.AssignmentExpression, {
 		operator: '=',
 		right: {
@@ -117,13 +103,35 @@ export function insertAfterImports(code, root, j) {
 				name: 'require',
 			},
 		},
-	}).length;
+	});
 
-	if (requireAssignments) {
-		const lastItem = requireAssignments.at(-1).get();
-		j(lastItem).insertAfter(code);
+		// Side effect requires statements like `require("error-cause/auto");`
+		const sideEffectRequireExpression = root.find(j.ExpressionStatement, {
+			expression: {
+				callee: {
+					name: 'require',
+				}
+			},
+		});
+
+	const allNodes = [
+		...importDeclarations.nodes(),
+		...requireDeclarations.nodes(),
+		...requireAssignments.nodes(),
+		...sideEffectRequireExpression.nodes(),
+	];
+
+	if (allNodes.length === 0) {
 		return;
 	}
+
+	const sortedNodes = allNodes.sort((a, b) => {
+		return a.loc.start.line - b.loc.start.line;
+	});
+
+	const bottomMostNode = sortedNodes[sortedNodes.length - 1];
+	const node = getAncestorOnLine(bottomMostNode.loc.end.line, root, j);
+	j(node).insertAfter(code);
 }
 
 export const DEFAULT_IMPORT = Symbol('DEFAULT_IMPORT');
@@ -509,14 +517,25 @@ export function replaceRequireMemberExpression(importName, value, root, j) {
  * @param {import("jscodeshift").Collection} root 
  * @param {import("jscodeshift").JSCodeshift} j 
  */
-export function insertCommentAboveNode(comment, startLine, root, j) {
-	const node = root.find(j.Node, {
+export function getAncestorOnLine(line, root, j) {
+	return root.find(j.Node, {
 		loc: {
 			start: {
-				line: startLine,
+				line,
 			}
 		}
 	}).at(0).get()
+}
+
+/**
+ * 
+ * @param {import("jscodeshift").CommentBlock} comment 
+ * @param {number} startLine
+ * @param {import("jscodeshift").Collection} root 
+ * @param {import("jscodeshift").JSCodeshift} j 
+ */
+export function insertCommentAboveNode(comment, startLine, root, j) {
+	const node = getAncestorOnLine(startLine, root, j);
 
 	node.value.comments = node.value.comments || [];
 	node.value.comments.push(comment);

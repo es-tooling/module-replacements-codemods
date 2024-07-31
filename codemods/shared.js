@@ -81,6 +81,68 @@ export function removeImport(name, root, j) {
 	return { identifier };
 }
 
+/**
+ * @param {string} code - code to insert after the last import
+ * @param {import("jscodeshift").Collection} root - jscodeshift tree of the file containing the import
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ *
+ */
+export function insertAfterImports(code, root, j) {
+	const importDeclarations = root.find(j.ImportDeclaration);
+	const requireDeclarations = root.find(j.VariableDeclarator, {
+		init: {
+			callee: {
+				name: 'require',
+			},
+		},
+	});
+	const requireAssignments = root.find(j.AssignmentExpression, {
+		operator: '=',
+		right: {
+			callee: {
+				name: 'require',
+			},
+		},
+	});
+
+	// Side effect requires statements like `require("error-cause/auto");`
+	const sideEffectRequireExpression = root.find(j.ExpressionStatement, {
+		expression: {
+			callee: {
+				name: 'require',
+			},
+		},
+	});
+
+	const allNodes = [
+		...importDeclarations.nodes(),
+		...requireDeclarations.nodes(),
+		...requireAssignments.nodes(),
+		...sideEffectRequireExpression.nodes(),
+	];
+
+	if (allNodes.length === 0) {
+		return;
+	}
+
+	const sortedNodes = allNodes.sort((a, b) => {
+		const aStart = a.loc?.start.line ?? 0;
+		const bStart = b.loc?.start.line ?? 0;
+		return aStart - bStart;
+	});
+
+	const bottomMostNode = sortedNodes[sortedNodes.length - 1];
+
+	const endLine = bottomMostNode.loc?.end.line;
+
+	if (!endLine) {
+		return;
+	}
+
+	const node = getAncestorOnLine(endLine, root, j);
+	j(node).insertAfter(code);
+}
+
 export const DEFAULT_IMPORT = Symbol('DEFAULT_IMPORT');
 export const NAMESPACE_IMPORT = Symbol('NAMESPACE_IMPORT');
 
@@ -403,4 +465,94 @@ export function transformMathPolyfill(importName, methodName, root, j) {
 		});
 
 	return dirtyFlag;
+}
+
+/**
+ * @param {string} importName = e.g., `define-properties`
+ * @param {string} identifier = e.g., `supportsDescriptors`
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ */
+export function getVariableExpressionHasIdentifier(
+	importName,
+	identifier,
+	root,
+	j,
+) {
+	const requireDeclarationWithProperty = root.find(j.VariableDeclarator, {
+		init: {
+			object: {
+				callee: {
+					name: 'require',
+				},
+			},
+			property: {
+				name: identifier,
+			},
+		},
+	});
+
+	const source = root.toSource();
+
+	return requireDeclarationWithProperty.length > 0;
+}
+
+/**
+ * @param {string} importName = e.g., `define-properties`
+ * @param {string | boolean | null | number | RegExp} value = e.g., true or "string value"
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
+ */
+export function replaceRequireMemberExpression(importName, value, root, j) {
+	const requireDeclaration = root
+		.find(j.MemberExpression, {
+			object: {
+				callee: {
+					name: 'require',
+				},
+				arguments: [
+					{
+						value: importName,
+					},
+				],
+			},
+		})
+		.forEach((path) => {
+			j(path).replaceWith(j.literal(value));
+		});
+
+	return true;
+}
+
+/**
+ *
+ * @param {number} line
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j
+ */
+export function getAncestorOnLine(line, root, j) {
+	return root
+		.find(j.Node, {
+			loc: {
+				start: {
+					line,
+				},
+			},
+		})
+		.at(0)
+		.get();
+}
+
+/**
+ *
+ * @param {import("jscodeshift").CommentBlock} comment
+ * @param {number} startLine
+ * @param {import("jscodeshift").Collection} root
+ * @param {import("jscodeshift").JSCodeshift} j
+ */
+export function insertCommentAboveNode(comment, startLine, root, j) {
+	const node = getAncestorOnLine(startLine, root, j);
+
+	node.value.comments = node.value.comments || [];
+	node.value.comments.push(comment);
 }

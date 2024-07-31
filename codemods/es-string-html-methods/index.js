@@ -34,15 +34,11 @@ export default function (options) {
 			];
 
 			// Remove all imports
-			const methodIdentifiers = methods.reduce((acc, method) => {
-				//@ts-ignore
-				acc[method] = removeImport(
-					`es-string-html-methods/${method}`,
-					root,
-					j,
-				).identifier;
-				return acc;
-			}, {});
+			const entries = methods.map((method) => [
+				method,
+				removeImport(`es-string-html-methods/${method}`, root, j).identifier,
+			]);
+			const methodIdentifiers = Object.fromEntries(entries);
 			methods.forEach((method) => {
 				removeImport(`es-string-html-methods/${method}/auto`, root, j);
 			});
@@ -54,7 +50,6 @@ export default function (options) {
 					.find(j.CallExpression, {
 						callee: {
 							type: 'Identifier',
-							//@ts-ignore
 							name: methodIdentifiers[method],
 						},
 					})

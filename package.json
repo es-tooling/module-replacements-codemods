@@ -2,7 +2,6 @@
   "name": "module-replacements-codemods",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "bin": {
     "module-replacements-codemods": "./index.js"
   },

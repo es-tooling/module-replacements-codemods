@@ -19,6 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@ast-grep/napi": "^0.25.4",
     "jscodeshift": "^0.16.1"
   },
   "files": [

@@ -2,9 +2,7 @@ import {
 	nativeReplacements,
 	microUtilsReplacements,
 } from 'module-replacements';
-import { getCodemods } from '../codemods/index.js';
-
-const codemods = await getCodemods();
+import { codemods } from '../index.js';
 
 const all = [
 	...nativeReplacements.moduleReplacements,

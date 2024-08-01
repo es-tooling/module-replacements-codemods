@@ -3,24 +3,23 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "bin": {
-    "module-replacements-codemods": "./index.js"
-  },
   "scripts": {
     "test": "node --test test/codemod.test.js",
     "test:watch": "node --test --watch test/codemod.test.js",
     "format": "biome format --write **/*",
     "lint:types": "tsc",
     "postinstall": "npm run which",
-    "which": "node scripts/which.js"
+    "which": "node scripts/which.js",
+    "prepublishOnly": "node scripts/generate-index.js"
+  },
+  "exports": {
+    ".": "./index.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "fast-glob": "^3.3.2",
-    "jscodeshift": "^0.16.1",
-    "picocolors": "^1.0.1"
+    "jscodeshift": "^0.16.1"
   },
   "files": [
     "index.js",

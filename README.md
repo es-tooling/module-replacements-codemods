@@ -1,6 +1,6 @@
-# module-replacements-codemods (name tbd)
+# module-replacements-codemods
 
-This repository aims to provide automated codemods for the modules provided in [module replacements](https://github.com/es-tooling/module-replacements).
+This repository aims to provide automated codemods for the modules provided in [module replacements](https://github.com/es-tooling/module-replacements). Feel free to use these codemods in any way you like.
 
 ## What is this project about?
 
@@ -24,18 +24,23 @@ After:
 
 For more examples of before/after's, take a look at the [test/fixtures](https://github.com/thepassle/module-replacements-codemods/tree/main/test/fixtures) folder, where you can see which replacements all of the codemods do.
 
-There are a lot of [packages](https://github.com/es-tooling/module-replacements) to create codemods for. While creating codemods for these packages is not very hard, there is simply _a lot_ of them, so we're looking for contributions! The codemods typically are very small and straightforward to implement; even if you've never written one before. With the help of [codemod.studio](https://codemod.com/studio) and the [contributing](#contributing) instructions down below, you should get up and running in no time. Being able to create codemods is a great skill to have in your developer toolset, but it's also really fun and satisfying to implement one, and at the same time you'll be contributing to a better ecosystem!
+All the codemods implemented in this repository should be listed in [es-tooling/module-replacements](https://github.com/es-tooling/module-replacements), if you would like to see a codemod for a package, please make sure it's in `module-replacements` first; feel free to create a PR to add it.
 
+If you're interested in contributing a codemod, please read the [contribution instructions](#contributing).
 
-## Status
+## How do I use this?
 
-The status of this project is **in development**. There's is a very barebones CLI implemented, mostly just to have something there, and it's also not published to NPM yet, because the name/home of this project is still TBD. The goal of this repository, at the current time, is mainly to gather as many codemods for the packages in [module replacements](https://github.com/es-tooling/module-replacements) or [polyfills](https://github.com/esm-dev/esm.sh/tree/main/server/embed/polyfills/npm) as we can and to have a centralized place where people can [collaborate](#contributing) on those codemods.
+This repository is intended to only hold the codemods for the packages provided by [module replacements](https://github.com/es-tooling/module-replacements). Additional tooling can import these codemods and use them how they like, like for example CLI tools. If you're interested in building such a tool; please do, and let us know what you've built with it!
 
-Once we have a substantial amount of codemods implemented (or in parallel), we can work on creating an actually well-designed CLI so people can start using the codemods in their projects and remove package bloat.
+In the future the `es-tooling` org will also be working on a CLI that wraps these codemods, among other things, but don't let that stop you from building something yourself!
 
 ## Contributing
 
-If you would like to contribute a codemod for a module in [module replacements](https://github.com/es-tooling/module-replacements) or [polyfills](https://github.com/esm-dev/esm.sh/tree/main/server/embed/polyfills/npm), please feel free to create a pull request! Pick any module from [module replacements](https://github.com/es-tooling/module-replacements) or [polyfills](https://github.com/esm-dev/esm.sh/tree/main/server/embed/polyfills/npm), collect some before/after examples, and get started.
+If you would like to contribute a codemod for a module in [module replacements](https://github.com/es-tooling/module-replacements) or [polyfills](https://github.com/esm-dev/esm.sh/tree/main/server/embed/polyfills/npm), please feel free to create a pull request! 
+
+All the codemods implemented in this repository should be listed in [es-tooling/module-replacements](https://github.com/es-tooling/module-replacements), if you would like to see a codemod for a package, please make sure it's in `module-replacements` first; feel free to create a PR to add it. You can run the `npm run which` script locally to see which of the packages listed in `module-replacements` have not been implemented as codemods yet.
+
+So to get started, run the `npm run which` script, collect some before/after examples, and get started.
 
 > If you're interested in contributing a codemod, but don't have much experience with _writing_ codemods, take a look at [codemod.studio](https://codemod.com/studio), which makes it really easy.
 

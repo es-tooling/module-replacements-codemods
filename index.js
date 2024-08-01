@@ -57,6 +57,7 @@ import functionBind from './codemods/function-bind/index.js';
 import functionPrototypeName from './codemods/function.prototype.name/index.js';
 import functionsHaveNames from './codemods/functions-have-names/index.js';
 import getSymbolDescription from './codemods/get-symbol-description/index.js';
+import global from './codemods/global/index.js';
 import gopd from './codemods/gopd/index.js';
 import has from './codemods/has/index.js';
 import hasOwnProp from './codemods/has-own-prop/index.js';
@@ -208,6 +209,7 @@ export const codemods = {
   "function.prototype.name": functionPrototypeName,
   "functions-have-names": functionsHaveNames,
   "get-symbol-description": getSymbolDescription,
+  "global": global,
   "gopd": gopd,
   "has": has,
   "has-own-prop": hasOwnProp,

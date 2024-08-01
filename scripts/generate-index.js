@@ -6,7 +6,6 @@ const camelize = (s) => s.replace(/[-\.]./g, (x) => x[1].toUpperCase());
 const folders = fs
 	.readdirSync('./codemods')
 	.filter((f) => fs.statSync(`./codemods/${f}`).isDirectory());
-console.log(folders);
 
 let obj = `export const codemods = {\n`;
 let imports = ``;

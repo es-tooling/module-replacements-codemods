@@ -1,11 +1,10 @@
 import { describe, it } from 'node:test';
 import fs from 'node:fs';
 import assert from 'assert';
-import { getCodemods } from '../codemods/index.js';
+import { codemods } from '../index.js';
 
 describe('codemod', async () => {
-	const codemods = await getCodemods();
-	for (const [name, codemodFn] of Object.entries(codemods)) {
+	for (const [_, codemodFn] of Object.entries(codemods)) {
 		const codemod = codemodFn();
 
 		const fixtures = fs.readdirSync(`./test/fixtures/${codemod.name}`);

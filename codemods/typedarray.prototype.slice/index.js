@@ -4,7 +4,7 @@ import {
 	transformInstanceMethod,
 	transformInstanceProperty,
 } from '../shared.js';
-import { ALL_TYPED_ARRAY_OBJECTS } from '../../CONSTANTS.js';
+import { ALL_TYPED_ARRAY_OBJECTS } from '../CONSTANTS.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod

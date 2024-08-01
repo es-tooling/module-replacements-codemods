@@ -1,0 +1,28 @@
+var anchor = require('es-string-html-methods/anchor');
+var big = require('es-string-html-methods/big');
+var blink = require('es-string-html-methods/blink');
+var bold = require('es-string-html-methods/bold');
+var fixed = require('es-string-html-methods/fixed');
+var fontcolor = require('es-string-html-methods/fontcolor');
+var fontsize = require('es-string-html-methods/fontsize');
+var italics = require('es-string-html-methods/italics');
+var link = require('es-string-html-methods/link');
+var small = require('es-string-html-methods/small');
+var strike = require('es-string-html-methods/strike');
+var sub = require('es-string-html-methods/sub');
+var sup = require('es-string-html-methods/sup');
+var assert = require('assert');
+
+assert.equal(anchor('a', 'b'), '<a name="b">a</a>');
+assert.equal(big('a'), '<big>a</big>');
+assert.equal(blink('a'), '<blink>a</blink>');
+assert.equal(bold('a'), '<b>a</b>');
+assert.equal(fixed('a'), '<tt>a</tt>');
+assert.equal(fontcolor('a', 'b'), '<font color="b">a</font>');
+assert.equal(fontsize('a', 'b'), '<font size="b">a</font>');
+assert.equal(italics('a'), '<i>a</i>');
+assert.equal(link('a', 'b'), '<a href="b">a</a>');
+assert.equal(small('a'), '<small>a</small>');
+assert.equal(strike('a'), '<strike>a</strike>');
+assert.equal(sub('a'), '<sub>a</sub>');
+assert.equal(sup('a'), '<sup>a</sup>');

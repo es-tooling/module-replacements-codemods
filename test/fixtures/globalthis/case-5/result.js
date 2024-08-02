@@ -1,0 +1,1 @@
+globalThis.a = 42;

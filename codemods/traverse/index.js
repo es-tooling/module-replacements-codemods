@@ -18,21 +18,26 @@ export default function (options) {
 
 			// Transform import declarations
 			root.find(j.ImportDeclaration).forEach((path) => {
-				if (j.Literal.check(path.node.source) && path.node.source.value === 'traverse') {
+				if (
+					j.Literal.check(path.node.source) &&
+					path.node.source.value === 'traverse'
+				) {
 					path.node.source.value = 'neotraverse/legacy';
 				}
 			});
 
 			// Transform require statements
-			root.find(j.CallExpression, { callee: { name: 'require' } }).forEach((path) => {
-				if (
-					path.node.arguments.length === 1 &&
-					j.Literal.check(path.node.arguments[0]) &&
-					path.node.arguments[0].value === 'traverse'
-				) {
-					path.node.arguments[0].value = 'neotraverse/legacy';
-				}
-			});
+			root
+				.find(j.CallExpression, { callee: { name: 'require' } })
+				.forEach((path) => {
+					if (
+						path.node.arguments.length === 1 &&
+						j.Literal.check(path.node.arguments[0]) &&
+						path.node.arguments[0].value === 'traverse'
+					) {
+						path.node.arguments[0].value = 'neotraverse/legacy';
+					}
+				});
 
 			return root.toSource();
 		},

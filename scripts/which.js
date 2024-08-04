@@ -21,13 +21,18 @@ filteredModuleReplacements.forEach((replacement) => {
 	console.log(`https://npmjs.com/package/${replacement.moduleName}`);
 });
 
-const implementedCodemods = Object.keys(codemods).length; // Number of implemented codemods
-const implementedCodemodsPercentage = (implementedCodemods / all.length) * 100;
+const implementedCodemodsNumber = Object.keys(codemods).length;
+const implementedFilteredCodemodsNumber =
+	all.length - filteredModuleReplacements.length || 0;
+const implementedCodemodsPercentage =
+	(implementedFilteredCodemodsNumber / all.length) * 100;
 
 console.log(
-	`\nNumber of implemented codemods: ${Object.keys(codemods).length}`,
+	`\nNumber of all implemented codemods: ${implementedCodemodsNumber}`,
 );
-console.log(`Total number of module replacements: ${all.length}`);
+console.log(
+	`Total number of native and micro-utils module replacements: ${all.length}`,
+);
 console.log(
 	`Number of module replacements left to implement codemods for: ${filteredModuleReplacements.length}`,
 );

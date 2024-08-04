@@ -43,6 +43,7 @@ import dataViewBuffer from './codemods/data-view-buffer/index.js';
 import dataViewByteLength from './codemods/data-view-byte-length/index.js';
 import dataViewByteOffset from './codemods/data-view-byte-offset/index.js';
 import date from './codemods/date/index.js';
+import deepEqual from './codemods/deep-equal/index.js';
 import defineProperties from './codemods/define-properties/index.js';
 import errorCause from './codemods/error-cause/index.js';
 import esAggregateError from './codemods/es-aggregate-error/index.js';
@@ -195,6 +196,7 @@ export const codemods = {
   "data-view-byte-length": dataViewByteLength,
   "data-view-byte-offset": dataViewByteOffset,
   "date": date,
+  "deep-equal": deepEqual,
   "define-properties": defineProperties,
   "error-cause": errorCause,
   "es-aggregate-error": esAggregateError,

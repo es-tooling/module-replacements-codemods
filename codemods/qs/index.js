@@ -16,6 +16,7 @@ const qsLikeOptionsStr = JSON.stringify(qsLikeOptions);
 
 /**
  * @param {SgNode} obj
+ * @return {Record<string, SgNode>}
  */
 function parseOptions(obj) {
 	/** @type {Record<string, SgNode>} */
@@ -32,6 +33,97 @@ function parseOptions(obj) {
 
 	return result;
 }
+
+/** @typedef {Record<string, unknown> | ((value: SgNode) => Record<string, unknown>|null) | null} ReplacementOptions */
+/** @typedef {({kind: string; options: ReplacementOptions})} Replacement */
+/** @typedef {({replacements: Replacement[]})} Replacer */
+/** @type {Record<string, Replacer>} */
+const replacements = {
+	indices: {
+		replacements: [
+			{
+				kind: 'false',
+				options: {
+					nestingSyntax: 'dot',
+					arrayRepeatSyntax: 'repeat',
+				},
+			},
+			{
+				kind: 'true',
+				options: {
+					nestingSyntax: 'js',
+				},
+			},
+		],
+	},
+	arrayFormat: {
+		replacements: [
+			{
+				kind: 'string',
+				options: (value) => {
+					const formatStr = value.child(1)?.text();
+					if (formatStr === 'repeat') {
+						return { arrayRepeatSyntax: 'repeat' };
+					} else if (formatStr === 'indices') {
+						return { arrayRepeat: false };
+					}
+					return { arrayRepeatSyntax: 'bracket' };
+				},
+			},
+		],
+	},
+	allowDots: {
+		replacements: [
+			{
+				kind: 'true',
+				options: {
+					nestingSyntax: 'js',
+				},
+			},
+			{
+				kind: 'false',
+				options: {
+					nestingSyntax: 'index',
+				},
+			},
+		],
+	},
+	parseArrays: {
+		replacements: [
+			{
+				kind: 'false',
+				options: {
+					arrayRepeat: false,
+				},
+			},
+			{
+				kind: 'true',
+				options: {
+					arrayRepeat: true,
+				},
+			},
+		],
+	},
+	delimiter: {
+		replacements: [
+			{
+				kind: 'string',
+				options: (value) => {
+					const delimiter = value.child(1)?.text();
+					if (delimiter) {
+						return { delimiter };
+					}
+					console.warn(
+						`Warning: encountered a delimiter we could not ` +
+							`transform. It will be dropped, so may need additional fixes ` +
+							`after this codemod executes`,
+					);
+					return null;
+				},
+			},
+		],
+	},
+};
 
 /**
  * @param {CodemodOptions} [options]
@@ -118,7 +210,7 @@ export default function (options) {
 					continue;
 				}
 
-				edits.push(func.replace('pq'));
+				let decodeResult = false;
 
 				if (args.length === 1) {
 					edits.push(args[0].replace(`${args[0].text()}, ${qsLikeOptionsStr}`));
@@ -128,36 +220,72 @@ export default function (options) {
 					/** @type {Record<string, unknown>} */
 					const newOptions = { ...qsLikeOptions };
 
-					if (opts.indices && opts.indices.kind() === 'false') {
-						newOptions.nestingSyntax = 'dot';
-						newOptions.arrayRepeatSyntax = 'repeat';
-					}
-
-					if (opts.arrayFormat && opts.arrayFormat.kind() === 'string') {
-						const arrayFormat = opts.arrayFormat.child(1)?.text();
-						if (arrayFormat === 'repeat') {
-							newOptions.arrayRepeatSyntax = 'repeat';
-						} else if (arrayFormat === 'indices') {
-							newOptions.arrayRepeat = false;
+					for (const [key, val] of Object.entries(opts)) {
+						// Special case for the `encode` option if it is `false`, as we
+						// need to wrap the entire result with `decodeURIComponent`
+						if (key === 'encode' && val.kind() === 'false') {
+							decodeResult = true;
+							continue;
 						}
-					}
 
-					if (opts.allowDots && opts.allowDots.kind() === 'true') {
-						newOptions.nestingSyntax = 'dot';
-					}
+						const replacer = replacements[key];
 
-					if (opts.parseArrays && opts.parseArrays.kind() === 'false') {
-						newOptions.arrayRepeat = false;
-					}
+						if (!replacer) {
+							console.warn(
+								`Warning: encountered an unknown option. ` +
+									`The option ("${key}") will be dropped, so may need ` +
+									`additional fixes after this codemod executes.`,
+							);
+							continue;
+						}
 
-					if (opts.delimiter && opts.delimiter.kind() === 'string') {
-						const delimiter = opts.delimiter.child(1)?.text();
-						if (delimiter) {
-							newOptions.delimiter = delimiter;
+						let foundReplacement = false;
+						for (const replacement of replacer.replacements) {
+							if (replacement.kind === val.kind()) {
+								const replacementOpts =
+									typeof replacement.options === 'function'
+										? replacement.options(val)
+										: replacement.options;
+								foundReplacement = true;
+								if (replacementOpts) {
+									for (const optKey in replacementOpts) {
+										newOptions[optKey] = replacementOpts[optKey];
+									}
+								}
+							}
+						}
+
+						if (!foundReplacement) {
+							console.warn(
+								`Warning: encountered an option with a value we could not parse. ` +
+									`The option ("${key}") has a computed value or an unexpected ` +
+									`type. It will be dropped, so may need additional fixes ` +
+									`after this codemod executes.`,
+							);
 						}
 					}
 
 					edits.push(args[2].replace(JSON.stringify(newOptions)));
+				}
+
+				if (decodeResult) {
+					console.warn(
+						`Warning: the "encode: false" option will be ` +
+							`replaced by a call to decodeURIComponent`,
+					);
+					edits.push(func.replace('decodeURIComponent(pq'));
+
+					const argsChildren = expr.field('arguments')?.children();
+
+					if (argsChildren) {
+						const lastArgsChild = argsChildren[argsChildren.length - 1];
+
+						if (lastArgsChild.kind() === ')') {
+							edits.push(lastArgsChild.replace(`${lastArgsChild.text()})`));
+						}
+					}
+				} else {
+					edits.push(func.replace('pq'));
 				}
 			}
 

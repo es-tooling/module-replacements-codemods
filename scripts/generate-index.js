@@ -7,7 +7,16 @@ const folders = fs
 	.readdirSync('./codemods')
 	.filter((f) => fs.statSync(`./codemods/${f}`).isDirectory());
 
-let obj = `export const codemods = {\n`;
+let obj = `
+/**
+ * @typedef {import('./types.js').Codemod} Codemod
+ * @typedef {import('./types.js').CodemodOptions} CodemodOptions
+ */
+
+/**
+ * @type {Record<string, (options: CodemodOptions) => Codemod>}
+ */
+export const codemods = {\n`;
 let imports = ``;
 const seenImports = new Set();
 

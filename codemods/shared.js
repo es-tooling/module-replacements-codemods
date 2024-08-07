@@ -2,6 +2,7 @@
  * type definition for return type object
  * @typedef {Object} RemoveImport
  * @property {string} identifier - the name of the module as it was imported or required. for example, `keys` in `import keys from 'object-keys'`
+ * @property {boolean} dirtyFlag - whether imports were removed or not
  * @typedef {Object} ReplaceDefaultImport
  * @property {string} identifier - the name of the module as it was imported or required. for example, `keys` in `import keys from 'object-keys'`
  */
@@ -78,7 +79,13 @@ export function removeImport(name, root, j) {
 	requireAssignment.remove();
 	sideEffectRequireExpression.remove();
 
-	return { identifier };
+	const dirtyFlag =
+		importDeclaration.length > 0 ||
+		requireDeclaration.length > 0 ||
+		requireAssignment.length > 0 ||
+		sideEffectRequireExpression.length > 0;
+
+	return { identifier, dirtyFlag };
 }
 
 /**
@@ -305,9 +312,14 @@ export function replaceDefaultImport(name, newSpecifier, newName, root, j) {
  * @returns {boolean} - true if the method was found and transformed, false otherwise
  */
 export function transformArrayMethod(method, identifierName, root, j) {
-	const { identifier } = removeImport(method, root, j);
+	const { identifier, dirtyFlag: importDirtyFlag } = removeImport(
+		method,
+		root,
+		j,
+	);
 
-	let dirtyFlag = false;
+	let dirtyFlag = importDirtyFlag;
+
 	root
 		.find(j.CallExpression, {
 			callee: {

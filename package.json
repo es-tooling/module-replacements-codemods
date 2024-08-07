@@ -8,7 +8,6 @@
     "test:watch": "node --test --watch test/codemod.test.js",
     "format": "biome format --write **/*",
     "lint:types": "tsc",
-    "postinstall": "npm run which",
     "which": "node scripts/which.js",
     "prepublishOnly": "node scripts/generate-index.js"
   },

@@ -144,6 +144,7 @@ import stringPrototypeTrimright from './codemods/string.prototype.trimright/inde
 import stringPrototypeTrimstart from './codemods/string.prototype.trimstart/index.js';
 import stringRaw from './codemods/string.raw/index.js';
 import symbolPrototypeDescription from './codemods/symbol.prototype.description/index.js';
+import traverse from './codemods/traverse/index.js';
 import typedArrayBuffer from './codemods/typed-array-buffer/index.js';
 import typedArrayByteLength from './codemods/typed-array-byte-length/index.js';
 import typedArrayByteOffset from './codemods/typed-array-byte-offset/index.js';
@@ -298,6 +299,7 @@ export const codemods = {
   "string.prototype.trimstart": stringPrototypeTrimstart,
   "string.raw": stringRaw,
   "symbol.prototype.description": symbolPrototypeDescription,
+  "traverse": traverse,
   "typed-array-buffer": typedArrayBuffer,
   "typed-array-byte-length": typedArrayByteLength,
   "typed-array-byte-offset": typedArrayByteOffset,

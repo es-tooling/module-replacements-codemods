@@ -152,6 +152,14 @@ import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
 import xtend from './codemods/xtend/index.js';
 
+/**
+ * @typedef {import('./types.js').Codemod} Codemod
+ * @typedef {import('./types.js').CodemodOptions} CodemodOptions
+ */
+
+/**
+ * @type {Record<string, (options: CodemodOptions) => Codemod>}
+ */
 export const codemods = {
   "abort-controller": abortController,
   "array-buffer-byte-length": arrayBufferByteLength,

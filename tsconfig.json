@@ -8,9 +8,14 @@
     "strict": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    "skipLibCheck": true,
-    "noEmit": true
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./types",
+    "skipLibCheck": true
   },
-  "include": ["types.ts", "**/*.js"],
-  "exclude": ["test/fixtures/**/*"]
+  "include": ["types.ts", "index.js", "codemods/*.js"],
+  "exclude": [
+    "test/fixtures/**/*",
+    "scripts/*.js"
+  ]
 }

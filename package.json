@@ -1,6 +1,6 @@
 {
   "name": "module-replacements-codemods",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "type": "module",
   "scripts": {
@@ -9,10 +9,13 @@
     "format": "biome format --write **/*",
     "lint:types": "tsc",
     "which": "node scripts/which.js",
-    "prepublishOnly": "node scripts/generate-index.js"
+    "prepublishOnly": "npm run lint:types && node scripts/generate-index.js"
   },
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./index.js"
+    }
   },
   "keywords": [],
   "author": "",
@@ -22,6 +25,7 @@
     "jscodeshift": "^0.16.1"
   },
   "files": [
+    "types",
     "index.js",
     "CONSTANTS.js",
     "codemods"

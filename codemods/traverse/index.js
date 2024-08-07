@@ -39,7 +39,7 @@ export default function (options) {
 					}
 				});
 
-			return root.toSource();
+			return root.toSource({ quote: 'single' });
 		},
 	};
 }

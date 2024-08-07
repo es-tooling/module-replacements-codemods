@@ -13,9 +13,14 @@
  * @param {Module} importModule
  * @param {Module} replacementModule
  */
-export function replaceImport(j: import("jscodeshift/src/core.js").JSCodeshift, root: import("jscodeshift").Collection<any>, importModule: Module, replacementModule: Module): boolean;
+export function replaceImport(
+	j: import('jscodeshift/src/core.js').JSCodeshift,
+	root: import('jscodeshift').Collection<any>,
+	importModule: Module,
+	replacementModule: Module,
+): boolean;
 export type Module = {
-    moduleName: string;
-    importName: string;
-    cjsNamespace: boolean | null;
+	moduleName: string;
+	importName: string;
+	cjsNamespace: boolean | null;
 };

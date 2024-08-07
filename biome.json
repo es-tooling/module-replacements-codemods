@@ -4,7 +4,7 @@
     "enabled": true
   },
   "files": {
-    "ignore": ["node_modules/*", "test/fixtures/*"]
+    "ignore": ["node_modules/*", "test/fixtures/*", "types/*"]
   },
   "javascript": {
     "formatter": {

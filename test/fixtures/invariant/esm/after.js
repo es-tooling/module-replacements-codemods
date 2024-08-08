@@ -1,4 +1,4 @@
-import invariant from "tiny-invariant";
+import { invariant } from "tiny-invariant";
 
 const a = 10;
 

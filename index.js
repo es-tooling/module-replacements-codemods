@@ -109,6 +109,7 @@ import numberPrototypeToexponential from './codemods/number.prototype.toexponent
 import objectAssign from './codemods/object-assign/index.js';
 import objectIs from './codemods/object-is/index.js';
 import objectKeys from './codemods/object-keys/index.js';
+import objectAssign2 from './codemods/object.assign/index.js';
 import objectDefineproperties from './codemods/object.defineproperties/index.js';
 import objectEntries from './codemods/object.entries/index.js';
 import objectFromentries from './codemods/object.fromentries/index.js';
@@ -274,6 +275,7 @@ export const codemods = {
   "object-assign": objectAssign,
   "object-is": objectIs,
   "object-keys": objectKeys,
+  "object.assign": objectAssign2,
   "object.defineproperties": objectDefineproperties,
   "object.entries": objectEntries,
   "object.fromentries": objectFromentries,

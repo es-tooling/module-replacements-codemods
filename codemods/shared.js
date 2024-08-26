@@ -21,8 +21,8 @@ export function removeImport(name, root, j) {
 		},
 	});
 
-	const requireDeclaration = root.find(j.VariableDeclarator, {
-		init: {
+	const requireDeclaration = root
+		.find(j.CallExpression, {
 			callee: {
 				name: 'require',
 			},
@@ -31,8 +31,8 @@ export function removeImport(name, root, j) {
 					value: name,
 				},
 			],
-		},
-	});
+		})
+		.closest(j.VariableDeclarator);
 
 	// Require statements without declarations like `Object.is = require("object-is");`
 	const requireAssignment = root.find(j.AssignmentExpression, {

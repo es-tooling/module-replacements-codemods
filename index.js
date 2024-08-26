@@ -121,6 +121,7 @@ import parseint from './codemods/parseint/index.js';
 import promiseAllsettled from './codemods/promise.allsettled/index.js';
 import promiseAny from './codemods/promise.any/index.js';
 import promisePrototypeFinally from './codemods/promise.prototype.finally/index.js';
+import qs from './codemods/qs/index.js';
 import reflectGetprototypeof from './codemods/reflect.getprototypeof/index.js';
 import reflectOwnkeys from './codemods/reflect.ownkeys/index.js';
 import regexpPrototypeFlags from './codemods/regexp.prototype.flags/index.js';
@@ -285,6 +286,7 @@ export const codemods = {
   "promise.allsettled": promiseAllsettled,
   "promise.any": promiseAny,
   "promise.prototype.finally": promisePrototypeFinally,
+  "qs": qs,
   "reflect.getprototypeof": reflectGetprototypeof,
   "reflect.ownkeys": reflectOwnkeys,
   "regexp.prototype.flags": regexpPrototypeFlags,

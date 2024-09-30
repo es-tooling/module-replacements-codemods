@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import fs from 'node:fs';
-import assert from 'assert';
+import assert from 'node:assert';
 import { codemods } from '../index.js';
 
 describe('codemod', async () => {

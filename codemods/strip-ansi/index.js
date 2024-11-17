@@ -25,24 +25,29 @@ export default function (options) {
 
 			let importName = 'stripAnsi';
 
-			importDeclarations.forEach((declaration) => {
-				const name = declaration.value.specifiers?.[0].local?.name;
+			for (const declaration of importDeclarations.nodes()) {
+				const name = declaration.specifiers?.[0].local?.name;
 				if (name) {
 					importName = name;
 				}
-				declaration.value.source.value = 'node:util';
-				declaration.value.specifiers = [j.importSpecifier(j.identifier('stripVTControlCharacters'))];
+				declaration.source.value = 'node:util';
+				declaration.specifiers = [j.importSpecifier(j.identifier('stripVTControlCharacters'))];
 				dirtyFlag = true;
+			}
+
+			const callExpression = root.find(j.CallExpression, {
+				callee: {
+					type: 'Identifier',
+					name: importName,
+				},
 			});
 
-			root.find(j.CallExpression, {
-				callee: {
-					name: importName,
+			for (const expression of callExpression.nodes()) {
+				if (expression.callee.type === 'Identifier') {
+					expression.callee.name = 'stripVTControlCharacters';
+					dirtyFlag = true;
 				}
-			}).forEach((expression) => {
-				expression.value.callee.name = 'stripVTControlCharacters';
-				dirtyFlag = true;
-			});
+			}
 
 			return dirtyFlag ? root.toSource() : file.source;
 		},

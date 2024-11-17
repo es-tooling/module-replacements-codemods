@@ -61,11 +61,11 @@ import functionsHaveNames from './codemods/functions-have-names/index.js';
 import getSymbolDescription from './codemods/get-symbol-description/index.js';
 import global from './codemods/global/index.js';
 import gopd from './codemods/gopd/index.js';
-import has from './codemods/has/index.js';
 import hasOwnProp from './codemods/has-own-prop/index.js';
 import hasProto from './codemods/has-proto/index.js';
 import hasSymbols from './codemods/has-symbols/index.js';
 import hasTostringtag from './codemods/has-tostringtag/index.js';
+import has from './codemods/has/index.js';
 import hasown from './codemods/hasown/index.js';
 import indexOf from './codemods/index-of/index.js';
 import isArrayBuffer from './codemods/is-array-buffer/index.js';
@@ -76,8 +76,8 @@ import isEven from './codemods/is-even/index.js';
 import isNan from './codemods/is-nan/index.js';
 import isNegativeZero from './codemods/is-negative-zero/index.js';
 import isNpm from './codemods/is-npm/index.js';
-import isNumber from './codemods/is-number/index.js';
 import isNumberObject from './codemods/is-number-object/index.js';
+import isNumber from './codemods/is-number/index.js';
 import isOdd from './codemods/is-odd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
@@ -96,8 +96,8 @@ import mathClz32 from './codemods/math.clz32/index.js';
 import mathF16round from './codemods/math.f16round/index.js';
 import mathFround from './codemods/math.fround/index.js';
 import mathImul from './codemods/math.imul/index.js';
-import mathLog10 from './codemods/math.log10/index.js';
 import mathLog1p from './codemods/math.log1p/index.js';
+import mathLog10 from './codemods/math.log10/index.js';
 import mathSign from './codemods/math.sign/index.js';
 import md5 from './codemods/md5/index.js';
 import numberIsfinite from './codemods/number.isfinite/index.js';
@@ -146,6 +146,7 @@ import stringPrototypeTrimleft from './codemods/string.prototype.trimleft/index.
 import stringPrototypeTrimright from './codemods/string.prototype.trimright/index.js';
 import stringPrototypeTrimstart from './codemods/string.prototype.trimstart/index.js';
 import stringRaw from './codemods/string.raw/index.js';
+import stripAnsi from './codemods/strip-ansi/index.js';
 import symbolPrototypeDescription from './codemods/symbol.prototype.description/index.js';
 import traverse from './codemods/traverse/index.js';
 import typedArrayBuffer from './codemods/typed-array-buffer/index.js';
@@ -313,6 +314,7 @@ export const codemods = {
   "string.prototype.trimright": stringPrototypeTrimright,
   "string.prototype.trimstart": stringPrototypeTrimstart,
   "string.raw": stringRaw,
+  "strip-ansi": stripAnsi,
   "symbol.prototype.description": symbolPrototypeDescription,
   "traverse": traverse,
   "typed-array-buffer": typedArrayBuffer,

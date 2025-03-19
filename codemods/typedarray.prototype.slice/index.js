@@ -1,24 +1,16 @@
 import jscodeshift from 'jscodeshift';
-import {
-	removeImport,
-	transformInstanceMethod,
-	transformInstanceProperty,
-} from '../shared.js';
 import { ALL_TYPED_ARRAY_OBJECTS } from '../CONSTANTS.js';
+import { removeImport, transformInstanceMethod } from '../shared.js';
+
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
-
-/**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'typedarray.prototype.slice',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirty = false;

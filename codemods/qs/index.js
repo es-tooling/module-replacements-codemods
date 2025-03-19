@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
 
+/** @import { Codemod, CodemodOptions, Warning } from '../../types.js'} */
+/** @import { SgNode } from '@ast-grep/napi' */
+
 const qsLikeOptions = {
 	nesting: true,
 	nestingSyntax: 'js',
@@ -7,12 +10,6 @@ const qsLikeOptions = {
 	arrayRepeatSyntax: 'bracket',
 };
 const qsLikeOptionsStr = JSON.stringify(qsLikeOptions);
-
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- * @typedef {import('@ast-grep/napi').SgNode} SgNode
- */
 
 /**
  * @param {SgNode} obj
@@ -129,10 +126,13 @@ const replacements = {
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function (options = {}) {
 	return {
 		name: 'qs',
 		transform: ({ file }) => {
+			/** @type {Warning[]} */
+			const warnings = [];
+			let isDirty = false;
 			const ast = ts.parse(file.source);
 			const root = ast.root();
 			const imports = root.findAll({
@@ -165,8 +165,21 @@ export default function (options) {
 				const nameMatch = imp.getMatch('NAME');
 
 				if (nameMatch) {
-					importName = nameMatch.text();
-					edits.push(nameMatch.replace('pq'));
+					const namespaceImport = nameMatch.find({
+						rule: {
+							kind: 'identifier',
+							inside: {
+								kind: 'namespace_import',
+							},
+						},
+					});
+					if (namespaceImport) {
+						importName = namespaceImport.text();
+					} else {
+						importName = nameMatch.text();
+					}
+					edits.push(nameMatch.replace('* as pq'));
+					isDirty = true;
 				}
 
 				edits.push(source.replace(`${quoteType}picoquery${quoteType}`));
@@ -186,6 +199,7 @@ export default function (options) {
 					if (name) {
 						importName = name.text();
 						edits.push(name.replace('pq'));
+						isDirty = true;
 					}
 				}
 			}
@@ -231,11 +245,29 @@ export default function (options) {
 						const replacer = replacements[key];
 
 						if (!replacer) {
-							console.warn(
-								`Warning: encountered an unknown option. ` +
+							if (options.strict) {
+								return {
+									code: file.source,
+									meta: {
+										warnings: [
+											{
+												range: val.range(),
+												message: `Unknown option "${key}". Aborting codemod due to strict mode.`,
+												file: file.filename,
+											},
+										],
+									},
+								};
+							}
+
+							warnings.push({
+								range: val.range(),
+								message:
+									`encountered an unknown option. ` +
 									`The option ("${key}") will be dropped, so may need ` +
 									`additional fixes after this codemod executes.`,
-							);
+								file: file.filename,
+							});
 							continue;
 						}
 
@@ -256,12 +288,30 @@ export default function (options) {
 						}
 
 						if (!foundReplacement) {
-							console.warn(
-								`Warning: encountered an option with a value we could not parse. ` +
+							if (options.strict) {
+								return {
+									code: file.source,
+									meta: {
+										warnings: [
+											{
+												range: val.range(),
+												message: `Unexpected value for option "${key}". Aborting codemod due to strict mode.`,
+												file: file.filename,
+											},
+										],
+									},
+								};
+							}
+
+							warnings.push({
+								range: val.range(),
+								message:
+									`encountered an option with a value we could not parse. ` +
 									`The option ("${key}") has a computed value or an unexpected ` +
 									`type. It will be dropped, so may need additional fixes ` +
 									`after this codemod executes.`,
-							);
+								file: file.filename,
+							});
 						}
 					}
 
@@ -269,10 +319,14 @@ export default function (options) {
 				}
 
 				if (decodeResult) {
-					console.warn(
-						`Warning: the "encode: false" option will be ` +
+					warnings.push({
+						range: func.range(),
+						message:
+							`the "encode: false" option will be ` +
 							`replaced by a call to decodeURIComponent`,
-					);
+						file: file.filename,
+					});
+
 					edits.push(func.replace('decodeURIComponent(pq'));
 
 					const argsChildren = expr.field('arguments')?.children();
@@ -289,7 +343,13 @@ export default function (options) {
 				}
 			}
 
-			return root.commitEdits(edits);
+			return {
+				code: root.commitEdits(edits),
+				warnings,
+				replacements: {
+					...(isDirty ? { qs: 'picoquery' } : undefined),
+				},
+			};
 		},
 	};
 }

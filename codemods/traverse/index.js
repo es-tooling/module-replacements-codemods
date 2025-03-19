@@ -1,20 +1,18 @@
 import jscodeshift from 'jscodeshift';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'traverse',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
+
+			let dirty = false;
 
 			// Transform import declarations
 			root.find(j.ImportDeclaration).forEach((path) => {
@@ -23,6 +21,7 @@ export default function (options) {
 					path.node.source.value === 'traverse'
 				) {
 					path.node.source.value = 'neotraverse/legacy';
+					dirty = true;
 				}
 			});
 
@@ -36,10 +35,20 @@ export default function (options) {
 						path.node.arguments[0].value === 'traverse'
 					) {
 						path.node.arguments[0].value = 'neotraverse/legacy';
+						dirty = true;
 					}
 				});
 
-			return root.toSource({ quote: 'single' });
+			if (dirty) {
+				return {
+					code: root.toSource(options),
+					replacements: {
+						traverse: 'neotraverse',
+					},
+				};
+			}
+
+			return file.source;
 		},
 	};
 }

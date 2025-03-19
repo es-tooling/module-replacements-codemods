@@ -1,15 +1,11 @@
 import { ts } from '@ast-grep/napi';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'iterate-value',
 		transform: ({ file }) => {

@@ -1,6 +1,6 @@
 // THESE ARE FOR CJS IMPORTS
 const assert = require('assert');
-const traverse = require('neotraverse/legacy');
+const traverse = require("neotraverse/legacy");
 
 const obj = {
 	a: 1,

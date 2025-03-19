@@ -1,19 +1,15 @@
 import jscodeshift from 'jscodeshift';
-import { removeImport, transformMathPolyfill } from '../shared.js';
+import { removeImport } from '../shared.js';
+
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
-
-/**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'es-aggregate-error',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 

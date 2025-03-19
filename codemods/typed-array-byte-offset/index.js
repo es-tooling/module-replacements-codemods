@@ -2,19 +2,15 @@ import jscodeshift from 'jscodeshift';
 import { removeImport, transformInstanceProperty } from '../shared.js';
 import { ALL_TYPED_ARRAY_OBJECTS } from '../CONSTANTS.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod, CodemodOptions } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'typed-array-byte-offset',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirty = false;

@@ -1,19 +1,15 @@
 import jscodeshift from 'jscodeshift';
 import { transformMathPolyfill } from '../shared.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod, CodemodOptions } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'math.fround',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 

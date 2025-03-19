@@ -28,10 +28,7 @@ fs.mkdirSync(`./codemods/${name}`);
 fs.writeFileSync(
 	`./codemods/${name}/index.js`,
 	`
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod, CodemodOptions } from '../../types.js' **/
 
 /**
  * @param {CodemodOptions} [options]
@@ -40,7 +37,7 @@ fs.writeFileSync(
 export default function(options) {
   return {
     name: '${name}',
-    transform: ({ file }) => {
+    transform: ({ file, options }) => {
       return '';
     },
   }

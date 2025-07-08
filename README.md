@@ -90,12 +90,12 @@ The `transform` function is where you can implement your codemod magic. Feel fre
 Codemods are provided in the following structure:
 
 ```js
-import codemod from 'module-replacements-codemods/codemods/chalk/index.js'; // The default codemod we recommend
+import codemod from 'module-replacements-codemods/codemods/<package-to-replace>/index.js'; // The default codemod we recommend
 ```
 
 In case there are multiple replacement codemods for a package, the default codemod in the `<package-to-replace>/index.js` will be an our recommended replacement, but other codemods will be available under:
 
 ```js
-import codemod from 'module-replacements-codemods/codemods/chalk/picocolors/index.js';
-import codemod from 'module-replacements-codemods/codemods/chalk/<some-other-package>/index.js';
+import codemod from 'module-replacements-codemods/codemods/<package-to-replace>/<replacement-a>/index.js';
+import codemod from 'module-replacements-codemods/codemods/<package-to-replace>/<replacement-b>/index.js';
 ```

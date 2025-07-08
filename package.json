@@ -1,6 +1,6 @@
 {
   "name": "module-replacements-codemods",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
   "type": "module",
   "scripts": {
@@ -10,12 +10,6 @@
     "lint:types": "tsc",
     "which": "node scripts/which.js",
     "prepublishOnly": "npm run lint:types && node scripts/generate-index.js"
-  },
-  "exports": {
-    ".": {
-      "types": "./types/index.d.ts",
-      "default": "./index.js"
-    }
   },
   "keywords": [],
   "author": "",

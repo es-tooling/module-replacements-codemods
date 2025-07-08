@@ -71,6 +71,7 @@ A codemod is a function that gets passed an options object, and returns an objec
 export default function (options) {
   return {
     name: "foo-lib",
+    to: "native",
     transform: ({ file }) => {
       return file.source.replaceAll("foo", "bar");
     },
@@ -80,4 +81,21 @@ export default function (options) {
 
 The codemod's `name` should be equal to the name of the package that you're trying to replace. So if you're writing a codemod for `is-array-buffer`, the `name` of the codemod should be `is-array-buffer`.
 
+The codemod's `to` should be `"native"` in case it's being replaced with a built-in language replacement, or the name of the new package you're replacing it with.
+
 The `transform` function is where you can implement your codemod magic. Feel free to use whatever codemod tool you're comfortable with, [ast-grep](https://github.com/ast-grep/ast-grep), [jscodeshift](https://github.com/facebook/jscodeshift), etc. It gets passed the `file` with a `source` property which is a string containing the contents of the file, which you can use to perform transformations on. Make sure to return the changed file from the `transform` function.
+
+## For consumers of this project
+
+Codemods are provided in the following structure:
+
+```js
+import codemod from 'module-replacements-codemods/codemods/chalk/index.js'; // The default codemod we recommend
+```
+
+In case there are multiple replacement codemods for a package, the default codemod in the `<package-to-replace>/index.js` will be an our recommended replacement, but other codemods will be available under:
+
+```js
+import codemod from 'module-replacements-codemods/codemods/chalk/picocolors/index.js';
+import codemod from 'module-replacements-codemods/codemods/chalk/<some-other-package>/index.js';
+```

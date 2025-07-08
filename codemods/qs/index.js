@@ -132,6 +132,7 @@ const replacements = {
 export default function (options) {
 	return {
 		name: 'qs',
+		to: 'picoquery',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();

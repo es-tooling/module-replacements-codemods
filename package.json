@@ -1,6 +1,6 @@
 {
   "name": "module-replacements-codemods",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
   "type": "module",
   "scripts": {
@@ -9,13 +9,7 @@
     "format": "biome format --write **/*",
     "lint:types": "tsc",
     "which": "node scripts/which.js",
-    "prepublishOnly": "npm run lint:types && node scripts/generate-index.js"
-  },
-  "exports": {
-    ".": {
-      "types": "./types/index.d.ts",
-      "default": "./index.js"
-    }
+    "prepublishOnly": "npm run lint:types && node scripts/generate-index.js && node scripts/generate-pkg-exports.js"
   },
   "keywords": [],
   "author": "",
@@ -36,5 +30,647 @@
     "@types/node": "^20.14.11",
     "module-replacements": "^2.2.0",
     "typescript": "~5.5.3"
+  },
+  "exports": {
+    "./codemods/abort-controller/index.js": {
+      "types": "./types/codemods/abort-controller/index.d.ts",
+      "default": "./codemods/abort-controller/index.js"
+    },
+    "./codemods/array-buffer-byte-length/index.js": {
+      "types": "./types/codemods/array-buffer-byte-length/index.d.ts",
+      "default": "./codemods/array-buffer-byte-length/index.js"
+    },
+    "./codemods/array-every/index.js": {
+      "types": "./types/codemods/array-every/index.d.ts",
+      "default": "./codemods/array-every/index.js"
+    },
+    "./codemods/array-includes/index.js": {
+      "types": "./types/codemods/array-includes/index.d.ts",
+      "default": "./codemods/array-includes/index.js"
+    },
+    "./codemods/array-map/index.js": {
+      "types": "./types/codemods/array-map/index.d.ts",
+      "default": "./codemods/array-map/index.js"
+    },
+    "./codemods/array.from/index.js": {
+      "types": "./types/codemods/array.from/index.d.ts",
+      "default": "./codemods/array.from/index.js"
+    },
+    "./codemods/array.of/index.js": {
+      "types": "./types/codemods/array.of/index.d.ts",
+      "default": "./codemods/array.of/index.js"
+    },
+    "./codemods/array.prototype.at/index.js": {
+      "types": "./types/codemods/array.prototype.at/index.d.ts",
+      "default": "./codemods/array.prototype.at/index.js"
+    },
+    "./codemods/array.prototype.concat/index.js": {
+      "types": "./types/codemods/array.prototype.concat/index.d.ts",
+      "default": "./codemods/array.prototype.concat/index.js"
+    },
+    "./codemods/array.prototype.copywithin/index.js": {
+      "types": "./types/codemods/array.prototype.copywithin/index.d.ts",
+      "default": "./codemods/array.prototype.copywithin/index.js"
+    },
+    "./codemods/array.prototype.entries/index.js": {
+      "types": "./types/codemods/array.prototype.entries/index.d.ts",
+      "default": "./codemods/array.prototype.entries/index.js"
+    },
+    "./codemods/array.prototype.every/index.js": {
+      "types": "./types/codemods/array.prototype.every/index.d.ts",
+      "default": "./codemods/array.prototype.every/index.js"
+    },
+    "./codemods/array.prototype.filter/index.js": {
+      "types": "./types/codemods/array.prototype.filter/index.d.ts",
+      "default": "./codemods/array.prototype.filter/index.js"
+    },
+    "./codemods/array.prototype.find/index.js": {
+      "types": "./types/codemods/array.prototype.find/index.d.ts",
+      "default": "./codemods/array.prototype.find/index.js"
+    },
+    "./codemods/array.prototype.findindex/index.js": {
+      "types": "./types/codemods/array.prototype.findindex/index.d.ts",
+      "default": "./codemods/array.prototype.findindex/index.js"
+    },
+    "./codemods/array.prototype.findlast/index.js": {
+      "types": "./types/codemods/array.prototype.findlast/index.d.ts",
+      "default": "./codemods/array.prototype.findlast/index.js"
+    },
+    "./codemods/array.prototype.findlastindex/index.js": {
+      "types": "./types/codemods/array.prototype.findlastindex/index.d.ts",
+      "default": "./codemods/array.prototype.findlastindex/index.js"
+    },
+    "./codemods/array.prototype.flat/index.js": {
+      "types": "./types/codemods/array.prototype.flat/index.d.ts",
+      "default": "./codemods/array.prototype.flat/index.js"
+    },
+    "./codemods/array.prototype.flatmap/index.js": {
+      "types": "./types/codemods/array.prototype.flatmap/index.d.ts",
+      "default": "./codemods/array.prototype.flatmap/index.js"
+    },
+    "./codemods/array.prototype.foreach/index.js": {
+      "types": "./types/codemods/array.prototype.foreach/index.d.ts",
+      "default": "./codemods/array.prototype.foreach/index.js"
+    },
+    "./codemods/array.prototype.indexof/index.js": {
+      "types": "./types/codemods/array.prototype.indexof/index.d.ts",
+      "default": "./codemods/array.prototype.indexof/index.js"
+    },
+    "./codemods/array.prototype.join/index.js": {
+      "types": "./types/codemods/array.prototype.join/index.d.ts",
+      "default": "./codemods/array.prototype.join/index.js"
+    },
+    "./codemods/array.prototype.keys/index.js": {
+      "types": "./types/codemods/array.prototype.keys/index.d.ts",
+      "default": "./codemods/array.prototype.keys/index.js"
+    },
+    "./codemods/array.prototype.lastindexof/index.js": {
+      "types": "./types/codemods/array.prototype.lastindexof/index.d.ts",
+      "default": "./codemods/array.prototype.lastindexof/index.js"
+    },
+    "./codemods/array.prototype.map/index.js": {
+      "types": "./types/codemods/array.prototype.map/index.d.ts",
+      "default": "./codemods/array.prototype.map/index.js"
+    },
+    "./codemods/array.prototype.push/index.js": {
+      "types": "./types/codemods/array.prototype.push/index.d.ts",
+      "default": "./codemods/array.prototype.push/index.js"
+    },
+    "./codemods/array.prototype.reduce/index.js": {
+      "types": "./types/codemods/array.prototype.reduce/index.d.ts",
+      "default": "./codemods/array.prototype.reduce/index.js"
+    },
+    "./codemods/array.prototype.reduceright/index.js": {
+      "types": "./types/codemods/array.prototype.reduceright/index.d.ts",
+      "default": "./codemods/array.prototype.reduceright/index.js"
+    },
+    "./codemods/array.prototype.slice/index.js": {
+      "types": "./types/codemods/array.prototype.slice/index.d.ts",
+      "default": "./codemods/array.prototype.slice/index.js"
+    },
+    "./codemods/array.prototype.some/index.js": {
+      "types": "./types/codemods/array.prototype.some/index.d.ts",
+      "default": "./codemods/array.prototype.some/index.js"
+    },
+    "./codemods/array.prototype.splice/index.js": {
+      "types": "./types/codemods/array.prototype.splice/index.d.ts",
+      "default": "./codemods/array.prototype.splice/index.js"
+    },
+    "./codemods/array.prototype.toreversed/index.js": {
+      "types": "./types/codemods/array.prototype.toreversed/index.d.ts",
+      "default": "./codemods/array.prototype.toreversed/index.js"
+    },
+    "./codemods/array.prototype.tosorted/index.js": {
+      "types": "./types/codemods/array.prototype.tosorted/index.d.ts",
+      "default": "./codemods/array.prototype.tosorted/index.js"
+    },
+    "./codemods/array.prototype.tospliced/index.js": {
+      "types": "./types/codemods/array.prototype.tospliced/index.d.ts",
+      "default": "./codemods/array.prototype.tospliced/index.js"
+    },
+    "./codemods/array.prototype.unshift/index.js": {
+      "types": "./types/codemods/array.prototype.unshift/index.d.ts",
+      "default": "./codemods/array.prototype.unshift/index.js"
+    },
+    "./codemods/array.prototype.values/index.js": {
+      "types": "./types/codemods/array.prototype.values/index.d.ts",
+      "default": "./codemods/array.prototype.values/index.js"
+    },
+    "./codemods/array.prototype.with/index.js": {
+      "types": "./types/codemods/array.prototype.with/index.d.ts",
+      "default": "./codemods/array.prototype.with/index.js"
+    },
+    "./codemods/arraybuffer.prototype.slice/index.js": {
+      "types": "./types/codemods/arraybuffer.prototype.slice/index.d.ts",
+      "default": "./codemods/arraybuffer.prototype.slice/index.js"
+    },
+    "./codemods/chalk/index.js": {
+      "types": "./types/codemods/chalk/index.d.ts",
+      "default": "./codemods/chalk/index.js"
+    },
+    "./codemods/clone-regexp/index.js": {
+      "types": "./types/codemods/clone-regexp/index.d.ts",
+      "default": "./codemods/clone-regexp/index.js"
+    },
+    "./codemods/concat-map/index.js": {
+      "types": "./types/codemods/concat-map/index.d.ts",
+      "default": "./codemods/concat-map/index.js"
+    },
+    "./codemods/data-view-buffer/index.js": {
+      "types": "./types/codemods/data-view-buffer/index.d.ts",
+      "default": "./codemods/data-view-buffer/index.js"
+    },
+    "./codemods/data-view-byte-length/index.js": {
+      "types": "./types/codemods/data-view-byte-length/index.d.ts",
+      "default": "./codemods/data-view-byte-length/index.js"
+    },
+    "./codemods/data-view-byte-offset/index.js": {
+      "types": "./types/codemods/data-view-byte-offset/index.d.ts",
+      "default": "./codemods/data-view-byte-offset/index.js"
+    },
+    "./codemods/date/index.js": {
+      "types": "./types/codemods/date/index.d.ts",
+      "default": "./codemods/date/index.js"
+    },
+    "./codemods/deep-equal/dequal/index.js": {
+      "types": "./types/codemods/deep-equal/dequal/index.d.ts",
+      "default": "./codemods/deep-equal/dequal/index.js"
+    },
+    "./codemods/deep-equal/index.js": {
+      "types": "./types/codemods/deep-equal/index.d.ts",
+      "default": "./codemods/deep-equal/index.js"
+    },
+    "./codemods/define-properties/index.js": {
+      "types": "./types/codemods/define-properties/index.d.ts",
+      "default": "./codemods/define-properties/index.js"
+    },
+    "./codemods/error-cause/index.js": {
+      "types": "./types/codemods/error-cause/index.d.ts",
+      "default": "./codemods/error-cause/index.js"
+    },
+    "./codemods/es-aggregate-error/index.js": {
+      "types": "./types/codemods/es-aggregate-error/index.d.ts",
+      "default": "./codemods/es-aggregate-error/index.js"
+    },
+    "./codemods/es-define-property/index.js": {
+      "types": "./types/codemods/es-define-property/index.d.ts",
+      "default": "./codemods/es-define-property/index.js"
+    },
+    "./codemods/es-errors/index.js": {
+      "types": "./types/codemods/es-errors/index.d.ts",
+      "default": "./codemods/es-errors/index.js"
+    },
+    "./codemods/es-get-iterator/index.js": {
+      "types": "./types/codemods/es-get-iterator/index.d.ts",
+      "default": "./codemods/es-get-iterator/index.js"
+    },
+    "./codemods/es-set-tostringtag/index.js": {
+      "types": "./types/codemods/es-set-tostringtag/index.d.ts",
+      "default": "./codemods/es-set-tostringtag/index.js"
+    },
+    "./codemods/es-shim-unscopables/index.js": {
+      "types": "./types/codemods/es-shim-unscopables/index.d.ts",
+      "default": "./codemods/es-shim-unscopables/index.js"
+    },
+    "./codemods/es-string-html-methods/index.js": {
+      "types": "./types/codemods/es-string-html-methods/index.d.ts",
+      "default": "./codemods/es-string-html-methods/index.js"
+    },
+    "./codemods/filter-array/index.js": {
+      "types": "./types/codemods/filter-array/index.d.ts",
+      "default": "./codemods/filter-array/index.js"
+    },
+    "./codemods/for-each/index.js": {
+      "types": "./types/codemods/for-each/index.d.ts",
+      "default": "./codemods/for-each/index.js"
+    },
+    "./codemods/function-bind/index.js": {
+      "types": "./types/codemods/function-bind/index.d.ts",
+      "default": "./codemods/function-bind/index.js"
+    },
+    "./codemods/function.prototype.name/index.js": {
+      "types": "./types/codemods/function.prototype.name/index.d.ts",
+      "default": "./codemods/function.prototype.name/index.js"
+    },
+    "./codemods/functions-have-names/index.js": {
+      "types": "./types/codemods/functions-have-names/index.d.ts",
+      "default": "./codemods/functions-have-names/index.js"
+    },
+    "./codemods/get-symbol-description/index.js": {
+      "types": "./types/codemods/get-symbol-description/index.d.ts",
+      "default": "./codemods/get-symbol-description/index.js"
+    },
+    "./codemods/global/index.js": {
+      "types": "./types/codemods/global/index.d.ts",
+      "default": "./codemods/global/index.js"
+    },
+    "./codemods/gopd/index.js": {
+      "types": "./types/codemods/gopd/index.d.ts",
+      "default": "./codemods/gopd/index.js"
+    },
+    "./codemods/has-own-prop/index.js": {
+      "types": "./types/codemods/has-own-prop/index.d.ts",
+      "default": "./codemods/has-own-prop/index.js"
+    },
+    "./codemods/has-proto/index.js": {
+      "types": "./types/codemods/has-proto/index.d.ts",
+      "default": "./codemods/has-proto/index.js"
+    },
+    "./codemods/has-symbols/index.js": {
+      "types": "./types/codemods/has-symbols/index.d.ts",
+      "default": "./codemods/has-symbols/index.js"
+    },
+    "./codemods/has-tostringtag/index.js": {
+      "types": "./types/codemods/has-tostringtag/index.d.ts",
+      "default": "./codemods/has-tostringtag/index.js"
+    },
+    "./codemods/has/index.js": {
+      "types": "./types/codemods/has/index.d.ts",
+      "default": "./codemods/has/index.js"
+    },
+    "./codemods/hasown/index.js": {
+      "types": "./types/codemods/hasown/index.d.ts",
+      "default": "./codemods/hasown/index.js"
+    },
+    "./codemods/index-of/index.js": {
+      "types": "./types/codemods/index-of/index.d.ts",
+      "default": "./codemods/index-of/index.js"
+    },
+    "./codemods/is-array-buffer/index.js": {
+      "types": "./types/codemods/is-array-buffer/index.d.ts",
+      "default": "./codemods/is-array-buffer/index.js"
+    },
+    "./codemods/is-boolean-object/index.js": {
+      "types": "./types/codemods/is-boolean-object/index.d.ts",
+      "default": "./codemods/is-boolean-object/index.js"
+    },
+    "./codemods/is-builtin-module/index.js": {
+      "types": "./types/codemods/is-builtin-module/index.d.ts",
+      "default": "./codemods/is-builtin-module/index.js"
+    },
+    "./codemods/is-date-object/index.js": {
+      "types": "./types/codemods/is-date-object/index.d.ts",
+      "default": "./codemods/is-date-object/index.js"
+    },
+    "./codemods/is-even/index.js": {
+      "types": "./types/codemods/is-even/index.d.ts",
+      "default": "./codemods/is-even/index.js"
+    },
+    "./codemods/is-nan/index.js": {
+      "types": "./types/codemods/is-nan/index.d.ts",
+      "default": "./codemods/is-nan/index.js"
+    },
+    "./codemods/is-negative-zero/index.js": {
+      "types": "./types/codemods/is-negative-zero/index.d.ts",
+      "default": "./codemods/is-negative-zero/index.js"
+    },
+    "./codemods/is-npm/index.js": {
+      "types": "./types/codemods/is-npm/index.d.ts",
+      "default": "./codemods/is-npm/index.js"
+    },
+    "./codemods/is-number-object/index.js": {
+      "types": "./types/codemods/is-number-object/index.d.ts",
+      "default": "./codemods/is-number-object/index.js"
+    },
+    "./codemods/is-number/index.js": {
+      "types": "./types/codemods/is-number/index.d.ts",
+      "default": "./codemods/is-number/index.js"
+    },
+    "./codemods/is-odd/index.js": {
+      "types": "./types/codemods/is-odd/index.d.ts",
+      "default": "./codemods/is-odd/index.js"
+    },
+    "./codemods/is-plain-object/index.js": {
+      "types": "./types/codemods/is-plain-object/index.d.ts",
+      "default": "./codemods/is-plain-object/index.js"
+    },
+    "./codemods/is-primitive/index.js": {
+      "types": "./types/codemods/is-primitive/index.d.ts",
+      "default": "./codemods/is-primitive/index.js"
+    },
+    "./codemods/is-regexp/index.js": {
+      "types": "./types/codemods/is-regexp/index.d.ts",
+      "default": "./codemods/is-regexp/index.js"
+    },
+    "./codemods/is-string/index.js": {
+      "types": "./types/codemods/is-string/index.d.ts",
+      "default": "./codemods/is-string/index.js"
+    },
+    "./codemods/is-travis/index.js": {
+      "types": "./types/codemods/is-travis/index.d.ts",
+      "default": "./codemods/is-travis/index.js"
+    },
+    "./codemods/is-whitespace/index.js": {
+      "types": "./types/codemods/is-whitespace/index.d.ts",
+      "default": "./codemods/is-whitespace/index.js"
+    },
+    "./codemods/is-windows/index.js": {
+      "types": "./types/codemods/is-windows/index.d.ts",
+      "default": "./codemods/is-windows/index.js"
+    },
+    "./codemods/iterate-value/index.js": {
+      "types": "./types/codemods/iterate-value/index.d.ts",
+      "default": "./codemods/iterate-value/index.js"
+    },
+    "./codemods/last-index-of/index.js": {
+      "types": "./types/codemods/last-index-of/index.d.ts",
+      "default": "./codemods/last-index-of/index.js"
+    },
+    "./codemods/left-pad/index.js": {
+      "types": "./types/codemods/left-pad/index.d.ts",
+      "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/math.acosh/index.js": {
+      "types": "./types/codemods/math.acosh/index.d.ts",
+      "default": "./codemods/math.acosh/index.js"
+    },
+    "./codemods/math.atanh/index.js": {
+      "types": "./types/codemods/math.atanh/index.d.ts",
+      "default": "./codemods/math.atanh/index.js"
+    },
+    "./codemods/math.cbrt/index.js": {
+      "types": "./types/codemods/math.cbrt/index.d.ts",
+      "default": "./codemods/math.cbrt/index.js"
+    },
+    "./codemods/math.clz32/index.js": {
+      "types": "./types/codemods/math.clz32/index.d.ts",
+      "default": "./codemods/math.clz32/index.js"
+    },
+    "./codemods/math.f16round/index.js": {
+      "types": "./types/codemods/math.f16round/index.d.ts",
+      "default": "./codemods/math.f16round/index.js"
+    },
+    "./codemods/math.fround/index.js": {
+      "types": "./types/codemods/math.fround/index.d.ts",
+      "default": "./codemods/math.fround/index.js"
+    },
+    "./codemods/math.imul/index.js": {
+      "types": "./types/codemods/math.imul/index.d.ts",
+      "default": "./codemods/math.imul/index.js"
+    },
+    "./codemods/math.log10/index.js": {
+      "types": "./types/codemods/math.log10/index.d.ts",
+      "default": "./codemods/math.log10/index.js"
+    },
+    "./codemods/math.log1p/index.js": {
+      "types": "./types/codemods/math.log1p/index.d.ts",
+      "default": "./codemods/math.log1p/index.js"
+    },
+    "./codemods/math.sign/index.js": {
+      "types": "./types/codemods/math.sign/index.d.ts",
+      "default": "./codemods/math.sign/index.js"
+    },
+    "./codemods/md5/index.js": {
+      "types": "./types/codemods/md5/index.d.ts",
+      "default": "./codemods/md5/index.js"
+    },
+    "./codemods/number.isfinite/index.js": {
+      "types": "./types/codemods/number.isfinite/index.d.ts",
+      "default": "./codemods/number.isfinite/index.js"
+    },
+    "./codemods/number.isinteger/index.js": {
+      "types": "./types/codemods/number.isinteger/index.d.ts",
+      "default": "./codemods/number.isinteger/index.js"
+    },
+    "./codemods/number.isnan/index.js": {
+      "types": "./types/codemods/number.isnan/index.d.ts",
+      "default": "./codemods/number.isnan/index.js"
+    },
+    "./codemods/number.issafeinteger/index.js": {
+      "types": "./types/codemods/number.issafeinteger/index.d.ts",
+      "default": "./codemods/number.issafeinteger/index.js"
+    },
+    "./codemods/number.parsefloat/index.js": {
+      "types": "./types/codemods/number.parsefloat/index.d.ts",
+      "default": "./codemods/number.parsefloat/index.js"
+    },
+    "./codemods/number.parseint/index.js": {
+      "types": "./types/codemods/number.parseint/index.d.ts",
+      "default": "./codemods/number.parseint/index.js"
+    },
+    "./codemods/number.prototype.toexponential/index.js": {
+      "types": "./types/codemods/number.prototype.toexponential/index.d.ts",
+      "default": "./codemods/number.prototype.toexponential/index.js"
+    },
+    "./codemods/object-assign/index.js": {
+      "types": "./types/codemods/object-assign/index.d.ts",
+      "default": "./codemods/object-assign/index.js"
+    },
+    "./codemods/object-is/index.js": {
+      "types": "./types/codemods/object-is/index.d.ts",
+      "default": "./codemods/object-is/index.js"
+    },
+    "./codemods/object-keys/index.js": {
+      "types": "./types/codemods/object-keys/index.d.ts",
+      "default": "./codemods/object-keys/index.js"
+    },
+    "./codemods/object.assign/index.js": {
+      "types": "./types/codemods/object.assign/index.d.ts",
+      "default": "./codemods/object.assign/index.js"
+    },
+    "./codemods/object.defineproperties/index.js": {
+      "types": "./types/codemods/object.defineproperties/index.d.ts",
+      "default": "./codemods/object.defineproperties/index.js"
+    },
+    "./codemods/object.entries/index.js": {
+      "types": "./types/codemods/object.entries/index.d.ts",
+      "default": "./codemods/object.entries/index.js"
+    },
+    "./codemods/object.fromentries/index.js": {
+      "types": "./types/codemods/object.fromentries/index.d.ts",
+      "default": "./codemods/object.fromentries/index.js"
+    },
+    "./codemods/object.getprototypeof/index.js": {
+      "types": "./types/codemods/object.getprototypeof/index.d.ts",
+      "default": "./codemods/object.getprototypeof/index.js"
+    },
+    "./codemods/object.hasown/index.js": {
+      "types": "./types/codemods/object.hasown/index.d.ts",
+      "default": "./codemods/object.hasown/index.js"
+    },
+    "./codemods/object.keys/index.js": {
+      "types": "./types/codemods/object.keys/index.d.ts",
+      "default": "./codemods/object.keys/index.js"
+    },
+    "./codemods/object.values/index.js": {
+      "types": "./types/codemods/object.values/index.d.ts",
+      "default": "./codemods/object.values/index.js"
+    },
+    "./codemods/pad-left/index.js": {
+      "types": "./types/codemods/pad-left/index.d.ts",
+      "default": "./codemods/pad-left/index.js"
+    },
+    "./codemods/parseint/index.js": {
+      "types": "./types/codemods/parseint/index.d.ts",
+      "default": "./codemods/parseint/index.js"
+    },
+    "./codemods/promise.allsettled/index.js": {
+      "types": "./types/codemods/promise.allsettled/index.d.ts",
+      "default": "./codemods/promise.allsettled/index.js"
+    },
+    "./codemods/promise.any/index.js": {
+      "types": "./types/codemods/promise.any/index.d.ts",
+      "default": "./codemods/promise.any/index.js"
+    },
+    "./codemods/promise.prototype.finally/index.js": {
+      "types": "./types/codemods/promise.prototype.finally/index.d.ts",
+      "default": "./codemods/promise.prototype.finally/index.js"
+    },
+    "./codemods/qs/index.js": {
+      "types": "./types/codemods/qs/index.d.ts",
+      "default": "./codemods/qs/index.js"
+    },
+    "./codemods/qs/picoquery/index.js": {
+      "types": "./types/codemods/qs/picoquery/index.d.ts",
+      "default": "./codemods/qs/picoquery/index.js"
+    },
+    "./codemods/reflect.getprototypeof/index.js": {
+      "types": "./types/codemods/reflect.getprototypeof/index.d.ts",
+      "default": "./codemods/reflect.getprototypeof/index.js"
+    },
+    "./codemods/reflect.ownkeys/index.js": {
+      "types": "./types/codemods/reflect.ownkeys/index.d.ts",
+      "default": "./codemods/reflect.ownkeys/index.js"
+    },
+    "./codemods/regexp.prototype.flags/index.js": {
+      "types": "./types/codemods/regexp.prototype.flags/index.d.ts",
+      "default": "./codemods/regexp.prototype.flags/index.js"
+    },
+    "./codemods/setprototypeof/index.js": {
+      "types": "./types/codemods/setprototypeof/index.d.ts",
+      "default": "./codemods/setprototypeof/index.js"
+    },
+    "./codemods/split-lines/index.js": {
+      "types": "./types/codemods/split-lines/index.d.ts",
+      "default": "./codemods/split-lines/index.js"
+    },
+    "./codemods/string.prototype.at/index.js": {
+      "types": "./types/codemods/string.prototype.at/index.d.ts",
+      "default": "./codemods/string.prototype.at/index.js"
+    },
+    "./codemods/string.prototype.lastindexof/index.js": {
+      "types": "./types/codemods/string.prototype.lastindexof/index.d.ts",
+      "default": "./codemods/string.prototype.lastindexof/index.js"
+    },
+    "./codemods/string.prototype.matchall/index.js": {
+      "types": "./types/codemods/string.prototype.matchall/index.d.ts",
+      "default": "./codemods/string.prototype.matchall/index.js"
+    },
+    "./codemods/string.prototype.padend/index.js": {
+      "types": "./types/codemods/string.prototype.padend/index.d.ts",
+      "default": "./codemods/string.prototype.padend/index.js"
+    },
+    "./codemods/string.prototype.padleft/index.js": {
+      "types": "./types/codemods/string.prototype.padleft/index.d.ts",
+      "default": "./codemods/string.prototype.padleft/index.js"
+    },
+    "./codemods/string.prototype.padright/index.js": {
+      "types": "./types/codemods/string.prototype.padright/index.d.ts",
+      "default": "./codemods/string.prototype.padright/index.js"
+    },
+    "./codemods/string.prototype.padstart/index.js": {
+      "types": "./types/codemods/string.prototype.padstart/index.d.ts",
+      "default": "./codemods/string.prototype.padstart/index.js"
+    },
+    "./codemods/string.prototype.repeat/index.js": {
+      "types": "./types/codemods/string.prototype.repeat/index.d.ts",
+      "default": "./codemods/string.prototype.repeat/index.js"
+    },
+    "./codemods/string.prototype.replaceall/index.js": {
+      "types": "./types/codemods/string.prototype.replaceall/index.d.ts",
+      "default": "./codemods/string.prototype.replaceall/index.js"
+    },
+    "./codemods/string.prototype.split/index.js": {
+      "types": "./types/codemods/string.prototype.split/index.d.ts",
+      "default": "./codemods/string.prototype.split/index.js"
+    },
+    "./codemods/string.prototype.substr/index.js": {
+      "types": "./types/codemods/string.prototype.substr/index.d.ts",
+      "default": "./codemods/string.prototype.substr/index.js"
+    },
+    "./codemods/string.prototype.trim/index.js": {
+      "types": "./types/codemods/string.prototype.trim/index.d.ts",
+      "default": "./codemods/string.prototype.trim/index.js"
+    },
+    "./codemods/string.prototype.trimend/index.js": {
+      "types": "./types/codemods/string.prototype.trimend/index.d.ts",
+      "default": "./codemods/string.prototype.trimend/index.js"
+    },
+    "./codemods/string.prototype.trimleft/index.js": {
+      "types": "./types/codemods/string.prototype.trimleft/index.d.ts",
+      "default": "./codemods/string.prototype.trimleft/index.js"
+    },
+    "./codemods/string.prototype.trimright/index.js": {
+      "types": "./types/codemods/string.prototype.trimright/index.d.ts",
+      "default": "./codemods/string.prototype.trimright/index.js"
+    },
+    "./codemods/string.prototype.trimstart/index.js": {
+      "types": "./types/codemods/string.prototype.trimstart/index.d.ts",
+      "default": "./codemods/string.prototype.trimstart/index.js"
+    },
+    "./codemods/string.raw/index.js": {
+      "types": "./types/codemods/string.raw/index.d.ts",
+      "default": "./codemods/string.raw/index.js"
+    },
+    "./codemods/symbol.prototype.description/index.js": {
+      "types": "./types/codemods/symbol.prototype.description/index.d.ts",
+      "default": "./codemods/symbol.prototype.description/index.js"
+    },
+    "./codemods/traverse/index.js": {
+      "types": "./types/codemods/traverse/index.d.ts",
+      "default": "./codemods/traverse/index.js"
+    },
+    "./codemods/traverse/neotraverse/index.js": {
+      "types": "./types/codemods/traverse/neotraverse/index.d.ts",
+      "default": "./codemods/traverse/neotraverse/index.js"
+    },
+    "./codemods/typed-array-buffer/index.js": {
+      "types": "./types/codemods/typed-array-buffer/index.d.ts",
+      "default": "./codemods/typed-array-buffer/index.js"
+    },
+    "./codemods/typed-array-byte-length/index.js": {
+      "types": "./types/codemods/typed-array-byte-length/index.d.ts",
+      "default": "./codemods/typed-array-byte-length/index.js"
+    },
+    "./codemods/typed-array-byte-offset/index.js": {
+      "types": "./types/codemods/typed-array-byte-offset/index.d.ts",
+      "default": "./codemods/typed-array-byte-offset/index.js"
+    },
+    "./codemods/typed-array-length/index.js": {
+      "types": "./types/codemods/typed-array-length/index.d.ts",
+      "default": "./codemods/typed-array-length/index.js"
+    },
+    "./codemods/typedarray.prototype.slice/index.js": {
+      "types": "./types/codemods/typedarray.prototype.slice/index.d.ts",
+      "default": "./codemods/typedarray.prototype.slice/index.js"
+    },
+    "./codemods/xtend/index.js": {
+      "types": "./types/codemods/xtend/index.d.ts",
+      "default": "./codemods/xtend/index.js"
+    },
+    "./index.js": {
+      "types": "./types/index.d.ts",
+      "default": "./index.js"
+    }
   }
 }

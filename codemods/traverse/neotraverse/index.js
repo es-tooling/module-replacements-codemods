@@ -1,8 +1,8 @@
 import jscodeshift from 'jscodeshift';
 
 /**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
+ * @typedef {import('../../../types.js').Codemod} Codemod
+ * @typedef {import('../../../types.js').CodemodOptions} CodemodOptions
  */
 
 /**

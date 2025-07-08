@@ -9,8 +9,8 @@ const qsLikeOptions = {
 const qsLikeOptionsStr = JSON.stringify(qsLikeOptions);
 
 /**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
+ * @typedef {import('../../../types.js').Codemod} Codemod
+ * @typedef {import('../../../types.js').CodemodOptions} CodemodOptions
  * @typedef {import('@ast-grep/napi').SgNode} SgNode
  */
 

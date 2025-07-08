@@ -540,9 +540,9 @@
       "types": "./types/codemods/qs/index.d.ts",
       "default": "./codemods/qs/index.js"
     },
-    "./codemods/qs/picocolors/index.js": {
-      "types": "./types/codemods/qs/picocolors/index.d.ts",
-      "default": "./codemods/qs/picocolors/index.js"
+    "./codemods/qs/picoquery/index.js": {
+      "types": "./types/codemods/qs/picoquery/index.d.ts",
+      "default": "./codemods/qs/picoquery/index.js"
     },
     "./codemods/reflect.getprototypeof/index.js": {
       "types": "./types/codemods/reflect.getprototypeof/index.d.ts",

@@ -13,7 +13,7 @@
     "outDir": "./types",
     "skipLibCheck": true
   },
-  "include": ["types.ts", "index.js", "codemods/*.js"],
+  "include": ["types.ts", "index.js", "codemods/**/*.js"],
   "exclude": [
     "test/fixtures/**/*",
     "scripts/*.js"

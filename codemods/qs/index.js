@@ -129,6 +129,7 @@ const replacements = {
 export default function (options = {}) {
 	return {
 		name: 'qs',
+		to: 'picoquery',
 		transform: ({ file }) => {
 			/** @type {Warning[]} */
 			const warnings = [];

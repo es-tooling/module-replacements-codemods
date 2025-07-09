@@ -9,6 +9,7 @@ import { replaceDefaultImport } from '../shared.js';
 export default function () {
 	return {
 		name: 'md5',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

@@ -9,6 +9,7 @@ import { removeImport, transformInstanceProperty } from '../shared.js';
 export default function () {
 	return {
 		name: 'data-view-byte-length',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

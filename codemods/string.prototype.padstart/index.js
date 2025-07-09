@@ -9,6 +9,7 @@ import { transformStringMethod } from '../shared.js';
 export default function () {
 	return {
 		name: 'string.prototype.padstart',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

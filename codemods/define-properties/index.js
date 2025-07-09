@@ -46,6 +46,7 @@ const ${name} = function (object, map) {
 export default function () {
 	return {
 		name: 'define-properties',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

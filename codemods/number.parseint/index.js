@@ -12,6 +12,7 @@ import { removeImport } from '../shared.js';
 export default function () {
 	return {
 		name: 'number.parseint',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

@@ -9,6 +9,7 @@ import { transformStringMethod } from '../shared.js';
 export default function () {
 	return {
 		name: 'string.prototype.split',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

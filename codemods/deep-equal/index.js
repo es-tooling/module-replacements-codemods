@@ -9,6 +9,7 @@ import { replaceImport } from '../replaceImport.js';
 export default function () {
 	return {
 		name: 'deep-equal',
+		to: 'dequal',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

@@ -8,6 +8,7 @@ import { removeImport } from '../shared.js';
 export default function () {
 	return {
 		name: 'is-negative-zero',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 

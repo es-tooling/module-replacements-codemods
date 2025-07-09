@@ -9,6 +9,7 @@ import { transformMathPolyfill } from '../shared.js';
 export default function () {
 	return {
 		name: 'math.clz32',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

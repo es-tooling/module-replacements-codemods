@@ -9,6 +9,7 @@ import { removeImport } from '../shared.js';
 export default function () {
 	return {
 		name: 'has-own-prop',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

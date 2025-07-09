@@ -37,6 +37,7 @@ const picoNames = [
 export default function () {
 	return {
 		name: 'chalk',
+		to: 'picocolors',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();

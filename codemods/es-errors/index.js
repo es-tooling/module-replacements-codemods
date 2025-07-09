@@ -19,6 +19,7 @@ const moduleToErrorMap = {
 export default function () {
 	return {
 		name: 'es-errors',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

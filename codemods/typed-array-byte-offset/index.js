@@ -10,6 +10,7 @@ import { ALL_TYPED_ARRAY_OBJECTS } from '../CONSTANTS.js';
 export default function () {
 	return {
 		name: 'typed-array-byte-offset',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

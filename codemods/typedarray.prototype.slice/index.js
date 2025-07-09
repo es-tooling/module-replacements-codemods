@@ -10,6 +10,7 @@ import { removeImport, transformInstanceMethod } from '../shared.js';
 export default function () {
 	return {
 		name: 'typedarray.prototype.slice',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

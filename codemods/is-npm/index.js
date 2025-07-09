@@ -13,6 +13,7 @@ import {
 export default function () {
 	return {
 		name: 'is-npm',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

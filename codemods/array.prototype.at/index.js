@@ -16,6 +16,7 @@ import { transformArrayMethod } from '../shared.js';
 export default function () {
 	return {
 		name: 'array.prototype.at',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

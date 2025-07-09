@@ -15,6 +15,7 @@ import { removeImport } from '../shared.js';
 export default function () {
 	return {
 		name: 'string.prototype.repeat',
+		to: 'native',
 		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

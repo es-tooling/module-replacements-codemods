@@ -1,6 +1,6 @@
 // THESE ARE FOR ESM IMPORTS
 import assert from 'assert';
-import traverse from 'neotraverse/legacy';
+import traverse from "neotraverse/legacy";
 
 const obj = {
 	a: 1,

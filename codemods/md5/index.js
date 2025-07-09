@@ -1,20 +1,16 @@
 import jscodeshift from 'jscodeshift';
 import { replaceDefaultImport } from '../shared.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'md5',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
@@ -54,7 +50,7 @@ export default function (options) {
 					j(path).replaceWith(newExpression);
 				});
 
-			return root.toSource({ quote: 'single' });
+			return root.toSource(options);
 		},
 	};
 }

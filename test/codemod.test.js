@@ -34,6 +34,11 @@ describe('codemod', async () => {
 							source: before,
 						},
 					});
+
+					if (typeof result !== 'string') {
+						result = result.code;
+					}
+
 					fs.writeFileSync(
 						`./test/fixtures/${codemod.name}/${fixture}/result.js`,
 						result,
@@ -44,7 +49,11 @@ describe('codemod', async () => {
 						{ cause: e },
 					);
 				}
-				assert.strictEqual(result, after);
+				assert.strictEqual(
+					result,
+					after,
+					`./fixtures/${codemod.name}/${fixture}/result.js`,
+				);
 			});
 		}
 	}

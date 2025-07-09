@@ -1,16 +1,12 @@
 import jscodeshift from 'jscodeshift';
 import { replaceImport } from '../replaceImport.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod, CodemodOptions } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'deep-equal',
 		to: 'dequal',

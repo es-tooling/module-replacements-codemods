@@ -7,14 +7,13 @@ import jscodeshift from 'jscodeshift';
 import { removeImport } from '../shared.js';
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'is-primitive',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
@@ -50,7 +49,7 @@ export default function (options) {
 
 				root.find(j.Program).get('body').push(func);
 
-				return root.toSource({ quote: 'single' });
+				return root.toSource(options);
 			}
 
 			return file.source;

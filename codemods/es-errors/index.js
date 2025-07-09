@@ -1,10 +1,7 @@
 import jscodeshift from 'jscodeshift';
 import { removeImport } from '../shared.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 const moduleToErrorMap = {
 	'es-errors': 'Error',
@@ -17,17 +14,15 @@ const moduleToErrorMap = {
 };
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'es-errors',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
-			let dirtyFlag = false;
 
 			for (const [moduleName, errorName] of Object.entries(moduleToErrorMap)) {
 				const { identifier } = removeImport(moduleName, root, j);

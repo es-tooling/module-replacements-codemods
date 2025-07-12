@@ -28,6 +28,7 @@ const computeImport = (useRequire, quoteType, names, source) => {
 export default function (options) {
 	return {
 		name: 'rimraf',
+		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();

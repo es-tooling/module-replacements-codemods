@@ -32,6 +32,10 @@
     "typescript": "~5.5.3"
   },
   "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./index.js"
+    },
     "./codemods/abort-controller/index.js": {
       "types": "./types/codemods/abort-controller/index.d.ts",
       "default": "./codemods/abort-controller/index.js"
@@ -555,6 +559,10 @@
     "./codemods/regexp.prototype.flags/index.js": {
       "types": "./types/codemods/regexp.prototype.flags/index.d.ts",
       "default": "./codemods/regexp.prototype.flags/index.js"
+    },
+    "./codemods/rimraf/index.js": {
+      "types": "./types/codemods/rimraf/index.d.ts",
+      "default": "./codemods/rimraf/index.js"
     },
     "./codemods/setprototypeof/index.js": {
       "types": "./types/codemods/setprototypeof/index.d.ts",

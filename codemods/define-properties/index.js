@@ -6,15 +6,10 @@ import {
 	insertAfterImports,
 	insertCommentAboveNode,
 	removeImport,
-	replaceDefaultImport,
 	replaceRequireMemberExpression,
 } from '../shared.js';
-import { dir } from 'console';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 /**
  *
@@ -46,14 +41,13 @@ const ${name} = function (object, map) {
 };`;
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'define-properties',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			const variableExpressionHasIdentifier =

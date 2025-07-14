@@ -45,7 +45,7 @@ async function generateExports() {
 
 	const exports = findIndexFiles(codemodsDir);
 
-	exports['./index.js'] = {
+	exports['.'] = exports['./index.js'] = {
 		types: './types/index.d.ts',
 		default: './index.js',
 	};

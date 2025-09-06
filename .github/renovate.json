@@ -1,0 +1,23 @@
+{
+  "extends": ["config:base"],
+  "enabledManagers": ["npm"],
+  "automerge": false,
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 3,
+  "schedule": ["before 3am on monday"],
+  "packageRules": [
+    {
+      "matchDepTypes": ["dependencies"],
+      "groupName": "production-dependencies"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "development-dependencies"
+    }
+  ],
+    "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 3am on monday"],
+    "automerge": false
+  }
+}

@@ -9,7 +9,7 @@
  * @param {string} moduleName - The name of the module to find imports from.
  * @returns {SgNode[]} - An array of matched import nodes.
  */
-export function findNamedImports(root, moduleName) {
+export function findNamedDefaultImport(root, moduleName) {
 	const imports = root.findAll({
 		rule: {
 			any: [

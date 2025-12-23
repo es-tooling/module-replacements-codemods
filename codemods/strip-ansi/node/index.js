@@ -1,5 +1,5 @@
 import { ts } from '@ast-grep/napi';
-import { findNamedImports } from '../../shared-ast-grep.js';
+import { findNamedDefaultImport } from '../../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../../types.js').Codemod} Codemod
@@ -20,7 +20,7 @@ export default function (options) {
 			const edits = [];
 			const importNames = new Set();
 
-			const imports = findNamedImports(root, 'strip-ansi');
+			const imports = findNamedDefaultImport(root, 'strip-ansi');
 
 			for (const imp of imports) {
 				const nameMatch = imp.getMatch('NAME');

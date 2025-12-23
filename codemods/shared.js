@@ -9,7 +9,7 @@
 
 /**
  * @param {string} name - package name to remove import/require calls for
- * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for
+ * @param {import("jscodeshift").Collection} root - jscodeshift collection / ast
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
  * @returns {RemoveImport}
  */

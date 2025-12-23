@@ -1,20 +1,16 @@
 import jscodeshift from 'jscodeshift';
 import { removeImport } from '../shared.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'is-travis',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirtyFlag = false;
@@ -31,7 +27,7 @@ export default function (options) {
 				);
 			});
 
-			return dirtyFlag ? root.toSource({ quote: 'single' }) : file.source;
+			return dirtyFlag ? root.toSource(options) : file.source;
 		},
 	};
 }

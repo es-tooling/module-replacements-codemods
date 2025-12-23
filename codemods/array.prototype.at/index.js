@@ -1,10 +1,7 @@
 import jscodeshift from 'jscodeshift';
 import { transformArrayMethod } from '../shared.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod, CodemodOptions } from '../../types.js' **/
 
 /**
  * @NOTE
@@ -14,14 +11,13 @@ import { transformArrayMethod } from '../shared.js';
  * We don't support that for now, but the most common usage seems to be similar
  * to the native usage
  *
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'array.prototype.at',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 

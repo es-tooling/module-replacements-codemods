@@ -1,20 +1,16 @@
 import jscodeshift from 'jscodeshift';
 import { removeImport } from '../shared.js';
 
-/**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
+/** @import { Codemod } from '../../types.js' **/
 
 /**
- * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (options) {
+export default function () {
 	return {
 		name: 'regexp.prototype.flags',
 		to: 'native',
-		transform: ({ file }) => {
+		transform: ({ file, options }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
@@ -52,7 +48,7 @@ export default function (options) {
 					}
 				});
 
-			return root.toSource({ quote: 'single' });
+			return root.toSource(options);
 		},
 	};
 }

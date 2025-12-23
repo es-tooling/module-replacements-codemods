@@ -18,9 +18,9 @@ assert.ok(isPrimitive('foo'));
 assert.notOk(isPrimitive(Object('foo')));
 
 function isPrimitive(val) {
-  if (typeof val === 'object') {
+  if (typeof val === "object") {
     return val === null;
   }
 
-  return typeof val !== 'function';
+  return typeof val !== "function";
 }

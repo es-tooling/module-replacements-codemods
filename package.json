@@ -640,6 +640,18 @@
       "types": "./types/codemods/string.raw/index.d.ts",
       "default": "./codemods/string.raw/index.js"
     },
+    "./codemods/strip-ansi/bun/index.js": {
+      "types": "./types/codemods/strip-ansi/bun/index.d.ts",
+      "default": "./codemods/strip-ansi/bun/index.js"
+    },
+    "./codemods/strip-ansi/index.js": {
+      "types": "./types/codemods/strip-ansi/index.d.ts",
+      "default": "./codemods/strip-ansi/index.js"
+    },
+    "./codemods/strip-ansi/node/index.js": {
+      "types": "./types/codemods/strip-ansi/node/index.d.ts",
+      "default": "./codemods/strip-ansi/node/index.js"
+    },
     "./codemods/symbol.prototype.description/index.js": {
       "types": "./types/codemods/symbol.prototype.description/index.d.ts",
       "default": "./codemods/symbol.prototype.description/index.js"

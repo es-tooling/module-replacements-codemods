@@ -12,6 +12,7 @@ import jscodeshift from 'jscodeshift';
 export default function (options) {
 	return {
 		name: 'is-builtin-module',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

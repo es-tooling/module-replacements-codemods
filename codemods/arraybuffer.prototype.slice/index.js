@@ -13,6 +13,7 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'arraybuffer.prototype.slice',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

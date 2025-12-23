@@ -18,6 +18,7 @@ import { ALL_TYPED_ARRAY_OBJECTS } from '../CONSTANTS.js';
 export default function (options) {
 	return {
 		name: 'typedarray.prototype.slice',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

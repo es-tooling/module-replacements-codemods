@@ -1,4 +1,5 @@
-import jscodeshift from 'jscodeshift';
+import { ts } from '@ast-grep/napi';
+import { findNamedDefaultImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,36 +13,38 @@ import jscodeshift from 'jscodeshift';
 export default function (options) {
 	return {
 		name: 'invariant',
+		to: 'tiny-invariant',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			// Transform import declarationss
-			// biome-ignore lint/complexity/noForEach: Need to iterate through statements.
-			root.find(j.ImportDeclaration).forEach((path) => {
-				if (
-					j.Literal.check(path.node.source) &&
-					path.node.source.value === 'invariant'
-				) {
-					path.node.source.value = 'tiny-invariant';
-				}
-			});
+			const imports = findNamedDefaultImport(root, 'invariant');
 
-			// Transform require statements
-			// biome-ignore lint/complexity/noForEach: Need to iterate through statements.
-			root
-				.find(j.CallExpression, { callee: { name: 'require' } })
-				.forEach((path) => {
-					if (
-						path.node.arguments.length === 1 &&
-						j.Literal.check(path.node.arguments[0]) &&
-						path.node.arguments[0].value === 'invariant'
-					) {
-						path.node.arguments[0].value = 'tiny-invariant';
+			for (const imp of imports) {
+				const nameMatch = imp.getMatch('NAME');
+				if (nameMatch) {
+					const name = nameMatch.text();
+					const source = imp.text();
+					const quoteType = source.includes('"') ? '"' : "'";
+
+					if (imp.text().startsWith('import')) {
+						edits.push(
+							imp.replace(
+								`import ${name} from ${quoteType}tiny-invariant${quoteType};`,
+							),
+						);
+					} else {
+						edits.push(
+							imp.replace(
+								`const ${name} = require(${quoteType}tiny-invariant${quoteType});`,
+							),
+						);
 					}
-				});
+				}
+			}
 
-			return root.toSource();
+			return root.commitEdits(edits);
 		},
 	};
 }

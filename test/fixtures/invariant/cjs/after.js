@@ -1,4 +1,4 @@
-const invariant = require("tiny-invariant");
+const invariant = require('tiny-invariant');
 
 const a = 10;
 

@@ -328,6 +328,10 @@
       "types": "./types/codemods/index-of/index.d.ts",
       "default": "./codemods/index-of/index.js"
     },
+    "./codemods/invariant/index.js": {
+      "types": "./types/codemods/invariant/index.d.ts",
+      "default": "./codemods/invariant/index.js"
+    },
     "./codemods/is-array-buffer/index.js": {
       "types": "./types/codemods/is-array-buffer/index.d.ts",
       "default": "./codemods/is-array-buffer/index.js"

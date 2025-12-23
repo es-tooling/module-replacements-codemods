@@ -41,6 +41,7 @@ const picoNames = [
 export default function (options) {
 	return {
 		name: 'chalk',
+		to: 'picocolors',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
@@ -74,8 +75,21 @@ export default function (options) {
 				const nameMatch = imp.getMatch('NAME');
 
 				if (nameMatch) {
-					chalkName = nameMatch.text();
-					edits.push(nameMatch.replace('pc'));
+					const namespaceImport = nameMatch.find({
+						rule: {
+							kind: 'identifier',
+							inside: {
+								kind: 'namespace_import',
+							},
+						},
+					});
+
+					if (namespaceImport) {
+						chalkName = namespaceImport.text();
+					} else {
+						chalkName = nameMatch.text();
+					}
+					edits.push(nameMatch.replace('* as pc'));
 				}
 
 				edits.push(source.replace(`${quoteType}picocolors${quoteType}`));

@@ -19,6 +19,7 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'string.prototype.matchall',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

@@ -12,6 +12,7 @@ import { ts } from '@ast-grep/napi';
 export default function (options) {
 	return {
 		name: 'iterate-value',
+		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();

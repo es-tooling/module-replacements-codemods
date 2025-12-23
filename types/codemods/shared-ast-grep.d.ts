@@ -8,5 +8,5 @@
  * @param {string} moduleName - The name of the module to find imports from.
  * @returns {SgNode[]} - An array of matched import nodes.
  */
-export function findNamedImports(root: SgNode, moduleName: string): SgNode[];
+export function findNamedDefaultImport(root: SgNode, moduleName: string): SgNode[];
 export type SgNode = import("@ast-grep/napi").SgNode;

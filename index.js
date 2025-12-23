@@ -36,6 +36,7 @@ import arrayPrototypeUnshift from './codemods/array.prototype.unshift/index.js';
 import arrayPrototypeValues from './codemods/array.prototype.values/index.js';
 import arrayPrototypeWith from './codemods/array.prototype.with/index.js';
 import arraybufferPrototypeSlice from './codemods/arraybuffer.prototype.slice/index.js';
+import bufferEqual from './codemods/buffer-equal/index.js';
 import bufferEquals from './codemods/buffer-equals/index.js';
 import chalk from './codemods/chalk/index.js';
 import cloneRegexp from './codemods/clone-regexp/index.js';
@@ -206,6 +207,7 @@ export const codemods = {
   "array.prototype.values": arrayPrototypeValues,
   "array.prototype.with": arrayPrototypeWith,
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
+  "buffer-equal": bufferEqual,
   "buffer-equals": bufferEquals,
   "chalk": chalk,
   "clone-regexp": cloneRegexp,

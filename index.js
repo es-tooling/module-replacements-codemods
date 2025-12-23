@@ -207,11 +207,8 @@ export const codemods = {
   "array.prototype.values": arrayPrototypeValues,
   "array.prototype.with": arrayPrototypeWith,
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
-<<<<<<< HEAD
   "buffer-equal": bufferEqual,
-=======
   "buffer-equals": bufferEquals,
->>>>>>> main
   "chalk": chalk,
   "clone-regexp": cloneRegexp,
   "concat-map": concatMap,

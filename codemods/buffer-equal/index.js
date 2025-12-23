@@ -1,9 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import {
-	DEFAULT_IMPORT,
-	getImportIdentifierMap,
-	removeImport,
-} from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findNamedDefaultImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'buffer-equal';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -16,48 +14,54 @@ import {
  */
 export default function (options) {
 	return {
-		name: 'buffer-equal',
+		name: MODULE_NAME,
+		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let transformCount = 0;
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const map = getImportIdentifierMap('buffer-equal', root, j);
+			const imports = findNamedDefaultImport(root, MODULE_NAME);
 
-			const identifier = map[DEFAULT_IMPORT];
+			if (imports.length === 0) {
+				return file.source;
+			}
 
-			const callExpressions = root.find(j.CallExpression, {
-				callee: {
-					name: identifier,
+			let identifierName = null;
+			for (const imp of imports) {
+				const nameMatch = imp.getMatch('NAME');
+				if (nameMatch) {
+					identifierName = nameMatch.text();
+					break;
+				}
+			}
+
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($FIRST, $SECOND)`,
 				},
 			});
 
-			if (!callExpressions.length) {
-				removeImport('buffer-equal', root, j);
-				return root.toSource(options);
-			}
+			for (const call of callExpressions) {
+				const firstArg = call.getMatch('FIRST');
+				const secondArg = call.getMatch('SECOND');
 
-			callExpressions.forEach((p) => {
-				const args = p.node.arguments;
-				if (args.length === 2 && args[0].type !== 'SpreadElement') {
-					const [firstArg, secondArg] = args;
-					j(p).replaceWith(
-						j.callExpression(
-							j.memberExpression(firstArg, j.identifier('equals')),
-							[secondArg],
-						),
+				if (firstArg && secondArg) {
+					edits.push(
+						call.replace(`${firstArg.text()}.equals(${secondArg.text()})`),
 					);
-					dirtyFlag = true;
-					transformCount++;
 				}
-			});
-
-			if (transformCount === callExpressions.length) {
-				removeImport('buffer-equal', root, j);
 			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

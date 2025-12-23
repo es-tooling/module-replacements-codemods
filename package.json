@@ -188,6 +188,10 @@
       "types": "./types/codemods/arraybuffer.prototype.slice/index.d.ts",
       "default": "./codemods/arraybuffer.prototype.slice/index.js"
     },
+    "./codemods/buffer-equal/index.js": {
+      "types": "./types/codemods/buffer-equal/index.d.ts",
+      "default": "./codemods/buffer-equal/index.js"
+    },
     "./codemods/buffer-equals/index.js": {
       "types": "./types/codemods/buffer-equals/index.d.ts",
       "default": "./codemods/buffer-equals/index.js"

@@ -55,7 +55,9 @@ export default function (options) {
 			// Replace import statement
 			importDeclaration.forEach((path) => {
 				const name = path.value.specifiers?.[0].local?.name;
-				if (name) importName = name;
+				if (name && typeof name === 'string') {
+					importName = name;
+				}
 				path.value.source.value = 'node:module';
 				path.value.specifiers = [j.importSpecifier(j.identifier('isBuiltin'))];
 				dirtyFlag = true;

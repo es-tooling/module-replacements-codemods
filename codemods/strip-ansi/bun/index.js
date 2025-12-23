@@ -12,7 +12,7 @@ import { findNamedImports } from '../../shared-ast-grep.js';
  */
 export default function (options) {
 	return {
-		name: 'strip-ansi',
+		name: 'strip-ansi-bun',
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
@@ -34,13 +34,13 @@ export default function (options) {
 					if (imp.text().startsWith('import')) {
 						edits.push(
 							imp.replace(
-								`import { stripVTControlCharacters } from ${quoteType}node:util${quoteType};`,
+								`import { stripANSI } from ${quoteType}bun${quoteType};`,
 							),
 						);
 					} else {
 						edits.push(
 							imp.replace(
-								`const { stripVTControlCharacters } = require(${quoteType}node:util${quoteType});`,
+								`const { stripANSI } = require(${quoteType}bun${quoteType});`,
 							),
 						);
 					}
@@ -60,9 +60,7 @@ export default function (options) {
 				for (const call of functionCalls) {
 					const valueMatch = call.getMatch('VALUE');
 					if (valueMatch) {
-						edits.push(
-							call.replace(`stripVTControlCharacters(${valueMatch.text()})`),
-						);
+						edits.push(call.replace(`stripANSI(${valueMatch.text()})`));
 					}
 				}
 			}

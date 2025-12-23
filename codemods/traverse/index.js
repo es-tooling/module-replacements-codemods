@@ -12,6 +12,7 @@ import jscodeshift from 'jscodeshift';
 export default function (options) {
 	return {
 		name: 'traverse',
+		to: 'neotraverse',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

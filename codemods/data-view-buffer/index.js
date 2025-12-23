@@ -13,6 +13,7 @@ import { removeImport, transformInstanceProperty } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'data-view-buffer',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

@@ -37,6 +37,7 @@ import arrayPrototypeValues from './codemods/array.prototype.values/index.js';
 import arrayPrototypeWith from './codemods/array.prototype.with/index.js';
 import arraybufferPrototypeSlice from './codemods/arraybuffer.prototype.slice/index.js';
 import bufferEqual from './codemods/buffer-equal/index.js';
+import bufferEquals from './codemods/buffer-equals/index.js';
 import chalk from './codemods/chalk/index.js';
 import cloneRegexp from './codemods/clone-regexp/index.js';
 import concatMap from './codemods/concat-map/index.js';
@@ -128,6 +129,7 @@ import qs from './codemods/qs/index.js';
 import reflectGetprototypeof from './codemods/reflect.getprototypeof/index.js';
 import reflectOwnkeys from './codemods/reflect.ownkeys/index.js';
 import regexpPrototypeFlags from './codemods/regexp.prototype.flags/index.js';
+import rimraf from './codemods/rimraf/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
 import splitLines from './codemods/split-lines/index.js';
 import stringPrototypeAt from './codemods/string.prototype.at/index.js';
@@ -147,6 +149,7 @@ import stringPrototypeTrimleft from './codemods/string.prototype.trimleft/index.
 import stringPrototypeTrimright from './codemods/string.prototype.trimright/index.js';
 import stringPrototypeTrimstart from './codemods/string.prototype.trimstart/index.js';
 import stringRaw from './codemods/string.raw/index.js';
+import stripAnsi from './codemods/strip-ansi/index.js';
 import symbolPrototypeDescription from './codemods/symbol.prototype.description/index.js';
 import traverse from './codemods/traverse/index.js';
 import typedArrayBuffer from './codemods/typed-array-buffer/index.js';
@@ -204,7 +207,11 @@ export const codemods = {
   "array.prototype.values": arrayPrototypeValues,
   "array.prototype.with": arrayPrototypeWith,
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
+<<<<<<< HEAD
   "buffer-equal": bufferEqual,
+=======
+  "buffer-equals": bufferEquals,
+>>>>>>> main
   "chalk": chalk,
   "clone-regexp": cloneRegexp,
   "concat-map": concatMap,
@@ -296,6 +303,7 @@ export const codemods = {
   "reflect.getprototypeof": reflectGetprototypeof,
   "reflect.ownkeys": reflectOwnkeys,
   "regexp.prototype.flags": regexpPrototypeFlags,
+  "rimraf": rimraf,
   "setprototypeof": setprototypeof,
   "split-lines": splitLines,
   "string.prototype.at": stringPrototypeAt,
@@ -315,6 +323,7 @@ export const codemods = {
   "string.prototype.trimright": stringPrototypeTrimright,
   "string.prototype.trimstart": stringPrototypeTrimstart,
   "string.raw": stringRaw,
+  "strip-ansi": stripAnsi,
   "symbol.prototype.description": symbolPrototypeDescription,
   "traverse": traverse,
   "typed-array-buffer": typedArrayBuffer,

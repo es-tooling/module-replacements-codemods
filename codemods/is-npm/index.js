@@ -17,6 +17,7 @@ import {
 export default function (options) {
 	return {
 		name: 'is-npm',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

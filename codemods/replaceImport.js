@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} Module
- * @property {String} moduleName
- * @property {String} importName
+ * @property {string} moduleName
+ * @property {string} importName
  * @property {boolean?} cjsNamespace
  */
 
@@ -9,7 +9,7 @@
  * Replaces an import statement from one module to another. Handles esm different
  * variations of esm and cjs imports, as well as code references to the imports.
  *
- * @param {import('jscodeshift')} j
+ * @param {typeof import('jscodeshift')} j
  * @param {import('jscodeshift').Collection<any>} root
  * @param {Module} importModule
  * @param {Module} replacementModule
@@ -49,13 +49,21 @@ export function replaceImport(j, root, importModule, replacementModule) {
 					importModule.importName !== 'default' &&
 					importModule.importName === specifier.imported.name
 				) {
-					bindingName = specifier.local?.name ?? specifier.imported.name;
+					const localName = specifier.local?.name;
+					if (typeof localName === 'string') {
+						bindingName = localName;
+					} else {
+						specifier.imported.name;
+					}
 				}
 			} else if (
 				specifier.type === 'ImportDefaultSpecifier' &&
 				importModule.importName === 'default'
 			) {
-				bindingName = specifier.local?.name;
+				const localName = specifier.local?.name;
+				if (typeof localName === 'string') {
+					bindingName = localName;
+				}
 			} else if (specifier.type === 'ImportNamespaceSpecifier') {
 				const localName = specifier.local?.name;
 				if (!localName) {

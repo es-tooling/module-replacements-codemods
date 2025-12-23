@@ -196,12 +196,19 @@ export function getImportIdentifierMap(packageName, root, j) {
 			path.value.specifiers?.forEach((specifier) => {
 				if (!specifier.local) return;
 
+				const localName = specifier.local.name;
+
+				if (typeof localName !== 'string') return;
+
 				if (specifier.type === 'ImportSpecifier') {
-					map[specifier.imported.name] = specifier.local.name;
+					const importedName = specifier.imported.name;
+					if (typeof importedName === 'string') {
+						map[importedName] = localName;
+					}
 				} else if (specifier.type === 'ImportDefaultSpecifier') {
-					map[DEFAULT_IMPORT] = specifier.local.name;
+					map[DEFAULT_IMPORT] = localName;
 				} else if (specifier.type === 'ImportNamespaceSpecifier') {
-					map[NAMESPACE_IMPORT] = specifier.local.name;
+					map[NAMESPACE_IMPORT] = localName;
 				}
 			});
 		});

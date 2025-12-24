@@ -296,6 +296,10 @@
       "types": "./types/codemods/global/index.d.ts",
       "default": "./codemods/global/index.js"
     },
+    "./codemods/globalthis/index.js": {
+      "types": "./types/codemods/globalthis/index.d.ts",
+      "default": "./codemods/globalthis/index.js"
+    },
     "./codemods/gopd/index.js": {
       "types": "./types/codemods/gopd/index.d.ts",
       "default": "./codemods/gopd/index.js"

@@ -13,19 +13,20 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'is-regexp',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			removeImport('is-regexp', root, j);
+			const { identifier } = removeImport('is-regexp', root, j);
 
 			// Replace isRegexp calls
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isRegexp',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

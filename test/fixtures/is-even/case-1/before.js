@@ -1,10 +1,10 @@
-var isEven = require('is-even');
- 
-isEven(0);
+var banana = require('is-even');
+
+banana(0);
 //=> true
-isEven('1');
+banana('1');
 //=> false
-isEven(2);
+banana(2);
 //=> true
-isEven('3');
+banana('3');
 //=> false

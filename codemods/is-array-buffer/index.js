@@ -13,19 +13,20 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'is-array-buffer',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			removeImport('is-array-buffer', root, j);
+			const { identifier } = removeImport('is-array-buffer', root, j);
 
 			// Replace isArrayBuffer calls with (foo instanceof ArrayBuffer)
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isArrayBuffer',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

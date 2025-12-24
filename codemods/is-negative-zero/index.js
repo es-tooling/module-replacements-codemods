@@ -12,12 +12,13 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'is-negative-zero',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 
 			const root = j(file.source);
 
-			removeImport('is-negative-zero', root, j);
+			const { identifier } = removeImport('is-negative-zero', root, j);
 
 			root
 				.find(j.LogicalExpression, {
@@ -32,7 +33,7 @@ export default function (options) {
 					},
 					right: {
 						type: 'CallExpression',
-						callee: { name: 'isNegativeZero' },
+						callee: { name: identifier },
 					},
 				})
 				.replaceWith((path) => {
@@ -43,7 +44,7 @@ export default function (options) {
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isNegativeZero',
+						name: identifier,
 					},
 				})
 				.replaceWith((path) => {

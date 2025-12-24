@@ -13,18 +13,19 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'is-date-object',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('is-date-object', root, j);
+			const { identifier } = removeImport('is-date-object', root, j);
 
 			// Replace all calls to isDate with Object.prototype.toString.call
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isDate',
+						name: identifier,
 					},
 				})
 				.replaceWith((path) => {

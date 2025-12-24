@@ -13,18 +13,19 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'is-boolean-object',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('is-boolean-object', root, j);
+			const { identifier } = removeImport('is-boolean-object', root, j);
 
 			// Replace all calls to isBoolean with Object.prototype.toString.call
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'isBoolean',
+						name: identifier,
 					},
 				})
 				.replaceWith((path) => {

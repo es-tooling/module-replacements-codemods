@@ -19,17 +19,18 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'is-whitespace',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 
-			removeImport('is-whitespace', root, j);
+			const { identifier } = removeImport('is-whitespace', root, j);
 
 			// Find the 'isWhitespace' function calls
 			root
 				.find(j.CallExpression, {
 					callee: {
-						name: 'isWhitespace',
+						name: identifier,
 					},
 				})
 				.replaceWith((path) => {

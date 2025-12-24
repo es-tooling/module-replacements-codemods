@@ -13,18 +13,19 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'array-includes',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
 			let dirtyFlag = false;
 
-			removeImport('array-includes', root, j);
+			const { identifier } = removeImport('array-includes', root, j);
 
 			root
 				.find(j.CallExpression, {
 					callee: {
 						type: 'Identifier',
-						name: 'includes',
+						name: identifier,
 					},
 				})
 				.forEach((path) => {

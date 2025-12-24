@@ -1,16 +1,16 @@
 var assert = require('assert');
-var isDate = require('is-date-object');
+var banana = require('is-date-object');
 
-assert.notOk(isDate(undefined));
-assert.notOk(isDate(null));
-assert.notOk(isDate(false));
-assert.notOk(isDate(true));
-assert.notOk(isDate(42));
-assert.notOk(isDate('foo'));
-assert.notOk(isDate(function () {}));
-assert.notOk(isDate([]));
-assert.notOk(isDate({}));
-assert.notOk(isDate(/a/g));
-assert.notOk(isDate(new RegExp('a', 'g')));
+assert.notOk(banana(undefined));
+assert.notOk(banana(null));
+assert.notOk(banana(false));
+assert.notOk(banana(true));
+assert.notOk(banana(42));
+assert.notOk(banana('foo'));
+assert.notOk(banana(function () {}));
+assert.notOk(banana([]));
+assert.notOk(banana({}));
+assert.notOk(banana(/a/g));
+assert.notOk(banana(new RegExp('a', 'g')));
 
-assert.ok(isDate(new Date()));
+assert.ok(banana(new Date()));

@@ -1,2 +1,2 @@
-var globalThis = require('globalthis')();
+const globalThis = require('globalthis')();
 globalThis.a = 42;

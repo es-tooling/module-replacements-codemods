@@ -34,91 +34,6 @@ export function removeImport(name, root, j) {
 		})
 		.closest(j.VariableDeclarator);
 
-	// Require statements with call expressions like `var globalThis = require('globalthis')()`
-	const requireCallExpression = root.find(j.VariableDeclarator, {
-		init: {
-			callee: {
-				type: 'CallExpression',
-				callee: {
-					name: 'require',
-				},
-				arguments: [
-					{
-						value: name,
-					},
-				],
-			},
-		},
-	});
-
-	// Same as above without variable declaration like `require('globalthis')()`
-	const sideEffectRequireCallExpression = root.find(j.ExpressionStatement, {
-		expression: {
-			callee: {
-				type: 'CallExpression',
-				callee: {
-					name: 'require',
-				},
-				arguments: [
-					{
-						value: name,
-					},
-				],
-			},
-		},
-	});
-
-	// Require chained call expressions like `var globalThis = require('globalthis').shim()`
-	const requireMethodCallExpression = root.find(j.VariableDeclarator, {
-		init: {
-			type: 'CallExpression',
-			callee: {
-				type: 'MemberExpression',
-				object: {
-					type: 'CallExpression',
-					callee: {
-						name: 'require',
-					},
-					arguments: [
-						{
-							value: name,
-						},
-					],
-				},
-				property: {
-					type: 'Identifier',
-				},
-			},
-		},
-	});
-
-	// Same as above without variable declaration like `require('globalthis').shim()`
-	const sideEffectRequireMethodCallExpression = root.find(
-		j.ExpressionStatement,
-		{
-			expression: {
-				type: 'CallExpression',
-				callee: {
-					type: 'MemberExpression',
-					object: {
-						type: 'CallExpression',
-						callee: {
-							name: 'require',
-						},
-						arguments: [
-							{
-								value: name,
-							},
-						],
-					},
-					property: {
-						type: 'Identifier',
-					},
-				},
-			},
-		},
-	);
-
 	// Require statements without declarations like `Object.is = require("object-is");`
 	const requireAssignment = root.find(j.AssignmentExpression, {
 		operator: '=',
@@ -150,25 +65,17 @@ export function removeImport(name, root, j) {
 
 	// Return the identifier name, e.g. 'fn' in `import { fn } from 'is-boolean-object'`
 	// or `var fn = require('is-boolean-object')`
-	let identifier = null;
-	if (importDeclaration.paths().length > 0) {
-		identifier = importDeclaration.get().node.specifiers[0].local.name;
-	} else if (requireDeclaration.paths().length > 0) {
-		identifier = requireDeclaration.find(j.Identifier).get().node.name;
-	} else if (requireCallExpression.paths().length > 0) {
-		identifier = requireCallExpression.find(j.Identifier).get().node.name;
-	} else if (requireMethodCallExpression.paths().length > 0) {
-		identifier = requireMethodCallExpression.find(j.Identifier).get().node.name;
-	} else if (requireAssignment.paths().length > 0) {
-		identifier = requireAssignment.find(j.Identifier).get().node.name;
-	}
+	const identifier =
+		importDeclaration.paths().length > 0
+			? importDeclaration.get().node.specifiers[0].local.name
+			: requireDeclaration.paths().length > 0
+				? requireDeclaration.find(j.Identifier).get().node.name
+				: requireAssignment.paths().length > 0
+					? requireAssignment.find(j.Identifier).get().node.name
+					: null;
 
 	importDeclaration.remove();
 	requireDeclaration.remove();
-	requireCallExpression.remove();
-	sideEffectRequireCallExpression.remove();
-	requireMethodCallExpression.remove();
-	sideEffectRequireMethodCallExpression.remove();
 	requireAssignment.remove();
 	sideEffectRequireExpression.remove();
 

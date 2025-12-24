@@ -1,5 +1,4 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -13,25 +12,67 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'globalthis',
+		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			const identifier1 = removeImport('globalthis', root, j).identifier;
-			const identifier2 = removeImport(
-				'globalthis/polyfill',
-				root,
-				j,
-			).identifier;
-			const identifier3 = removeImport('globalthis/shim', root, j).identifier;
-			const identifier = identifier1 || identifier2 || identifier3;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			if (identifier) {
-				root
-					.find(j.Identifier, { name: identifier })
-					.replaceWith(j.identifier('globalThis'));
+			const matches = root.findAll({
+				rule: {
+					any: [
+						{
+							pattern: {
+								context: "const $NAME = require('globalthis')()",
+								strictness: 'relaxed',
+							},
+						},
+						{
+							pattern: {
+								context: "const $NAME = require('globalthis/polyfill')()",
+								strictness: 'relaxed',
+							},
+						},
+						{
+							pattern: {
+								context: "const $NAME = require('globalthis/shim')()",
+								strictness: 'relaxed',
+							},
+						},
+						{
+							pattern: {
+								context: "const $NAME = require('globalthis').shim()",
+								strictness: 'relaxed',
+							},
+						},
+					],
+				},
+			});
+
+			let identifierToReplace = null;
+
+			for (const match of matches) {
+				const nameMatch = match.getMatch('NAME');
+				if (nameMatch) {
+					identifierToReplace = nameMatch.text();
+					edits.push(match.replace(''));
+				}
 			}
 
-			return root.toSource({ quote: 'single' });
+			if (identifierToReplace) {
+				const usages = root.findAll({
+					rule: {
+						kind: 'identifier',
+						pattern: identifierToReplace,
+					},
+				});
+
+				for (const usage of usages) {
+					edits.push(usage.replace('globalThis'));
+				}
+			}
+
+			return root.commitEdits(edits);
 		},
 	};
 }

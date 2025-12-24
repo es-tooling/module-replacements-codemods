@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findNamedDefaultImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -13,105 +13,110 @@ import { removeImport } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'iterate-iterator',
+		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let isDirty = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
+			const importNames = new Set();
 
-			const { identifier } = removeImport('iterate-iterator', root, j);
+			const imports = findNamedDefaultImport(root, 'iterate-iterator');
 
-			if (identifier) {
-				const callExpressions = root.find(j.CallExpression, {
-					callee: { type: 'Identifier', name: identifier },
+			for (const imp of imports) {
+				const nameMatch = imp.getMatch('NAME');
+				if (nameMatch) {
+					importNames.add(nameMatch.text());
+				}
+				edits.push(imp.replace(''));
+			}
+
+			for (const importName of importNames) {
+				const singleArgCalls = root.findAll({
+					rule: {
+						pattern: {
+							context: `${importName}($ARG)`,
+							strictness: 'relaxed',
+						},
+					},
 				});
 
-				for (const path of callExpressions.paths()) {
-					const args = path.node.arguments;
-					if (args.length === 1) {
-						// Case: Converting an iterator to an array
-						const [iterable] = args;
-						const iterableArg =
-							iterable.type === 'SpreadElement' ? iterable.argument : iterable;
+				for (const call of singleArgCalls) {
+					const argMatch = call.getMatch('ARG');
+					if (argMatch) {
+						const replacement = `Array.from({\n  [Symbol.iterator]: () => ${argMatch.text()}\n})`;
+						edits.push(call.replace(replacement));
+					}
+				}
 
-						const wrappedIterable = j.objectExpression([
-							j.property(
-								'init',
-								j.memberExpression(
-									j.identifier('Symbol'),
-									j.identifier('iterator'),
-								),
-								j.arrowFunctionExpression([], iterableArg),
-							),
-						]);
+				const arrowCalls = root.findAll({
+					rule: {
+						pattern: {
+							context: `${importName}($ARG1, $PARAM => $BODY)`,
+							strictness: 'relaxed',
+						},
+					},
+					constraints: {
+						PARAM: { regex: '^[^,]+$' },
+					},
+				});
 
-						if (
-							wrappedIterable.properties[0].type !== 'SpreadProperty' &&
-							wrappedIterable.properties[0].type !== 'SpreadElement'
-						) {
-							wrappedIterable.properties[0].computed = true;
-						}
+				for (const call of arrowCalls) {
+					const arg1Match = call.getMatch('ARG1');
+					const paramMatch = call.getMatch('PARAM');
+					const bodyMatch = call.getMatch('BODY');
 
-						const arrayFromExpression = j.callExpression(
-							j.memberExpression(j.identifier('Array'), j.identifier('from')),
-							[wrappedIterable],
-						);
-						j(path).replaceWith(arrayFromExpression);
-						isDirty = true;
-					} else if (args.length === 2) {
-						// Case: Using a callback function
-						const [iterable, callback] = args;
-						const iterableArg =
-							iterable.type === 'SpreadElement' ? iterable.argument : iterable;
-
-						if (
-							callback.type !== 'Identifier' &&
-							callback.type !== 'FunctionExpression' &&
-							callback.type !== 'ArrowFunctionExpression'
-						) {
+					if (arg1Match && paramMatch && bodyMatch) {
+						if (bodyMatch.kind() === 'statement_block') {
 							continue;
 						}
 
-						const wrappedIterable = j.objectExpression([
-							j.property(
-								'init',
-								j.memberExpression(
-									j.identifier('Symbol'),
-									j.identifier('iterator'),
-								),
-								j.arrowFunctionExpression([], iterableArg),
-							),
-						]);
+						const paramName = paramMatch.text().replace(/^\(|\)$/g, '');
+						const bodyText = bodyMatch.text();
 
-						if (
-							wrappedIterable.properties[0].type !== 'SpreadProperty' &&
-							wrappedIterable.properties[0].type !== 'SpreadElement'
-						) {
-							wrappedIterable.properties[0].computed = true;
+						const replacement = `for (const ${paramName} of {\n  [Symbol.iterator]: () => ${arg1Match.text()}\n}) {\n  ${bodyText};\n}`;
+						edits.push(call.replace(replacement));
+					}
+				}
+
+				const otherCalls = root.findAll({
+					rule: {
+						pattern: {
+							context: `${importName}($ARG1, $ARG2)`,
+							strictness: 'relaxed',
+						},
+					},
+				});
+
+				for (const call of otherCalls) {
+					const arg1Match = call.getMatch('ARG1');
+					const arg2Match = call.getMatch('ARG2');
+
+					if (arg1Match && arg2Match) {
+						const callback = arg2Match.text();
+						const callbackKind = arg2Match.kind();
+
+						if (callbackKind === 'arrow_function') {
+							const body = arg2Match.field('body');
+							if (body && body.kind() !== 'statement_block') {
+								continue;
+							}
 						}
 
-						const forOfStatement = j.forOfStatement(
-							j.variableDeclaration('const', [
-								j.variableDeclarator(j.identifier('i')),
-							]),
-							wrappedIterable,
-							j.blockStatement([
-								j.expressionStatement(
-									j.callExpression(
-										callback.type === 'Identifier'
-											? callback
-											: j.parenthesizedExpression(callback),
-										[j.identifier('i')],
-									),
-								),
-							]),
-						);
-						j(path).replaceWith(forOfStatement);
-						isDirty = true;
+						const needsParens =
+							callbackKind === 'function_expression' ||
+							callbackKind === 'arrow_function';
+
+						const callbackCall = needsParens
+							? `(${callback})(i)`
+							: `${callback}(i)`;
+
+						const replacement = `for (const i of {\n  [Symbol.iterator]: () => ${arg1Match.text()}\n}) {\n  ${callbackCall};\n}`;
+						edits.push(call.replace(replacement));
 					}
 				}
 			}
 
-			return isDirty ? root.toSource(options) : file.source;
+			return root.commitEdits(edits);
 		},
 	};
 }

@@ -1,3 +1,4 @@
+
 import assert from 'assert';
 
 assert.deepEqual(Array.from({
@@ -24,7 +25,7 @@ const foo = {
       }
     }
   };
-assert.deepStrictEqual(Array.from({
+  assert.deepStrictEqual(Array.from({
   [Symbol.iterator]: () => foo
 }), [42, 42, 42, 42, 42]);
 
@@ -33,10 +34,10 @@ function assertWithCallback(iterable, expected) {
     const callback = function (x) { values.push(x); };
 
     for (const i of {
-      [Symbol.iterator]: () => iterable
-    }) {
-      callback(i);
-    };
+  [Symbol.iterator]: () => iterable
+}) {
+  callback(i);
+};
 
     assert.deepEqual(values, expected);
 }
@@ -52,8 +53,8 @@ for (const i of {
   (function (x) { console.log(x); })(i);
 };
 
-for (const i of {
+for (const x of {
   [Symbol.iterator]: () => [1, 2][Symbol.iterator]()
 }) {
-  (x => console.log(x))(i);
+  console.log(x);
 };

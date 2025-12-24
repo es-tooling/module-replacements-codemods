@@ -90,6 +90,7 @@ import isString from './codemods/is-string/index.js';
 import isTravis from './codemods/is-travis/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
 import isWindows from './codemods/is-windows/index.js';
+import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
@@ -263,6 +264,7 @@ export const codemods = {
   "is-travis": isTravis,
   "is-whitespace": isWhitespace,
   "is-windows": isWindows,
+  "iterate-iterator": iterateIterator,
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,

@@ -408,6 +408,10 @@
       "types": "./types/codemods/is-windows/index.d.ts",
       "default": "./codemods/is-windows/index.js"
     },
+    "./codemods/iterate-iterator/index.js": {
+      "types": "./types/codemods/iterate-iterator/index.d.ts",
+      "default": "./codemods/iterate-iterator/index.js"
+    },
     "./codemods/iterate-value/index.js": {
       "types": "./types/codemods/iterate-value/index.d.ts",
       "default": "./codemods/iterate-value/index.js"

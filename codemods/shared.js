@@ -2,6 +2,7 @@
  * type definition for return type object
  * @typedef {Object} RemoveImport
  * @property {string} identifier - the name of the module as it was imported or required. for example, `keys` in `import keys from 'object-keys'`
+ * @property {boolean} dirtyFlag - whether imports were removed or not
  * @typedef {Object} ReplaceDefaultImport
  * @property {string} identifier - the name of the module as it was imported or required. for example, `keys` in `import keys from 'object-keys'`
  */
@@ -20,8 +21,8 @@ export function removeImport(name, root, j) {
 		},
 	});
 
-	const requireDeclaration = root.find(j.VariableDeclarator, {
-		init: {
+	const requireDeclaration = root
+		.find(j.CallExpression, {
 			callee: {
 				name: 'require',
 			},
@@ -30,8 +31,8 @@ export function removeImport(name, root, j) {
 					value: name,
 				},
 			],
-		},
-	});
+		})
+		.closest(j.VariableDeclarator);
 
 	// Require statements with call expressions like `var globalThis = require('globalthis')()`
 	const requireCallExpression = root.find(j.VariableDeclarator, {
@@ -171,7 +172,13 @@ export function removeImport(name, root, j) {
 	requireAssignment.remove();
 	sideEffectRequireExpression.remove();
 
-	return { identifier };
+	const dirtyFlag =
+		importDeclaration.length > 0 ||
+		requireDeclaration.length > 0 ||
+		requireAssignment.length > 0 ||
+		sideEffectRequireExpression.length > 0;
+
+	return { identifier, dirtyFlag };
 }
 
 /**
@@ -282,12 +289,19 @@ export function getImportIdentifierMap(packageName, root, j) {
 			path.value.specifiers?.forEach((specifier) => {
 				if (!specifier.local) return;
 
+				const localName = specifier.local.name;
+
+				if (typeof localName !== 'string') return;
+
 				if (specifier.type === 'ImportSpecifier') {
-					map[specifier.imported.name] = specifier.local.name;
+					const importedName = specifier.imported.name;
+					if (typeof importedName === 'string') {
+						map[importedName] = localName;
+					}
 				} else if (specifier.type === 'ImportDefaultSpecifier') {
-					map[DEFAULT_IMPORT] = specifier.local.name;
+					map[DEFAULT_IMPORT] = localName;
 				} else if (specifier.type === 'ImportNamespaceSpecifier') {
-					map[NAMESPACE_IMPORT] = specifier.local.name;
+					map[NAMESPACE_IMPORT] = localName;
 				}
 			});
 		});
@@ -398,9 +412,14 @@ export function replaceDefaultImport(name, newSpecifier, newName, root, j) {
  * @returns {boolean} - true if the method was found and transformed, false otherwise
  */
 export function transformArrayMethod(method, identifierName, root, j) {
-	const { identifier } = removeImport(method, root, j);
+	const { identifier, dirtyFlag: importDirtyFlag } = removeImport(
+		method,
+		root,
+		j,
+	);
 
-	let dirtyFlag = false;
+	let dirtyFlag = importDirtyFlag;
+
 	root
 		.find(j.CallExpression, {
 			callee: {

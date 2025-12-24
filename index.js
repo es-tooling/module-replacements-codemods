@@ -36,6 +36,8 @@ import arrayPrototypeUnshift from './codemods/array.prototype.unshift/index.js';
 import arrayPrototypeValues from './codemods/array.prototype.values/index.js';
 import arrayPrototypeWith from './codemods/array.prototype.with/index.js';
 import arraybufferPrototypeSlice from './codemods/arraybuffer.prototype.slice/index.js';
+import bufferEqual from './codemods/buffer-equal/index.js';
+import bufferEquals from './codemods/buffer-equals/index.js';
 import chalk from './codemods/chalk/index.js';
 import cloneRegexp from './codemods/clone-regexp/index.js';
 import concatMap from './codemods/concat-map/index.js';
@@ -69,6 +71,7 @@ import hasSymbols from './codemods/has-symbols/index.js';
 import hasTostringtag from './codemods/has-tostringtag/index.js';
 import hasown from './codemods/hasown/index.js';
 import indexOf from './codemods/index-of/index.js';
+import invariant from './codemods/invariant/index.js';
 import isArrayBuffer from './codemods/is-array-buffer/index.js';
 import isBooleanObject from './codemods/is-boolean-object/index.js';
 import isBuiltinModule from './codemods/is-builtin-module/index.js';
@@ -87,6 +90,7 @@ import isString from './codemods/is-string/index.js';
 import isTravis from './codemods/is-travis/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
 import isWindows from './codemods/is-windows/index.js';
+import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
@@ -110,6 +114,7 @@ import numberPrototypeToexponential from './codemods/number.prototype.toexponent
 import objectAssign from './codemods/object-assign/index.js';
 import objectIs from './codemods/object-is/index.js';
 import objectKeys from './codemods/object-keys/index.js';
+import objectAssign2 from './codemods/object.assign/index.js';
 import objectDefineproperties from './codemods/object.defineproperties/index.js';
 import objectEntries from './codemods/object.entries/index.js';
 import objectFromentries from './codemods/object.fromentries/index.js';
@@ -122,9 +127,11 @@ import parseint from './codemods/parseint/index.js';
 import promiseAllsettled from './codemods/promise.allsettled/index.js';
 import promiseAny from './codemods/promise.any/index.js';
 import promisePrototypeFinally from './codemods/promise.prototype.finally/index.js';
+import qs from './codemods/qs/index.js';
 import reflectGetprototypeof from './codemods/reflect.getprototypeof/index.js';
 import reflectOwnkeys from './codemods/reflect.ownkeys/index.js';
 import regexpPrototypeFlags from './codemods/regexp.prototype.flags/index.js';
+import rimraf from './codemods/rimraf/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
 import splitLines from './codemods/split-lines/index.js';
 import stringPrototypeAt from './codemods/string.prototype.at/index.js';
@@ -144,7 +151,9 @@ import stringPrototypeTrimleft from './codemods/string.prototype.trimleft/index.
 import stringPrototypeTrimright from './codemods/string.prototype.trimright/index.js';
 import stringPrototypeTrimstart from './codemods/string.prototype.trimstart/index.js';
 import stringRaw from './codemods/string.raw/index.js';
+import stripAnsi from './codemods/strip-ansi/index.js';
 import symbolPrototypeDescription from './codemods/symbol.prototype.description/index.js';
+import traverse from './codemods/traverse/index.js';
 import typedArrayBuffer from './codemods/typed-array-buffer/index.js';
 import typedArrayByteLength from './codemods/typed-array-byte-length/index.js';
 import typedArrayByteOffset from './codemods/typed-array-byte-offset/index.js';
@@ -152,6 +161,15 @@ import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
 import xtend from './codemods/xtend/index.js';
 
+
+/**
+ * @typedef {import('./types.js').Codemod} Codemod
+ * @typedef {import('./types.js').CodemodOptions} CodemodOptions
+ */
+
+/**
+ * @type {Record<string, (options: CodemodOptions) => Codemod>}
+ */
 export const codemods = {
   "abort-controller": abortController,
   "array-buffer-byte-length": arrayBufferByteLength,
@@ -191,6 +209,8 @@ export const codemods = {
   "array.prototype.values": arrayPrototypeValues,
   "array.prototype.with": arrayPrototypeWith,
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
+  "buffer-equal": bufferEqual,
+  "buffer-equals": bufferEquals,
   "chalk": chalk,
   "clone-regexp": cloneRegexp,
   "concat-map": concatMap,
@@ -224,6 +244,7 @@ export const codemods = {
   "has-tostringtag": hasTostringtag,
   "hasown": hasown,
   "index-of": indexOf,
+  "invariant": invariant,
   "is-array-buffer": isArrayBuffer,
   "is-boolean-object": isBooleanObject,
   "is-builtin-module": isBuiltinModule,
@@ -242,6 +263,7 @@ export const codemods = {
   "is-travis": isTravis,
   "is-whitespace": isWhitespace,
   "is-windows": isWindows,
+  "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
   "math.acosh": mathAcosh,
@@ -265,6 +287,7 @@ export const codemods = {
   "object-assign": objectAssign,
   "object-is": objectIs,
   "object-keys": objectKeys,
+  "object.assign": objectAssign2,
   "object.defineproperties": objectDefineproperties,
   "object.entries": objectEntries,
   "object.fromentries": objectFromentries,
@@ -277,9 +300,11 @@ export const codemods = {
   "promise.allsettled": promiseAllsettled,
   "promise.any": promiseAny,
   "promise.prototype.finally": promisePrototypeFinally,
+  "qs": qs,
   "reflect.getprototypeof": reflectGetprototypeof,
   "reflect.ownkeys": reflectOwnkeys,
   "regexp.prototype.flags": regexpPrototypeFlags,
+  "rimraf": rimraf,
   "setprototypeof": setprototypeof,
   "split-lines": splitLines,
   "string.prototype.at": stringPrototypeAt,
@@ -299,7 +324,9 @@ export const codemods = {
   "string.prototype.trimright": stringPrototypeTrimright,
   "string.prototype.trimstart": stringPrototypeTrimstart,
   "string.raw": stringRaw,
+  "strip-ansi": stripAnsi,
   "symbol.prototype.description": symbolPrototypeDescription,
+  "traverse": traverse,
   "typed-array-buffer": typedArrayBuffer,
   "typed-array-byte-length": typedArrayByteLength,
   "typed-array-byte-offset": typedArrayByteOffset,

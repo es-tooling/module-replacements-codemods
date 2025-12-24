@@ -13,6 +13,7 @@ import { transformArrayMethod } from '../shared.js';
 export default function (options) {
 	return {
 		name: 'array.prototype.copywithin',
+		to: 'native',
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);

@@ -160,6 +160,7 @@ import typedArrayByteLength from './codemods/typed-array-byte-length/index.js';
 import typedArrayByteOffset from './codemods/typed-array-byte-offset/index.js';
 import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
+import vitestJsdom from './codemods/vitest-jsdom/index.js';
 import xtend from './codemods/xtend/index.js';
 
 
@@ -334,5 +335,6 @@ export const codemods = {
   "typed-array-byte-offset": typedArrayByteOffset,
   "typed-array-length": typedArrayLength,
   "typedarray.prototype.slice": typedarrayPrototypeSlice,
+  "vitest-jsdom": vitestJsdom,
   "xtend": xtend,
 };

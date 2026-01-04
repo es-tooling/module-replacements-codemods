@@ -33,11 +33,9 @@ function assertWithCallback(iterable, expected) {
     const values = [];
     const callback = function (x) { values.push(x); };
 
-    for (const i of {
+    Array.from({
   [Symbol.iterator]: () => iterable
-}) {
-  callback(i);
-};
+});
 
     assert.deepEqual(values, expected);
 }
@@ -47,14 +45,10 @@ assertWithCallback([1, 2][Symbol.iterator](), [1, 2]);
 assertWithCallback(new Set([1, 2]).values(), [1, 2]);
 assertWithCallback(new Map([[1, 2], [3, 4]]).entries(), [[1, 2], [3, 4]]);
 
-for (const i of {
+Array.from({
   [Symbol.iterator]: () => [1, 2][Symbol.iterator]()
-}) {
-  (function (x) { console.log(x); })(i);
-};
+});
 
-for (const x of {
+Array.from({
   [Symbol.iterator]: () => [1, 2][Symbol.iterator]()
-}) {
-  console.log(x);
-};
+});

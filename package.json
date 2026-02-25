@@ -11,6 +11,10 @@
     "which": "node scripts/which.js",
     "prepublishOnly": "npm run lint:types && node scripts/generate-index.js && node scripts/generate-pkg-exports.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/es-tooling/module-replacements-codemods.git"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",

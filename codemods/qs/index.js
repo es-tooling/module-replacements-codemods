@@ -166,8 +166,20 @@ export default function (options) {
 				const nameMatch = imp.getMatch('NAME');
 
 				if (nameMatch) {
-					importName = nameMatch.text();
-					edits.push(nameMatch.replace('pq'));
+					const namespaceImport = nameMatch.find({
+						rule: {
+							kind: 'identifier',
+							inside: {
+								kind: 'namespace_import',
+							},
+						},
+					});
+					if (namespaceImport) {
+						importName = namespaceImport.text();
+					} else {
+						importName = nameMatch.text();
+					}
+					edits.push(nameMatch.replace('* as pq'));
 				}
 
 				edits.push(source.replace(`${quoteType}picoquery${quoteType}`));

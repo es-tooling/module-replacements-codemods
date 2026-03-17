@@ -29,9 +29,9 @@
     "codemods"
   ],
   "devDependencies": {
-    "@biomejs/biome": "2.4.6",
+    "@biomejs/biome": "2.4.7",
     "@types/jscodeshift": "^17.3.0",
-    "@types/node": "^25.4.0",
+    "@types/node": "^25.5.0",
     "module-replacements": "^2.11.0",
     "typescript": "~5.9.3"
   },

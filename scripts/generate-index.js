@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 /** @param {string} s */
-const camelize = (s) => s.replace(/[-\.]./g, (x) => x[1].toUpperCase());
+const camelize = (s) => s.replace(/[-.]./g, (x) => x[1].toUpperCase());
 
 const folders = fs
 	.readdirSync('./codemods')

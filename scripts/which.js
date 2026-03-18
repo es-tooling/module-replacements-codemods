@@ -1,6 +1,6 @@
 import {
-	nativeReplacements,
 	microUtilsReplacements,
+	nativeReplacements,
 } from 'module-replacements';
 import { codemods } from '../index.js';
 

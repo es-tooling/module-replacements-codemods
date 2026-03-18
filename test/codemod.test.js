@@ -1,9 +1,9 @@
-import { describe, it } from 'node:test';
-import fs from 'node:fs';
 import assert from 'node:assert';
-import { codemods } from '../index.js';
-import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 import { dirname, join } from 'node:path';
+import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
+import { codemods } from '../index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -1,3 +1,4 @@
+import { dir } from 'console';
 import jscodeshift from 'jscodeshift';
 import {
 	DEFAULT_IMPORT,
@@ -9,7 +10,6 @@ import {
 	replaceDefaultImport,
 	replaceRequireMemberExpression,
 } from '../shared.js';
-import { dir } from 'console';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod

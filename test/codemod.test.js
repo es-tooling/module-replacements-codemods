@@ -16,14 +16,11 @@ async function discoverAlternatives() {
 	/** @type {Array<{path: string, codemodFn: () => import('../types.js').Codemod}>} */
 	const alternatives = [];
 
-	for (const [exportPath, exportConfig] of Object.entries(
-		packageJson.exports,
-	)) {
+	for (const exportPath of Object.keys(packageJson.exports)) {
 		const match = exportPath.match(
 			/^\.\/codemods\/([^/]+)\/([^/]+)\/index\.js$/,
 		);
 		if (match) {
-			const [, pkg, alt] = match;
 			const codemodModule = await import(`../${exportPath}`);
 			const codemodFn = codemodModule.default;
 			alternatives.push({ path: exportPath, codemodFn });

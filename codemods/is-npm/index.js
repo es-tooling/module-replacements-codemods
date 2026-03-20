@@ -95,7 +95,9 @@ export default function (options) {
 
 			root
 				.find(j.Identifier, { name: identifiers.isNpm })
-				.forEach(() => (isDirty = true))
+				.forEach(() => {
+					isDirty = true;
+				})
 				.replaceWith(isNpmLogicalExpression);
 
 			if (identifiers[NAMESPACE_IMPORT]) {
@@ -110,13 +112,17 @@ export default function (options) {
 							type: 'Identifier',
 						},
 					})
-					.forEach(() => (isDirty = true))
+					.forEach(() => {
+						isDirty = true;
+					})
 					.replaceWith(isNpmLogicalExpression);
 			}
 
 			root
 				.find(j.Identifier, { name: identifiers.isYarn })
-				.forEach(() => (isDirty = true))
+				.forEach(() => {
+					isDirty = true;
+				})
 				.replaceWith(isYarnLogicalExpression);
 
 			if (identifiers[NAMESPACE_IMPORT]) {
@@ -131,13 +137,17 @@ export default function (options) {
 							type: 'Identifier',
 						},
 					})
-					.forEach(() => (isDirty = true))
+					.forEach(() => {
+						isDirty = true;
+					})
 					.replaceWith(isYarnLogicalExpression);
 			}
 
 			root
 				.find(j.Identifier, { name: identifiers.isNpmOrYarn })
-				.forEach(() => (isDirty = true))
+				.forEach(() => {
+					isDirty = true;
+				})
 				.replaceWith(isNpmOrYarnLogicalExpression);
 
 			if (identifiers[NAMESPACE_IMPORT]) {
@@ -152,7 +162,9 @@ export default function (options) {
 							type: 'Identifier',
 						},
 					})
-					.forEach(() => (isDirty = true))
+					.forEach(() => {
+						isDirty = true;
+					})
 					.replaceWith(isNpmOrYarnLogicalExpression);
 			}
 

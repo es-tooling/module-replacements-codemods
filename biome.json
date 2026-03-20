@@ -8,8 +8,7 @@
 			"!types/**/*",
 			"!index.js",
 			"!package.json",
-			"!tsconfig.json",
-			"!types.ts"
+			"!tsconfig.json"
 		]
 	},
 	"javascript": { "formatter": { "quoteStyle": "single", "lineEnding": "lf" } },
@@ -18,19 +17,11 @@
 		"enabled": true,
 		"rules": {
 			"suspicious": {
-				"useIterableCallbackReturn": "off",
 				"noEmptyInterface": "off",
 				"noTsIgnore": "off"
 			},
 			"correctness": {
-				"noUnusedVariables": "off",
-				"noUnusedImports": "off",
 				"noUnusedFunctionParameters": "off"
-			},
-			"style": {
-				"useTemplate": "off",
-				"useNodejsImportProtocol": "off",
-				"useConst": "off"
 			}
 		}
 	}

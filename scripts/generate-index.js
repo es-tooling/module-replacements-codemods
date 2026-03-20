@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 /** @param {string} s */
 const camelize = (s) => s.replace(/[-.]./g, (x) => x[1].toUpperCase());
@@ -31,6 +31,6 @@ for (const folder of folders) {
 }
 obj += `};`;
 
-fs.writeFileSync('./index.js', imports + '\n' + obj);
+fs.writeFileSync('./index.js', `${imports}\n${obj}`);
 
 console.log('Generated index.js');

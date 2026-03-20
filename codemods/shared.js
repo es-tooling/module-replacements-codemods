@@ -511,8 +511,6 @@ export function getVariableExpressionHasIdentifier(
 		},
 	});
 
-	const source = root.toSource();
-
 	return requireDeclarationWithProperty.length > 0;
 }
 
@@ -523,7 +521,7 @@ export function getVariableExpressionHasIdentifier(
  * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
  */
 export function replaceRequireMemberExpression(importName, value, root, j) {
-	const requireDeclaration = root
+	root
 		.find(j.MemberExpression, {
 			object: {
 				callee: {

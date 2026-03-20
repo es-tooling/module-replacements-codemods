@@ -1,5 +1,5 @@
 import jscodeshift from 'jscodeshift';
-import { removeImport, transformMathPolyfill } from '../shared.js';
+import { removeImport } from '../shared.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod

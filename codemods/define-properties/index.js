@@ -1,4 +1,3 @@
-import { dir } from 'console';
 import jscodeshift from 'jscodeshift';
 import {
 	DEFAULT_IMPORT,
@@ -7,7 +6,6 @@ import {
 	insertAfterImports,
 	insertCommentAboveNode,
 	removeImport,
-	replaceDefaultImport,
 	replaceRequireMemberExpression,
 } from '../shared.js';
 

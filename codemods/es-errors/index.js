@@ -27,7 +27,6 @@ export default function (options) {
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
-			let dirtyFlag = false;
 
 			for (const [moduleName, errorName] of Object.entries(moduleToErrorMap)) {
 				const { identifier } = removeImport(moduleName, root, j);

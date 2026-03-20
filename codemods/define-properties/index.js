@@ -6,10 +6,8 @@ import {
 	insertAfterImports,
 	insertCommentAboveNode,
 	removeImport,
-	replaceDefaultImport,
 	replaceRequireMemberExpression,
 } from '../shared.js';
-import { dir } from 'console';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod

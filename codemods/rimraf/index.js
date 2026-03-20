@@ -234,7 +234,7 @@ Promise.all(
 			if (imports.length > 0) {
 				const [firstImport, ...remainingImports] = imports;
 
-				let replacedImports = [];
+				const replacedImports = [];
 
 				if (seenAsync) {
 					replacedImports.push(

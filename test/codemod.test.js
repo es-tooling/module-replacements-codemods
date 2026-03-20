@@ -1,9 +1,9 @@
-import { describe, it } from 'node:test';
-import fs from 'node:fs';
 import assert from 'node:assert';
-import { codemods } from '../index.js';
-import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 import { dirname, join } from 'node:path';
+import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
+import { codemods } from '../index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,14 +16,11 @@ async function discoverAlternatives() {
 	/** @type {Array<{path: string, codemodFn: () => import('../types.js').Codemod}>} */
 	const alternatives = [];
 
-	for (const [exportPath, exportConfig] of Object.entries(
-		packageJson.exports,
-	)) {
+	for (const exportPath of Object.keys(packageJson.exports)) {
 		const match = exportPath.match(
 			/^\.\/codemods\/([^/]+)\/([^/]+)\/index\.js$/,
 		);
 		if (match) {
-			const [, pkg, alt] = match;
 			const codemodModule = await import(`../${exportPath}`);
 			const codemodFn = codemodModule.default;
 			alternatives.push({ path: exportPath, codemodFn });

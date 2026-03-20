@@ -1,17 +1,28 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
-	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
 	"files": {
 		"includes": [
 			"**",
 			"!**/node_modules/**/*",
 			"!test/fixtures/**/*",
-			"!types/**/*"
+			"!types/**/*",
+			"!index.js",
+			"!package.json",
+			"!tsconfig.json"
 		]
 	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "single"
+	"javascript": { "formatter": { "quoteStyle": "single", "lineEnding": "lf" } },
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"suspicious": {
+				"noEmptyInterface": "off",
+				"noTsIgnore": "off"
+			},
+			"correctness": {
+				"noUnusedFunctionParameters": "off"
+			}
 		}
 	}
 }

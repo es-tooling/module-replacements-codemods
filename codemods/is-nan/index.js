@@ -17,9 +17,8 @@ export default function (options) {
 		transform: ({ file }) => {
 			const j = jscodeshift;
 			const root = j(file.source);
-			let dirtyFlag = false;
 
-			let { identifier } = removeImport('is-nan', root, j);
+			const { identifier } = removeImport('is-nan', root, j);
 
 			root
 				.find(j.CallExpression, {

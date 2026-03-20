@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,7 +66,7 @@ async function generateExports() {
 		packageJson.exports = sortedExports;
 		fs.writeFileSync(
 			packageJsonPath,
-			JSON.stringify(packageJson, null, 2) + '\n',
+			`${JSON.stringify(packageJson, null, 2)}\n`,
 		);
 		console.log('\n✓ Updated package.json with exports');
 	} else {

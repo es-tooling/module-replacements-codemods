@@ -27,6 +27,24 @@ const picoNames = [
 	'bgMagenta',
 	'bgCyan',
 	'bgWhite',
+	
+	'blackBright', 
+	'redBright', 
+	'greenBright', 
+	'yellowBright', 
+	'blueBright', 
+	'magentaBright', 
+	'cyanBright', 
+	'whiteBright', 
+	
+	'bgBlackBright', 
+	'bgRedBright', 
+	'bgGreenBright', 
+	'bgYellowBright', 
+	'bgBlueBright', 
+	'bgMagentaBright', 
+	'bgCyanBright', 
+	'bgWhiteBright', 
 ];
 
 /**

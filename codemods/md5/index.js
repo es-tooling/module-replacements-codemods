@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { replaceDefaultImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replaceDefaultImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,46 +15,35 @@ export default function (options) {
 		name: 'md5',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = replaceDefaultImport(
+			const { edits, localNames, quoteType } = replaceDefaultImport(
+				root,
 				'md5',
 				'crypto',
 				'crypto',
-				root,
-				j,
 			);
 
-			// Replace function calls
-			root
-				.find(j.CallExpression, {
-					callee: { name: identifier },
-				})
-				.forEach((path) => {
-					const newExpression = j.callExpression(
-						j.memberExpression(
-							j.callExpression(
-								j.memberExpression(
-									j.callExpression(
-										j.memberExpression(
-											j.identifier('crypto'),
-											j.identifier('createHash'),
-										),
-										[j.literal('md5')],
-									),
-									j.identifier('update'),
-								),
-								path.node.arguments,
-							),
-							j.identifier('digest'),
-						),
-						[j.literal('hex')],
-					);
-					j(path).replaceWith(newExpression);
-				});
+			if (localNames.length === 0) {
+				return file.source;
+			}
 
-			return root.toSource({ quote: 'single' });
+			for (const localName of localNames) {
+				for (const usage of root.findAll({
+					rule: { pattern: `${localName}($ARG)` },
+				})) {
+					const arg = usage.getMatch('ARG');
+					if (arg === null) continue;
+					edits.push(
+						usage.replace(
+							`crypto.createHash(${quoteType}md5${quoteType}).update(${arg.text()}).digest(${quoteType}hex${quoteType})`,
+						),
+					);
+				}
+			}
+
+			return root.commitEdits(edits);
 		},
 	};
 }

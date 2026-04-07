@@ -33,7 +33,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.10",
     "@types/jscodeshift": "^17.3.0",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "module-replacements": "^2.11.0",
     "typescript": "~6.0.2"
   },

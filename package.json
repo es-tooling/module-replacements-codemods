@@ -21,7 +21,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@ast-grep/napi": "^0.42.0",
+    "@ast-grep/napi": "^0.42.1",
     "jscodeshift": "^17.3.0"
   },
   "files": [

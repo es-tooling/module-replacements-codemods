@@ -71,7 +71,7 @@ async function testCodemod(codemod) {
 					{ cause: e },
 				);
 			}
-			assert.strictEqual(result, after);
+			assert.strictEqual(result.replace(/\r?\n/g, '\n'), after);
 		});
 	}
 }

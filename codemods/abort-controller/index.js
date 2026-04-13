@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,12 +15,16 @@ export default function (options) {
 		name: 'abort-controller',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			removeImport('abort-controller', root, j);
+			const { edits } = removeImport(root, 'abort-controller');
 
-			return root.toSource(options);
+			if (edits.length === 0) {
+				return file.source;
+			}
+
+			return root.commitEdits(edits);
 		},
 	};
 }

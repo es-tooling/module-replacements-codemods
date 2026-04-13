@@ -13,7 +13,7 @@ export interface Codemod {
     /**
      * Either "native" or the name of the package you're replacing it with.
      */
-    to: "native" | string;
+    to: 'native' | string;
     transform: (options: {
         file: File;
     }) => string | Promise<string>;

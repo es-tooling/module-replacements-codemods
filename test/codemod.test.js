@@ -55,12 +55,9 @@ async function testCodemod(codemod) {
 			);
 			let result;
 			try {
-				result = await codemod.transform({
-					file: {
-						filename,
-						source: before,
-					},
-				});
+				result = await codemod
+					.transform({ file: { filename, source: before } })
+					.replace(/\r?\n/g, '\n');
 				fs.writeFileSync(
 					`./test/fixtures/${codemod.name}/${fixture}/result.js`,
 					result,

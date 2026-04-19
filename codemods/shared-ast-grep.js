@@ -113,6 +113,12 @@ export function findNamedDefaultImport(root, moduleName) {
 						strictness: 'relaxed',
 					},
 				},
+				{
+					pattern: {
+						context: `var $NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
 			],
 		},
 	});

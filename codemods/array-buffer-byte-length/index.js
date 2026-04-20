@@ -44,16 +44,17 @@ export default function (options) {
 				const argsMatch = call.getMultipleMatches('ARG');
 				if (!argsMatch) continue;
 
-				const args = argsMatch
-					.filter((m) => m.kind() !== ',')
-					.map((m) => m.text());
+				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
 
-				if (args.length !== 1) continue;
+				if (argNodes.length !== 1) continue;
 
-				const argText = args[0];
+				const argNode = argNodes[0];
+				const argText = argNode.text();
 
-				const isIdentifier = argText.match(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/);
-				const isNewArrayBuffer = argText.startsWith('new ArrayBuffer');
+				const isIdentifier = argNode.kind() === 'identifier';
+				const isNewArrayBuffer =
+					argNode.kind() === 'new_expression' &&
+					argText.startsWith('new ArrayBuffer');
 
 				if (isIdentifier || isNewArrayBuffer) {
 					edits.push(call.replace(`${argText}.byteLength`));

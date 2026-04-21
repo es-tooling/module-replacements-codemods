@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findNamedDefaultImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.from';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,30 +14,54 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.from',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const { identifier } = removeImport('array.from', root, j);
+			const imports = findNamedDefaultImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: { name: identifier },
-				})
-				.forEach((p) => {
-					dirtyFlag = true;
-					j(p).replaceWith(
-						j.callExpression(
-							j.memberExpression(j.identifier('Array'), j.identifier('from')),
-							p.value.arguments,
-						),
-					);
-				});
+			if (imports.length === 0) {
+				return file.source;
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			let identifierName = null;
+			for (const imp of imports) {
+				const nameMatch = imp.getMatch('NAME');
+				if (nameMatch) {
+					identifierName = nameMatch.text();
+					break;
+				}
+			}
+
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($$$ARGS)`,
+				},
+			});
+
+			for (const call of callExpressions) {
+				const argsMatch = call.getMultipleMatches('ARGS');
+				if (argsMatch) {
+					const argsText = argsMatch
+						.filter((m) => m.kind() !== ',')
+						.map((m) => m.text())
+						.join(', ');
+					edits.push(call.replace(`Array.from(${argsText})`));
+				}
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

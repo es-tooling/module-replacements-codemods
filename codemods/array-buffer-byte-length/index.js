@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array-buffer-byte-length';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,38 +14,54 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array-buffer-byte-length',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const { identifier } = removeImport('array-buffer-byte-length', root, j);
+			const { edits: importEdits, localNames } = removeImport(
+				root,
+				MODULE_NAME,
+			);
 
-			let dirtyFlag = false;
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const [bufferArg] = path.node.arguments;
-					if (
-						j.Identifier.check(bufferArg) ||
-						(j.NewExpression.check(bufferArg) &&
-							bufferArg.callee.type === 'Identifier' &&
-							bufferArg.callee.name === 'ArrayBuffer')
-					) {
-						path.replace(
-							j.memberExpression(bufferArg, j.identifier('byteLength')),
-						);
-						dirtyFlag = true;
-					}
-				});
+			if (localNames.length === 0) {
+				return file.source;
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			edits.push(...importEdits);
+
+			const identifierName = localNames[0];
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($$$ARG)`,
+				},
+			});
+
+			for (const call of callExpressions) {
+				const argsMatch = call.getMultipleMatches('ARG');
+				if (!argsMatch) continue;
+
+				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
+
+				if (argNodes.length !== 1) continue;
+
+				const argNode = argNodes[0];
+				const argText = argNode.text();
+
+				const isIdentifier = argNode.kind() === 'identifier';
+				const isNewArrayBuffer =
+					argNode.kind() === 'new_expression' &&
+					argText.startsWith('new ArrayBuffer');
+
+				if (isIdentifier || isNewArrayBuffer) {
+					edits.push(call.replace(`${argText}.byteLength`));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

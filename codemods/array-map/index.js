@@ -12,7 +12,7 @@ const MODULE_NAME = 'array-map';
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
-export default function (_options) {
+export default function (options) {
 	return {
 		name: MODULE_NAME,
 		to: 'native',

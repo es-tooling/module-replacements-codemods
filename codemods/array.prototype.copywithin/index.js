@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { transformArrayMethod } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findNamedDefaultImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.prototype.copywithin';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,20 +14,60 @@ import { transformArrayMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.copywithin',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const dirty = transformArrayMethod(
-				'array.prototype.copywithin',
-				'copyWithin',
-				root,
-				j,
-			);
+			const imports = findNamedDefaultImport(root, MODULE_NAME);
 
-			return dirty ? root.toSource(options) : file.source;
+			if (imports.length === 0) {
+				return file.source;
+			}
+
+			let identifierName = null;
+			for (const imp of imports) {
+				const nameMatch = imp.getMatch('NAME');
+				if (nameMatch) {
+					identifierName = nameMatch.text();
+					break;
+				}
+			}
+
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($$$ARGS)`,
+				},
+			});
+
+			for (const call of callExpressions) {
+				const argsMatch = call.getMultipleMatches('ARGS');
+				if (!argsMatch) continue;
+
+				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
+
+				if (argNodes.length < 2) continue;
+
+				const arrayText = argNodes[0].text();
+				const restArgs = argNodes
+					.slice(1)
+					.map((m) => m.text())
+					.join(', ');
+
+				edits.push(call.replace(`${arrayText}.copyWithin(${restArgs})`));
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

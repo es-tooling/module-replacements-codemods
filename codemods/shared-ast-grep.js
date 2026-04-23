@@ -127,6 +127,45 @@ export function findNamedDefaultImport(root, moduleName) {
 }
 
 /**
+ * Find call expressions and identifier name for a given module import.
+ *
+ * This combines findNamedDefaultImport with extracting the identifier name
+ * and finding all call expressions using that identifier.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} moduleName - The module name to find imports for.
+ * @returns {{ callExpressions: SgNode[], identifierName: string | null, imports: SgNode[] }}
+ */
+export function findCallExpressionsAndIdentifier(root, moduleName) {
+	const imports = findNamedDefaultImport(root, moduleName);
+
+	if (imports.length === 0) {
+		return { callExpressions: [], identifierName: null, imports: [] };
+	}
+
+	let identifierName = null;
+	for (const imp of imports) {
+		const nameMatch = imp.getMatch('NAME');
+		if (nameMatch) {
+			identifierName = nameMatch.text();
+			break;
+		}
+	}
+
+	if (!identifierName) {
+		return { callExpressions: [], identifierName: null, imports: [] };
+	}
+
+	const callExpressions = root.findAll({
+		rule: {
+			pattern: `${identifierName}($$$ARGS)`,
+		},
+	});
+
+	return { callExpressions, identifierName, imports };
+}
+
+/**
  * Replace a default import/require of one package with another.
  *
  * @param {SgNode} root - The root of the AST.

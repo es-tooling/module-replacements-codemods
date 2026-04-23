@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { transformArrayMethod } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findNamedDefaultImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.prototype.every';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,20 +14,55 @@ import { transformArrayMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.every',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const dirty = transformArrayMethod(
-				'array.prototype.every',
-				'every',
-				root,
-				j,
-			);
+			const imports = findNamedDefaultImport(root, MODULE_NAME);
 
-			return dirty ? root.toSource(options) : file.source;
+			if (imports.length === 0) {
+				return file.source;
+			}
+
+			let identifierName = null;
+			for (const imp of imports) {
+				const nameMatch = imp.getMatch('NAME');
+				if (nameMatch) {
+					identifierName = nameMatch.text();
+					break;
+				}
+			}
+
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($$ARRAY, $$CALLBACK)`,
+				},
+			});
+
+			for (const call of callExpressions) {
+				const arrayMatch = call.getMatch('ARRAY');
+				if (!arrayMatch) continue;
+				const callbackMatch = call.getMatch('CALLBACK');
+				if (!callbackMatch) continue;
+
+				const arrayText = arrayMatch.text();
+				const callbackText = callbackMatch.text();
+
+				edits.push(call.replace(`${arrayText}.every(${callbackText})`));
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -44,11 +44,11 @@ export default function (options) {
 				const argsMatch = call.getMultipleMatches('ARG');
 				if (!argsMatch) continue;
 
-				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
+				const args = argsMatch.filter((m) => m.kind() !== ',');
 
-				if (argNodes.length !== 1) continue;
+				if (args.length !== 1) continue;
 
-				const argNode = argNodes[0];
+				const argNode = args[0];
 				const argText = argNode.text();
 
 				const isIdentifier = argNode.kind() === 'identifier';

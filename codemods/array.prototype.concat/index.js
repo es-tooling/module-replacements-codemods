@@ -39,17 +39,17 @@ export default function (options) {
 			for (const call of callExpressions) {
 				const argsMatch = call.getMultipleMatches('ARGS');
 				if (!argsMatch) continue;
-			
-					const args = argsMatch.filter((m) => m.kind() !== ',');
-					if (args.length >= 1) {
-						const arrayText = args[0].text();
-						const concatArgs = args
-							.slice(1)
-							.map((m) => m.text())
-							.join(', ');
-						edits.push(call.replace(`${arrayText}.concat(${concatArgs})`));
-					}
-				
+
+				const args = argsMatch.filter((m) => m.kind() !== ',');
+
+				if (args.length < 1) continue;
+
+				const arrayText = args[0].text();
+				const concatArgs = args
+					.slice(1)
+					.map((m) => m.text())
+					.join(', ');
+				edits.push(call.replace(`${arrayText}.concat(${concatArgs})`));
 			}
 
 			for (const imp of imports) {

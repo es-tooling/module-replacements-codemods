@@ -47,12 +47,12 @@ export default function (options) {
 				const argsMatch = call.getMultipleMatches('ARGS');
 				if (!argsMatch) continue;
 
-				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
+				const args = argsMatch.filter((m) => m.kind() !== ',');
 
-				if (argNodes.length !== 2) continue;
+				if (args.length !== 2) continue;
 
-				const arrayText = argNodes[0].text();
-				const indexText = argNodes[1].text();
+				const arrayText = args[0].text();
+				const indexText = args[1].text();
 
 				edits.push(call.replace(`${arrayText}.at(${indexText})`));
 			}

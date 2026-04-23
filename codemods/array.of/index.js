@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { findNamedDefaultImport } from '../shared-ast-grep.js';
+import {
+	computeSimpleCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.of';
 
@@ -19,43 +22,21 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
 
-			const imports = findNamedDefaultImport(root, MODULE_NAME);
-
-			if (imports.length === 0) {
-				return file.source;
-			}
-
-			let identifierName = null;
-			for (const imp of imports) {
-				const nameMatch = imp.getMatch('NAME');
-				if (nameMatch) {
-					identifierName = nameMatch.text();
-					break;
-				}
-			}
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
 			if (!identifierName) {
 				return file.source;
 			}
 
-			const callExpressions = root.findAll({
-				rule: {
-					pattern: `${identifierName}($$$ARGS)`,
-				},
-			});
-
-			for (const call of callExpressions) {
-				const argsMatch = call.getMultipleMatches('ARGS');
-				if (argsMatch) {
-					const argsText = argsMatch
-						.filter((m) => m.kind() !== ',')
-						.map((m) => m.text())
-						.join(', ');
-					edits.push(call.replace(`Array.of(${argsText})`));
-				}
-			}
+			const edits = computeSimpleCallReplacementEdits(
+				root,
+				identifierName,
+				'Array.of',
+			);
 
 			for (const imp of imports) {
 				edits.push(imp.replace(''));

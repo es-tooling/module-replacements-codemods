@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+import {
+	findDefaultImportIdentifier,
+	replaceCallExpressions,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.prototype.at';
 
@@ -37,25 +40,14 @@ export default function (options) {
 				return file.source;
 			}
 
-			const callExpressions = root.findAll({
-				rule: {
-					pattern: `${identifierName}($$$ARGS)`,
-				},
-			});
+			const callEdits = replaceCallExpressions(
+				root,
+				identifierName,
+				'at',
+				(args) => args.length === 2,
+			);
 
-			for (const call of callExpressions) {
-				const argsMatch = call.getMultipleMatches('ARGS');
-				if (!argsMatch) continue;
-
-				const args = argsMatch.filter((m) => m.kind() !== ',');
-
-				if (args.length !== 2) continue;
-
-				const arrayText = args[0].text();
-				const indexText = args[1].text();
-
-				edits.push(call.replace(`${arrayText}.at(${indexText})`));
-			}
+			edits.push(...callEdits);
 
 			for (const imp of imports) {
 				edits.push(imp.replace(''));

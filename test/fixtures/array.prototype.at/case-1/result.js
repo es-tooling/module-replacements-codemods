@@ -1,5 +1,6 @@
 const assert = require('assert');
 
+
 const arr = [1, 2];
 
 assert.equal(arr.at(0), arr[0]);

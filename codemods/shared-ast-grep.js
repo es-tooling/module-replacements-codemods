@@ -135,11 +135,71 @@ export function findNamedDefaultImport(root, moduleName) {
 						strictness: 'relaxed',
 					},
 				},
+				{
+					pattern: {
+						context: `var $NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
 			],
 		},
 	});
 
 	return imports;
+}
+
+/**
+ * Find default imports of a module and resolve the local identifier name.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} moduleName - The module to find imports for.
+ * @returns {{ imports: SgNode[], identifierName: string | null }}
+ */
+export function findDefaultImportIdentifier(root, moduleName) {
+	const imports = findNamedDefaultImport(root, moduleName);
+	let identifierName = null;
+	for (const imp of imports) {
+		const nameMatch = imp.getMatch('NAME');
+		if (nameMatch) {
+			identifierName = nameMatch.text();
+			break;
+		}
+	}
+	return { imports, identifierName };
+}
+
+/**
+ * Compute edits that replace every call of `fromIdentifier(...)` with
+ * `toCallee(...)`, preserving the original argument list verbatim.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} fromIdentifier - The identifier currently being called.
+ * @param {string} toCallee - The replacement callee expression (e.g. `Array.of`).
+ * @returns {Edit[]}
+ */
+export function computeSimpleCallReplacementEdits(
+	root,
+	fromIdentifier,
+	toCallee,
+) {
+	/** @type {Edit[]} */
+	const edits = [];
+	const calls = root.findAll({
+		rule: {
+			pattern: `${fromIdentifier}($$$ARGS)`,
+		},
+	});
+	for (const call of calls) {
+		const argsMatch = call.getMultipleMatches('ARGS');
+		const argsText = argsMatch
+			? argsMatch
+					.filter((m) => m.kind() !== ',')
+					.map((m) => m.text())
+					.join(', ')
+			: '';
+		edits.push(call.replace(`${toCallee}(${argsText})`));
+	}
+	return edits;
 }
 
 /**

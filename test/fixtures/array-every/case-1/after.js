@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 var result = ["a", "b", "c"].every(function (ele) {

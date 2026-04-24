@@ -1,5 +1,5 @@
 import { ts } from '@ast-grep/napi';
-import { findNamedDefaultImport } from '../shared-ast-grep.js';
+import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.prototype.every';
 
@@ -21,20 +21,11 @@ export default function (options) {
 			const root = ast.root();
 			const edits = [];
 
-			const imports = findNamedDefaultImport(root, MODULE_NAME);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			if (imports.length === 0) {
-				return file.source;
-			}
-
-			let identifierName = null;
-			for (const imp of imports) {
-				const nameMatch = imp.getMatch('NAME');
-				if (nameMatch) {
-					identifierName = nameMatch.text();
-					break;
-				}
-			}
 
 			if (!identifierName) {
 				return file.source;

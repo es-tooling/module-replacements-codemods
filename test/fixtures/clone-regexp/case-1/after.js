@@ -1,3 +1,4 @@
+
 import assert from 'assert';
 
 const regex = /[a-z]/gi;

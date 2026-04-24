@@ -26,7 +26,6 @@ export default function (options) {
 				MODULE_NAME,
 			);
 
-
 			if (!identifierName) {
 				return file.source;
 			}

@@ -1,5 +1,5 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array-map';
 
@@ -21,18 +21,14 @@ export default function (options) {
 			const root = ast.root();
 			const edits = [];
 
-			const { edits: importEdits, localNames } = removeImport(
+			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
 				MODULE_NAME,
 			);
 
-			if (localNames.length === 0) {
+			if (!identifierName) {
 				return file.source;
 			}
-
-			edits.push(...importEdits);
-
-			const identifierName = localNames[0];
 
 			const callExpressions = root.findAll({
 				rule: {
@@ -47,18 +43,13 @@ export default function (options) {
 				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
 
 				if (argNodes.length !== 2) continue;
+				const arrayText = argNodes[0].text();
+				const callbackText = argNodes[1].text();
+				edits.push(call.replace(`${arrayText}.map(${callbackText})`));
+			}
 
-				const arrayArgNode = argNodes[0];
-				const callbackArgNode = argNodes[1];
-
-				const isIdentifier = arrayArgNode.kind() === 'identifier';
-				const isArray = arrayArgNode.kind() === 'array';
-
-				if (isIdentifier || isArray) {
-					const arrayText = arrayArgNode.text();
-					const callbackText = callbackArgNode.text();
-					edits.push(call.replace(`${arrayText}.map(${callbackText})`));
-				}
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

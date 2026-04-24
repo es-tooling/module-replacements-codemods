@@ -47,8 +47,15 @@ export default function (options) {
 
 				let newText = '';
 				if (hasSecondArg) {
-					const flags = extractFlags(args[1].text());
-					newText = `new RegExp(${firstArg}, ${flags})`;
+					const flags = extractFlagsFromNode(args[1]);
+					if (flags) {
+						newText = `new RegExp(${firstArg}, '${flags}')`;
+					} else {
+						newText = `new RegExp(${firstArg})`;
+						console.warn(
+							'[WARNING] Options are being passed to `clone-regexp`. Please modify the new regular expression accordingly.',
+						);
+					}
 				} else {
 					newText = `new RegExp(${firstArg})`;
 				}
@@ -65,31 +72,37 @@ export default function (options) {
 	};
 }
 
+const FLAG_MAP = {
+	global: 'g',
+	ignoreCase: 'i',
+	multiline: 'm',
+	dotAll: 's',
+	unicode: 'u',
+	sticky: 'y',
+};
+
 /**
- * @param {string} optionsText
- * @returns {string}
+ * @param {import('@ast-grep/napi').SgNode} node
+ * @returns {string | null}
  */
-function extractFlags(optionsText) {
+function extractFlagsFromNode(node) {
+	/** @type {string[]} */
 	const flags = [];
-	const flagMap = {
-		global: 'g',
-		ignoreCase: 'i',
-		multiline: 'm',
-		dotAll: 's',
-		unicode: 'u',
-		sticky: 'y',
-	};
 
-	const cleaned = optionsText.replace(/[{}]/g, '').trim();
-	const pairs = cleaned.split(',').map((p) => p.trim());
+	for (const [flagName, flagChar] of Object.entries(FLAG_MAP)) {
+		const propMatch = node.find({
+			rule: {
+				pattern: {
+					context: `{ ${flagName}: true }`,
+					strictness: 'smart',
+				},
+			},
+		});
 
-	for (const pair of pairs) {
-		const [key, value] = pair.split(':').map((s) => s.trim());
-		const flag = flagMap[key];
-		if (flag && value === 'true') {
-			flags.push(flag);
+		if (propMatch) {
+			flags.push(flagChar);
 		}
 	}
 
-	return flags.length > 0 ? `'${flags.join('')}'` : 'undefined';
+	return flags.length > 0 ? flags.join('') : null;
 }

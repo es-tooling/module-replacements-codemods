@@ -43,15 +43,15 @@ export default function (options) {
 				const args = argsMatch.filter((m) => m.kind() !== ',');
 
 				const firstArg = args.length >= 1 ? args[0].text() : '';
-				const hasSecondArg = args.length >= 2;
+				const secondArg = args[1];
 
 				let newText = '';
-				if (hasSecondArg) {
-					const flags = extractFlagsFromNode(args[1]);
+				if (secondArg) {
+					const flags = extractFlagsFromNode(secondArg);
 					if (flags) {
 						newText = `new RegExp(${firstArg}, '${flags}')`;
 					} else {
-						newText = `new RegExp(${firstArg})`;
+						newText = `new RegExp(${firstArg} /* Todo (, ${secondArg.text()}) */)`;
 						console.warn(
 							'[WARNING] Options are being passed to `clone-regexp`. Please modify the new regular expression accordingly.',
 						);

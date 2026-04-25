@@ -22,7 +22,6 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
 
 			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
@@ -33,14 +32,12 @@ export default function (options) {
 				return file.source;
 			}
 
-			const callEdits = replaceCallExpressions(
+			const edits = replaceCallExpressions(
 				root,
 				identifierName,
 				'concat',
 				(args) => args.length >= 1,
 			);
-
-			edits.push(...callEdits);
 
 			for (const imp of imports) {
 				edits.push(imp.replace(''));

@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.prototype.entries';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,41 +14,44 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.entries',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const { identifier } = removeImport('array.prototype.entries', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: { name: identifier },
-				})
-				.forEach((path) => {
-					const { arguments: args } = path.node;
+			if (!identifierName) {
+				return file.source;
+			}
 
-					// Ensure the call expression has exactly one argument
-					if (args.length === 1) {
-						const arg = args[0];
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($ARG)`,
+				},
+			});
 
-						// Check if the argument is an array expression or an identifier
-						if (j.ArrayExpression.check(arg) || j.Identifier.check(arg)) {
-							// Replace the call expression with a method call on the argument
-							j(path).replaceWith(
-								j.callExpression(
-									j.memberExpression(arg, j.identifier('entries')),
-									[],
-								),
-							);
-							dirtyFlag = true;
-						}
-					}
-				});
+			for (const call of callExpressions) {
+				const argNode = call.getMatch('ARG');
+				if (!argNode) continue;
+				const argKind = argNode.kind();
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+				if (argKind === 'identifier' || argKind === 'array') {
+					const argText = argNode.text();
+					edits.push(call.replace(`${argText}.entries()`));
+				}
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

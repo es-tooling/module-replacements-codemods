@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeSimpleCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.from';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,30 +17,32 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.from',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('array.from', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: { name: identifier },
-				})
-				.forEach((p) => {
-					dirtyFlag = true;
-					j(p).replaceWith(
-						j.callExpression(
-							j.memberExpression(j.identifier('Array'), j.identifier('from')),
-							p.value.arguments,
-						),
-					);
-				});
+			if (!identifierName) {
+				return file.source;
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			const edits = computeSimpleCallReplacementEdits(
+				root,
+				identifierName,
+				'Array.from',
+			);
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

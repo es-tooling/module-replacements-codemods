@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { transformArrayMethod } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.prototype.flatmap';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,20 +14,49 @@ import { transformArrayMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.flatmap',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const dirty = transformArrayMethod(
-				'array.prototype.flatmap',
-				'flatMap',
+			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
-				j,
+				MODULE_NAME,
 			);
 
-			return dirty ? root.toSource(options) : file.source;
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}($$$ARGS)`,
+				},
+			});
+
+			for (const call of callExpressions) {
+				const argsMatch = call.getMultipleMatches('ARGS');
+				if (!argsMatch) continue;
+
+				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
+				if (argNodes.length === 0) continue;
+
+				const arrayText = argNodes[0].text();
+				const restArgs = argNodes
+					.slice(1)
+					.map((m) => m.text())
+					.join(', ');
+
+				edits.push(call.replace(`${arrayText}.flatMap(${restArgs})`));
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

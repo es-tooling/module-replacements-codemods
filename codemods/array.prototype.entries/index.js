@@ -32,7 +32,7 @@ export default function (options) {
 
 			const callExpressions = root.findAll({
 				rule: {
-					pattern: `${identifierName}($$ARG)`,
+					pattern: `${identifierName}($ARG)`,
 				},
 			});
 

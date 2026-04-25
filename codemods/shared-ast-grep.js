@@ -181,6 +181,49 @@ export function computeSimpleCallReplacementEdits(
 }
 
 /**
+ * Iterate over call expressions of a specific identifier and generate edits.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} identifierName - The identifier being called.
+ * @param {string} methodName - The native method name to replace with (e.g., 'concat').
+ * @param {((args: SgNode[]) => boolean)} shouldTransform - Function that receives args and returns whether to transform.
+ * @returns {Edit[]}
+ */
+export function replaceCallExpressions(
+	root,
+	identifierName,
+	methodName,
+	shouldTransform,
+) {
+	/** @type {Edit[]} */
+	const edits = [];
+	const callExpressions = root.findAll({
+		rule: {
+			pattern: `${identifierName}($$$ARGS)`,
+		},
+	});
+
+	for (const call of callExpressions) {
+		const argsMatch = call.getMultipleMatches('ARGS');
+		if (!argsMatch) continue;
+
+		const args = argsMatch.filter((m) => m.kind() !== ',');
+
+		if (!shouldTransform(args)) continue;
+
+		const callee = args[0].text();
+		const methodArgs = args
+			.slice(1)
+			.map((m) => m.text())
+			.join(', ');
+
+		edits.push(call.replace(`${callee}.${methodName}(${methodArgs})`));
+	}
+
+	return edits;
+}
+
+/**
  * Replace a default import/require of one package with another.
  *
  * @param {SgNode} root - The root of the AST.

@@ -19,9 +19,8 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
 
-			const { edits: importEdits, localNames } = removeImport(
+			const { edits, localNames } = removeImport(
 				root,
 				MODULE_NAME,
 			);
@@ -29,8 +28,6 @@ export default function (options) {
 			if (localNames.length === 0) {
 				return file.source;
 			}
-
-			edits.push(...importEdits);
 
 			const identifierName = localNames[0];
 

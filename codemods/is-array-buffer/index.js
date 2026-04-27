@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,37 +15,36 @@ export default function (options) {
 		name: 'is-array-buffer',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('is-array-buffer', root, j);
+			const { edits, localNames } = removeImport(root, 'is-array-buffer');
 
-			// Replace isArrayBuffer calls with (foo instanceof ArrayBuffer)
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
+			if (localNames.length === 0) {
+				return file.source;
+			}
+
+			for (const localName of localNames) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${localName}($$$ARGS)`,
 					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length === 1) {
-						const arg = args[0];
-						const newExpression = j.binaryExpression(
-							'instanceof',
-							// @ts-expect-error
-							arg,
-							j.identifier('ArrayBuffer'),
-						);
-						const wrappedExpression = j.parenthesizedExpression(newExpression);
-						j(path).replaceWith(wrappedExpression);
-						dirtyFlag = true;
-					}
 				});
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					if (args.length !== 1) continue;
+
+					const argText = args[0].text();
+					const replacement = `(${argText} instanceof ArrayBuffer)`;
+					edits.push(call.replace(replacement));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

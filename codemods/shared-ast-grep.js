@@ -224,21 +224,13 @@ export function computePolyfillMethodCallReplacementEdits(
 }
 
 /**
- * Replace a default import/require of one package with another.
- * If toIdentifier is not provided, the original local name is preserved.
+ * Find all default imports/requires for a package and extract common metadata.
  *
  * @param {SgNode} root - The root of the AST.
- * @param {string} fromPackage - The package being replaced
- * @param {string} toPackage - The new package specifier
- * @param {string} [toIdentifier] - The local name to use in the replacement (defaults to original name)
- * @returns {{ edits: Edit[], localNames: string[], quoteType: string }}
+ * @param {string} fromPackage - The package to find imports for.
+ * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
  */
-export function replaceDefaultImport(
-	root,
-	fromPackage,
-	toPackage,
-	toIdentifier,
-) {
+function findDefaultImports(root, fromPackage) {
 	const imports = root.findAll({
 		rule: {
 			any: [
@@ -264,8 +256,6 @@ export function replaceDefaultImport(
 		},
 	});
 
-	/** @type {Edit[]} */
-	const edits = [];
 	/** @type {string[]} */
 	const localNames = [];
 	let quoteType = "'";
@@ -273,32 +263,12 @@ export function replaceDefaultImport(
 	for (const imp of imports) {
 		const nameMatch = imp.getMatch('NAME');
 		if (!nameMatch) continue;
-
-		const localName = nameMatch.text();
-		localNames.push(localName);
-
+		localNames.push(nameMatch.text());
 		const impText = imp.text();
 		if (impText.includes('"')) quoteType = '"';
-
-		const identifier = toIdentifier ?? localName;
-		const isCommonJS = imp.find('require($SOURCE)') !== null;
-
-		if (isCommonJS) {
-			edits.push(
-				imp.replace(
-					`const ${identifier} = require(${quoteType}${toPackage}${quoteType});`,
-				),
-			);
-		} else {
-			edits.push(
-				imp.replace(
-					`import ${identifier} from ${quoteType}${toPackage}${quoteType};`,
-				),
-			);
-		}
 	}
 
-	return { edits, localNames, quoteType };
+	return { imports, localNames, quoteType };
 }
 
 /**
@@ -316,45 +286,17 @@ export function replaceDefaultWithNamedImport(
 	toPackage,
 	namedImport,
 ) {
-	const imports = root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `import $NAME from '${fromPackage}'`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `const $NAME = require('${fromPackage}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `var $NAME = require('${fromPackage}')`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	});
+	const { imports, localNames, quoteType } = findDefaultImports(
+		root,
+		fromPackage,
+	);
 
 	/** @type {Edit[]} */
 	const edits = [];
-	/** @type {string[]} */
-	const localNames = [];
-	let quoteType = "'";
 
 	for (const imp of imports) {
 		const nameMatch = imp.getMatch('NAME');
 		if (!nameMatch) continue;
-
-		localNames.push(nameMatch.text());
-
-		const impText = imp.text();
-		if (impText.includes('"')) quoteType = '"';
 
 		const isCommonJS = imp.find('require($SOURCE)') !== null;
 
@@ -368,6 +310,55 @@ export function replaceDefaultWithNamedImport(
 			edits.push(
 				imp.replace(
 					`import { ${namedImport} } from ${quoteType}${toPackage}${quoteType};`,
+				),
+			);
+		}
+	}
+
+	return { edits, localNames, quoteType };
+}
+
+/**
+ * Replace a default import/require of one package with another.
+ * If toIdentifier is not provided, the original local name is preserved.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} fromPackage - The package being replaced
+ * @param {string} toPackage - The new package specifier
+ * @param {string} [toIdentifier] - The local name to use in the replacement (defaults to original name)
+ * @returns {{ edits: Edit[], localNames: string[], quoteType: string }}
+ */
+export function replaceDefaultImport(
+	root,
+	fromPackage,
+	toPackage,
+	toIdentifier,
+) {
+	const { imports, localNames, quoteType } = findDefaultImports(
+		root,
+		fromPackage,
+	);
+
+	/** @type {Edit[]} */
+	const edits = [];
+
+	for (const imp of imports) {
+		const nameMatch = imp.getMatch('NAME');
+		if (!nameMatch) continue;
+
+		const identifier = toIdentifier || nameMatch.text();
+		const isCommonJS = imp.find('require($SOURCE)') !== null;
+
+		if (isCommonJS) {
+			edits.push(
+				imp.replace(
+					`const ${identifier} = require(${quoteType}${toPackage}${quoteType});`,
+				),
+			);
+		} else {
+			edits.push(
+				imp.replace(
+					`import ${identifier} from ${quoteType}${toPackage}${quoteType};`,
 				),
 			);
 		}

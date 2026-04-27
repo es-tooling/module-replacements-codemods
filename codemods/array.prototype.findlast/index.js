@@ -35,7 +35,7 @@ export default function (options) {
 			const edits = computePolyfillMethodCallReplacementEdits(
 				root,
 				identifierName,
-				'findlast',
+				'findLast',
 				(args) => args.length >= 2,
 			);
 

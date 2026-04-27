@@ -6,4 +6,4 @@ var isNumber = function (x) {
   return typeof x === "number";
 };
 
-assert.deepEqual(arr.findlast(isNumber), 3);
+assert.deepEqual(arr.findLast(isNumber), 3);

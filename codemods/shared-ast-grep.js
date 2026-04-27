@@ -98,31 +98,7 @@ export function removeImport(root, moduleName) {
  * @returns {SgNode[]} - An array of matched import nodes.
  */
 export function findNamedDefaultImport(root, moduleName) {
-	const imports = root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `import $NAME from '${moduleName}'`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `const $NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `var $NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	});
-
+	const { imports } = findDefaultImports(root, moduleName);
 	return imports;
 }
 

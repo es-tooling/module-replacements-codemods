@@ -1,5 +1,8 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-negative-zero';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -11,53 +14,51 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-negative-zero',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			const root = j(file.source);
+			if (localNames.length === 0) {
+				return file.source;
+			}
 
-			const { identifier } = removeImport('is-negative-zero', root, j);
-
-			root
-				.find(j.LogicalExpression, {
-					operator: '||',
-					left: {
-						type: 'CallExpression',
-						callee: {
-							type: 'MemberExpression',
-							object: { name: 'Object' },
-							property: { name: 'is' },
-						},
+			for (const localName of localNames) {
+				// Find Object.is(...) || localName(...) and replace with Object.is(...)
+				const logicalExprs = root.findAll({
+					rule: {
+						pattern: `Object.is($$$ARGS) || ${localName}($$$ARGS2)`,
 					},
-					right: {
-						type: 'CallExpression',
-						callee: { name: identifier },
-					},
-				})
-				.replaceWith((path) => {
-					return path.node.left;
 				});
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
+				for (const expr of logicalExprs) {
+					const argsMatch = expr.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					const argsText = args.map((m) => m.text()).join(', ');
+					edits.push(expr.replace(`Object.is(${argsText})`));
+				}
+
+				// Find remaining localName(...) calls and replace with Object.is(arg, -0)
+				const calls = root.findAll({
+					rule: {
+						pattern: `${localName}($$$ARGS)`,
 					},
-				})
-				.replaceWith((path) => {
-					if (path.node.arguments.length === 1) {
-						return j.callExpression(
-							j.memberExpression(j.identifier('Object'), j.identifier('is')),
-							[path.node.arguments[0], j.unaryExpression('-', j.literal(0))],
-						);
-					}
-					return path.node;
 				});
 
-			return root.toSource(options);
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					if (args.length !== 1) continue;
+					const argText = args[0].text();
+					edits.push(call.replace(`Object.is(${argText}, -0)`));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

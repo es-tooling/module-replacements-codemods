@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-boolean-object';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,57 +14,39 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-boolean-object',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('is-boolean-object', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			// Replace all calls to isBoolean with Object.prototype.toString.call
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
+			if (localNames.length === 0) {
+				return file.source;
+			}
+
+			for (const localName of localNames) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${localName}($$$ARGS)`,
 					},
-				})
-				.replaceWith((path) => {
-					const arg = path.node.arguments[0];
-					return j.callExpression(
-						j.memberExpression(
-							j.memberExpression(
-								j.memberExpression(
-									j.identifier('Object'),
-									j.identifier('prototype'),
-								),
-								j.identifier('toString'),
-							),
-							j.identifier('call'),
-						),
-						[arg],
-					);
-				})
-				.forEach((path) => {
-					const parent = path.parent.node;
-					if (j.BinaryExpression.check(parent)) {
-						parent.operator = '===';
-						parent.right = j.literal('[object Boolean]');
-					} else if (
-						j.CallExpression.check(parent) &&
-						parent.arguments.length === 1
-					) {
-						const newExpression = j.binaryExpression(
-							'===',
-							path.node,
-							j.literal('[object Boolean]'),
-						);
-						parent.arguments[0] = newExpression;
-					}
 				});
 
-			return root.toSource({ quote: 'single' });
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					if (args.length !== 1) continue;
+
+					const argText = args[0].text();
+					const replacement = `Object.prototype.toString.call(${argText}) === '[object Boolean]'`;
+					edits.push(call.replace(replacement));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

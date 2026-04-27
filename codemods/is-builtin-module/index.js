@@ -1,69 +1,93 @@
-import { ts } from '@ast-grep/napi';
-import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
-
-const MODULE_NAME = 'is-builtin-module';
+import jscodeshift from 'jscodeshift';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
-
-/**
- * @param {CodemodOptions} [options]
- * @returns {Codemod}
  */
 export default function (options) {
 	return {
-		name: MODULE_NAME,
+		name: 'is-builtin-module',
 		to: 'native',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
-			const root = ast.root();
-			const edits = [];
+			const j = jscodeshift;
+			const root = j(file.source);
+			let dirtyFlag = false;
 
-			const { imports, identifierName } = findDefaultImportIdentifier(
-				root,
-				MODULE_NAME,
-			);
+			const importDeclaration = root.find(j.ImportDeclaration, {
+				source: { value: 'is-builtin-module' },
+			});
 
-			if (!identifierName) {
-				return file.source;
-			}
-
-			// Replace import/require statements
-			for (const imp of imports) {
-				const impText = imp.text();
-				const quoteType = impText.includes('"') ? '"' : "'";
-
-				if (impText.startsWith('import')) {
-					edits.push(
-						imp.replace(
-							`import { isBuiltin } from ${quoteType}node:module${quoteType};`,
-						),
-					);
-				} else {
-					edits.push(
-						imp.replace(
-							`const { isBuiltin } = require(${quoteType}node:module${quoteType});`,
-						),
-					);
-				}
-			}
-
-			// Replace function calls
-			const calls = root.findAll({
-				rule: {
-					pattern: `${identifierName}($$$ARGS)`,
+			const requireDeclaration = root.find(j.VariableDeclarator, {
+				init: {
+					callee: {
+						name: 'require',
+					},
+					arguments: [
+						{
+							value: 'is-builtin-module',
+						},
+					],
 				},
 			});
 
-			for (const call of calls) {
-				edits.push(
-					call.replace(call.text().replace(identifierName, 'isBuiltin')),
+			// These cases are too complex and too niche to handle
+			if (importDeclaration.size() >= 1 && requireDeclaration.size() >= 1) {
+				console.warn(
+					'[WARNING] Refusing to replace `is-builtin-module` because the code mixes import and require statements. Please only use either `import` or `require` and re-run this codemod.',
 				);
+				return file.source;
 			}
 
-			return edits.length > 0 ? root.commitEdits(edits) : file.source;
+			if (importDeclaration.size() > 1 || requireDeclaration.size() > 1) {
+				console.warn(
+					'[WARNING] Refusing to replace `is-builtin-module` because it is imported multiple times. Please import it only once and re-run this codemod.',
+				);
+				return file.source;
+			}
+
+			let importName = 'isBuiltin';
+
+			// Replace import statement
+			importDeclaration.forEach((path) => {
+				const name = path.value.specifiers?.[0].local?.name;
+				if (name && typeof name === 'string') {
+					importName = name;
+				}
+				path.value.source.value = 'node:module';
+				path.value.specifiers = [j.importSpecifier(j.identifier('isBuiltin'))];
+				dirtyFlag = true;
+			});
+
+			// Replace require statement
+			requireDeclaration.forEach((path) => {
+				// @ts-expect-error
+				importName = path.value.id.name;
+				path.value.id = j.objectPattern.from({
+					properties: [
+						j.property.from({
+							key: j.identifier('isBuiltin'),
+							value: j.identifier('isBuiltin'),
+							shorthand: true,
+							kind: 'init',
+						}),
+					],
+				});
+				// @ts-expect-error
+				path.value.init.arguments[0].value = 'node:module';
+				dirtyFlag = true;
+			});
+
+			// Replace function calls
+			root
+				.find(j.CallExpression, {
+					callee: { name: importName },
+				})
+				.forEach((path) => {
+					// @ts-expect-error
+					path.value.callee.name = 'isBuiltin';
+					dirtyFlag = true;
+				});
+
+			return dirtyFlag ? root.toSource() : file.source;
 		},
 	};
 }

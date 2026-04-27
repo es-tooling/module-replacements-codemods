@@ -1,6 +1,8 @@
 import { ts } from '@ast-grep/napi';
 import { removeImport } from '../shared-ast-grep.js';
 
+const MODULE_NAME = 'is-array-buffer';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -12,13 +14,13 @@ import { removeImport } from '../shared-ast-grep.js';
  */
 export default function (options) {
 	return {
-		name: 'is-array-buffer',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
 
-			const { edits, localNames } = removeImport(root, 'is-array-buffer');
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
 			if (localNames.length === 0) {
 				return file.source;

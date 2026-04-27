@@ -1,4 +1,6 @@
-const { isBuiltin } = require('node:module');
+var {
+  isBuiltin
+} = require("node:module");
 
 isBuiltin('fs');
 //=> true

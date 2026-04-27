@@ -20,10 +20,7 @@ export default function (options) {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
 
-			const { edits, localNames } = removeImport(
-				root,
-				MODULE_NAME,
-			);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
 			if (localNames.length === 0) {
 				return file.source;

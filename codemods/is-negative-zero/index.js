@@ -26,7 +26,7 @@ export default function (options) {
 			}
 
 			for (const localName of localNames) {
-				// Find Object.is(...) || localName(...) and replace with Object.is(...)
+				// Find `Object.is(...) || localName(...)` and replace with Object.is(...)
 				const logicalExprs = root.findAll({
 					rule: {
 						pattern: `Object.is($$$ARGS) || ${localName}($$$ARGS2)`,

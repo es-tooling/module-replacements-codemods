@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { transformArrayMethod } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'last-index-of';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,20 +17,33 @@ import { transformArrayMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'last-index-of',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const dirty = transformArrayMethod(
-				'last-index-of',
-				'lastIndexOf',
+			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
-				j,
+				MODULE_NAME,
 			);
 
-			return dirty ? root.toSource(options) : file.source;
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'lastIndexOf',
+				(args) => args.length >= 2,
+			);
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

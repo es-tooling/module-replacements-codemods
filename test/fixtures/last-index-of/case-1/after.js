@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 assert.equal(["a", "b", "c", "a", "b", "c"].lastIndexOf("a"), 3);

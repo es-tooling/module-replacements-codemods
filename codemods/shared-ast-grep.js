@@ -91,6 +91,54 @@ export function removeImport(root, moduleName) {
 }
 
 /**
+ * Find all default imports/requires for a package and extract common metadata.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} fromPackage - The package to find imports for.
+ * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
+ */
+function findNamedDefaultImports(root, fromPackage) {
+	const imports = root.findAll({
+		rule: {
+			any: [
+				{
+					pattern: {
+						context: `import $NAME from '${fromPackage}'`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `const $NAME = require('${fromPackage}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `var $NAME = require('${fromPackage}')`,
+						strictness: 'relaxed',
+					},
+				},
+			],
+		},
+	});
+
+	/** @type {string[]} */
+	const localNames = [];
+	let quoteType = "'";
+
+	for (const imp of imports) {
+		const nameMatch = imp.getMatch('NAME');
+		if (!nameMatch) continue;
+		localNames.push(nameMatch.text());
+		const impText = imp.text();
+		if (impText.includes('"')) quoteType = '"';
+	}
+
+	return { imports, localNames, quoteType };
+}
+
+/**
  * Find default imports of a module and resolve the local identifier name.
  *
  * @param {SgNode} root - The root of the AST.
@@ -178,54 +226,6 @@ export function computePolyfillMethodCallReplacementEdits(
 	}
 
 	return edits;
-}
-
-/**
- * Find all default imports/requires for a package and extract common metadata.
- *
- * @param {SgNode} root - The root of the AST.
- * @param {string} fromPackage - The package to find imports for.
- * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
- */
-function findNamedDefaultImports(root, fromPackage) {
-	const imports = root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `import $NAME from '${fromPackage}'`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `const $NAME = require('${fromPackage}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `var $NAME = require('${fromPackage}')`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	});
-
-	/** @type {string[]} */
-	const localNames = [];
-	let quoteType = "'";
-
-	for (const imp of imports) {
-		const nameMatch = imp.getMatch('NAME');
-		if (!nameMatch) continue;
-		localNames.push(nameMatch.text());
-		const impText = imp.text();
-		if (impText.includes('"')) quoteType = '"';
-	}
-
-	return { imports, localNames, quoteType };
 }
 
 /**

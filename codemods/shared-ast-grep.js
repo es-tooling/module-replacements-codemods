@@ -94,28 +94,28 @@ export function removeImport(root, moduleName) {
  * Find all default imports/requires for a package and extract common metadata.
  *
  * @param {SgNode} root - The root of the AST.
- * @param {string} fromPackage - The package to find imports for.
+ * @param {string} moduleName - The package to find imports for.
  * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
  */
-function findNamedDefaultImports(root, fromPackage) {
+function findNamedDefaultImports(root, moduleName) {
 	const imports = root.findAll({
 		rule: {
 			any: [
 				{
 					pattern: {
-						context: `import $NAME from '${fromPackage}'`,
+						context: `import $NAME from '${moduleName}'`,
 						strictness: 'relaxed',
 					},
 				},
 				{
 					pattern: {
-						context: `const $NAME = require('${fromPackage}')`,
+						context: `const $NAME = require('${moduleName}')`,
 						strictness: 'relaxed',
 					},
 				},
 				{
 					pattern: {
-						context: `var $NAME = require('${fromPackage}')`,
+						context: `var $NAME = require('${moduleName}')`,
 						strictness: 'relaxed',
 					},
 				},

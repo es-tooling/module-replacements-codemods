@@ -91,18 +91,6 @@ export function removeImport(root, moduleName) {
 }
 
 /**
- * Find all named imports from a specific module in the AST.
- *
- * @param {SgNode} root - The root of the AST.
- * @param {string} moduleName - The name of the module to find imports from.
- * @returns {SgNode[]} - An array of matched import nodes.
- */
-export function findNamedDefaultImport(root, moduleName) {
-	const { imports } = findDefaultImports(root, moduleName);
-	return imports;
-}
-
-/**
  * Find default imports of a module and resolve the local identifier name.
  *
  * @param {SgNode} root - The root of the AST.
@@ -110,15 +98,8 @@ export function findNamedDefaultImport(root, moduleName) {
  * @returns {{ imports: SgNode[], identifierName: string | null }}
  */
 export function findDefaultImportIdentifier(root, moduleName) {
-	const imports = findNamedDefaultImport(root, moduleName);
-	let identifierName = null;
-	for (const imp of imports) {
-		const nameMatch = imp.getMatch('NAME');
-		if (nameMatch) {
-			identifierName = nameMatch.text();
-			break;
-		}
-	}
+	const { imports } = findNamedDefaultImports(root, moduleName);
+	const identifierName = imports[0]?.getMatch('NAME')?.text() ?? null;
 	return { imports, identifierName };
 }
 
@@ -206,7 +187,7 @@ export function computePolyfillMethodCallReplacementEdits(
  * @param {string} fromPackage - The package to find imports for.
  * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
  */
-function findDefaultImports(root, fromPackage) {
+function findNamedDefaultImports(root, fromPackage) {
 	const imports = root.findAll({
 		rule: {
 			any: [
@@ -262,7 +243,7 @@ export function replaceDefaultWithNamedImport(
 	toPackage,
 	namedImport,
 ) {
-	const { imports, localNames, quoteType } = findDefaultImports(
+	const { imports, localNames, quoteType } = findNamedDefaultImports(
 		root,
 		fromPackage,
 	);
@@ -310,7 +291,7 @@ export function replaceDefaultImport(
 	toPackage,
 	toIdentifier,
 ) {
-	const { imports, localNames, quoteType } = findDefaultImports(
+	const { imports, localNames, quoteType } = findNamedDefaultImports(
 		root,
 		fromPackage,
 	);

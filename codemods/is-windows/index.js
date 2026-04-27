@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-windows';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,35 +14,47 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-windows',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const { identifier } = removeImport('is-windows', root, j);
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					dirtyFlag = true;
-					j(path).replaceWith(
-						j.binaryExpression(
-							'===',
-							j.memberExpression(
-								j.identifier('process'),
-								j.identifier('platform'),
-							),
-							j.literal('win32'),
-						),
-					);
-				});
-			return dirtyFlag ? root.toSource({ quote: 'single' }) : file.source;
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
+
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const negatedCallExpressions = root.findAll({
+				rule: {
+					pattern: `!${identifierName}()`,
+				},
+			});
+
+			for (const call of negatedCallExpressions) {
+				edits.push(call.replace("process.platform !== 'win32'"));
+			}
+
+			const callExpressions = root.findAll({
+				rule: {
+					pattern: `${identifierName}()`,
+				},
+			});
+
+			for (const call of callExpressions) {
+				edits.push(call.replace("process.platform === 'win32'"));
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

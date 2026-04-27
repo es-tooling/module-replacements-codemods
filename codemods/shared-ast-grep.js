@@ -189,7 +189,7 @@ export function computeSimpleCallReplacementEdits(
  * @param {((args: SgNode[]) => boolean)} shouldTransform - Function that receives args and returns whether to transform.
  * @returns {Edit[]}
  */
-export function replaceCallExpressions(
+export function computePolyfillMethodCallReplacementEdits(
 	root,
 	identifierName,
 	methodName,

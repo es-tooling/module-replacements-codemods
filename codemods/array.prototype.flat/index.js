@@ -1,7 +1,7 @@
 import { ts } from '@ast-grep/napi';
 import {
+	computePolyfillMethodCallReplacementEdits,
 	findDefaultImportIdentifier,
-	replaceCallExpressions,
 } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.prototype.flat';
@@ -32,7 +32,7 @@ export default function (options) {
 				return file.source;
 			}
 
-			const edits = replaceCallExpressions(
+			const edits = computePolyfillMethodCallReplacementEdits(
 				root,
 				identifierName,
 				'flat',

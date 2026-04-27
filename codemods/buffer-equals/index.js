@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { findNamedDefaultImport } from '../shared-ast-grep.js';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'buffer-equals';
 
@@ -19,43 +22,22 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
 
-			const imports = findNamedDefaultImport(root, MODULE_NAME);
-
-			if (imports.length === 0) {
-				return file.source;
-			}
-
-			let identifierName = null;
-			for (const imp of imports) {
-				const nameMatch = imp.getMatch('NAME');
-				if (nameMatch) {
-					identifierName = nameMatch.text();
-					break;
-				}
-			}
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
 			if (!identifierName) {
 				return file.source;
 			}
 
-			const callExpressions = root.findAll({
-				rule: {
-					pattern: `${identifierName}($FIRST, $SECOND)`,
-				},
-			});
-
-			for (const call of callExpressions) {
-				const firstArg = call.getMatch('FIRST');
-				const secondArg = call.getMatch('SECOND');
-
-				if (firstArg && secondArg) {
-					edits.push(
-						call.replace(`${firstArg.text()}.equals(${secondArg.text()})`),
-					);
-				}
-			}
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'equals',
+				(args) => args.length === 2,
+			);
 
 			for (const imp of imports) {
 				edits.push(imp.replace(''));

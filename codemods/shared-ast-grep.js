@@ -87,28 +87,6 @@ export function removeImport(root, moduleName) {
 		edits.push(imp.replace(''));
 	}
 
-	// CJS assignment: X = require('pkg') or obj.prop = require('pkg')
-	for (const imp of root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `$TARGET = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `$TARGET = require('${moduleName}');`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	})) {
-		edits.push(imp.replace(''));
-	}
-
 	return { edits, localNames };
 }
 
@@ -138,6 +116,18 @@ export function findNamedDefaultImport(root, moduleName) {
 				{
 					pattern: {
 						context: `var $NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `$NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `$NAME = require('${moduleName}');`,
 						strictness: 'relaxed',
 					},
 				},

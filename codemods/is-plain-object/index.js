@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-plain-object';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,95 +14,39 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-plain-object',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let isDirty = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('is-plain-object', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (identifier) {
-				const callExpressions = root.find(j.CallExpression, {
-					callee: {
-						name: identifier,
+			if (localNames.length === 0) {
+				return file.source;
+			}
+
+			for (const localName of localNames) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${localName}($$$ARGS)`,
 					},
 				});
 
-				for (const path of callExpressions.paths()) {
-					const args = path.value.arguments;
-					if (args.length > 0) {
-						isDirty = true;
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
 
-						const arg =
-							args[0].type === 'SpreadElement' ? args[0].argument : args[0];
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					if (args.length !== 1) continue;
 
-						const newExpression = j.callExpression(
-							j.arrowFunctionExpression(
-								[j.identifier('v')],
-								j.blockStatement([
-									j.returnStatement(
-										j.unaryExpression(
-											'!',
-											j.unaryExpression(
-												'!',
-												j.logicalExpression(
-													'&&',
-													j.identifier('v'),
-													j.logicalExpression(
-														'&&',
-														j.binaryExpression(
-															'===',
-															j.unaryExpression('typeof', j.identifier('v')),
-															j.literal('object'),
-														),
-														j.parenthesizedExpression(
-															j.logicalExpression(
-																'||',
-																j.binaryExpression(
-																	'===',
-																	j.callExpression(
-																		j.memberExpression(
-																			j.identifier('Object'),
-																			j.identifier('getPrototypeOf'),
-																		),
-																		[j.identifier('v')],
-																	),
-																	j.literal(null),
-																),
-																j.binaryExpression(
-																	'===',
-																	j.callExpression(
-																		j.memberExpression(
-																			j.identifier('Object'),
-																			j.identifier('getPrototypeOf'),
-																		),
-																		[j.identifier('v')],
-																	),
-																	j.memberExpression(
-																		j.identifier('Object'),
-																		j.identifier('prototype'),
-																	),
-																),
-															),
-														),
-													),
-												),
-											),
-										),
-									),
-								]),
-							),
-							[arg],
-						);
-
-						j(path).replaceWith(newExpression);
-					}
+					const argText = args[0].text();
+					const replacement = `((v) => !(!(v && typeof v === 'object' && (Object.getPrototypeOf(v) === null || Object.getPrototypeOf(v) === Object.prototype))))(${argText})`;
+					edits.push(call.replace(replacement));
 				}
 			}
 
-			return isDirty ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

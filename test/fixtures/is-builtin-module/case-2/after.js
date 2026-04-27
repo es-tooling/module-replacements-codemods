@@ -1,4 +1,4 @@
-import { isBuiltin } from "node:module";
+import { isBuiltin } from 'node:module';
 
 isBuiltin('fs');
 //=> true

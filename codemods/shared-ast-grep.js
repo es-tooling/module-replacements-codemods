@@ -147,14 +147,7 @@ export function findNamedDefaultImport(root, moduleName) {
  */
 export function findDefaultImportIdentifier(root, moduleName) {
 	const imports = findNamedDefaultImport(root, moduleName);
-	let identifierName = null;
-	for (const imp of imports) {
-		const nameMatch = imp.getMatch('NAME');
-		if (nameMatch) {
-			identifierName = nameMatch.text();
-			break;
-		}
-	}
+	const identifierName = imports[0]?.getMatch('NAME')?.text() ?? null;
 	return { imports, identifierName };
 }
 

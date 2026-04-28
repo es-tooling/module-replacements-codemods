@@ -30,16 +30,6 @@ export default function (options) {
 				return file.source;
 			}
 
-			const negatedCallExpressions = root.findAll({
-				rule: {
-					pattern: `!${identifierName}()`,
-				},
-			});
-
-			for (const call of negatedCallExpressions) {
-				edits.push(call.replace("process.platform !== 'win32'"));
-			}
-
 			const callExpressions = root.findAll({
 				rule: {
 					pattern: `${identifierName}()`,
@@ -47,7 +37,7 @@ export default function (options) {
 			});
 
 			for (const call of callExpressions) {
-				edits.push(call.replace("process.platform === 'win32'"));
+				edits.push(call.replace("(process.platform === 'win32')"));
 			}
 
 			for (const imp of imports) {

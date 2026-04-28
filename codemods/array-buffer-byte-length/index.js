@@ -19,18 +19,12 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
 
-			const { edits: importEdits, localNames } = removeImport(
-				root,
-				MODULE_NAME,
-			);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
 			if (localNames.length === 0) {
 				return file.source;
 			}
-
-			edits.push(...importEdits);
 
 			const identifierName = localNames[0];
 
@@ -44,11 +38,11 @@ export default function (options) {
 				const argsMatch = call.getMultipleMatches('ARG');
 				if (!argsMatch) continue;
 
-				const argNodes = argsMatch.filter((m) => m.kind() !== ',');
+				const args = argsMatch.filter((m) => m.kind() !== ',');
 
-				if (argNodes.length !== 1) continue;
+				if (args.length !== 1) continue;
 
-				const argNode = argNodes[0];
+				const argNode = args[0];
 				const argText = argNode.text();
 
 				const isIdentifier = argNode.kind() === 'identifier';

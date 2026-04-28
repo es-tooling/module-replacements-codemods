@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.prototype.entries';
 
@@ -19,7 +22,6 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
 
 			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
@@ -30,22 +32,12 @@ export default function (options) {
 				return file.source;
 			}
 
-			const callExpressions = root.findAll({
-				rule: {
-					pattern: `${identifierName}($ARG)`,
-				},
-			});
-
-			for (const call of callExpressions) {
-				const argNode = call.getMatch('ARG');
-				if (!argNode) continue;
-				const argKind = argNode.kind();
-
-				if (argKind === 'identifier' || argKind === 'array') {
-					const argText = argNode.text();
-					edits.push(call.replace(`${argText}.entries()`));
-				}
-			}
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'entries',
+				(args) => args.length === 1,
+			);
 
 			for (const imp of imports) {
 				edits.push(imp.replace(''));

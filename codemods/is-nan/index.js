@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeSimpleCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-nan';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,28 +17,32 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-nan',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('is-nan', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					return j.callExpression(
-						j.memberExpression(j.identifier('Number'), j.identifier('isNaN')),
-						node.arguments,
-					);
-				});
+			if (!identifierName) {
+				return file.source;
+			}
 
-			return root.toSource(options);
+			const edits = computeSimpleCallReplacementEdits(
+				root,
+				identifierName,
+				'Number.isNaN',
+			);
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

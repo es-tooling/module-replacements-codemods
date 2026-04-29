@@ -1,3 +1,4 @@
+
 var assert = require('assert');
 
 assert.equal(
@@ -8,7 +9,7 @@ assert.equal(
 );
 assert.equal(
     [1, 2, 3].reduceRight(function (prev, x) {
-        return prev + x;
-    }, 1),
+            return prev + x;
+        }, 1),
     7,
 );

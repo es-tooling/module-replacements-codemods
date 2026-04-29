@@ -1,3 +1,4 @@
+
 var assert = require('assert');
 
 assert.notOk(Object.prototype.toString.call(undefined) === '[object String]');

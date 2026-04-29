@@ -1,3 +1,5 @@
+
+
 console.log((typeof 5e3 === 'number' || typeof 5e3 === 'string' && Number.isFinite(+5e3)));
 console.log((typeof 0xff === 'number' || typeof 0xff === 'string' && Number.isFinite(+0xff)));
 console.log((typeof -1.1 === 'number' || typeof -1.1 === 'string' && Number.isFinite(+-1.1)));

@@ -1,15 +1,11 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-whitespace';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
-
-/**
- * @TODO
- * Remove the dep from package.json!
- * - can glob for all package.jsons, and remove it?
  */
 
 /**
@@ -18,36 +14,35 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-whitespace',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			const { identifier } = removeImport('is-whitespace', root, j);
+			if (localNames.length === 0) {
+				return file.source;
+			}
 
-			// Find the 'isWhitespace' function calls
-			root
-				.find(j.CallExpression, {
-					callee: {
-						name: identifier,
+			for (const localName of localNames) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${localName}($$$ARGS)`,
 					},
-				})
-				.replaceWith((path) => {
-					// Replace 'isWhitespace(str)' with 'str.trim() === '''
-					const argument = path.node.arguments[0];
-					return j.binaryExpression(
-						'===',
-						j.callExpression(
-							// @ts-expect-error
-							j.memberExpression(argument, j.identifier('trim'), false),
-							[],
-						),
-						j.literal(''),
-					);
 				});
 
-			return root.toSource({ quote: 'single' });
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					if (args.length !== 1) continue;
+					const argText = args[0].text();
+					edits.push(call.replace(`${argText}.trim() === ''`));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

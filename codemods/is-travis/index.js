@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-travis';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,26 +14,31 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'is-travis',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			const { identifier } = removeImport('is-travis', root, j);
-			root.find(j.Identifier, { name: identifier }).replaceWith(() => {
-				dirtyFlag = true;
-				return j.parenthesizedExpression(
-					j.binaryExpression(
-						'in',
-						j.literal('TRAVIS'),
-						j.memberExpression(j.identifier('process'), j.identifier('env')),
-					),
-				);
-			});
+			if (localNames.length === 0) {
+				return file.source;
+			}
 
-			return dirtyFlag ? root.toSource({ quote: 'single' }) : file.source;
+			for (const localName of localNames) {
+				const ids = root.findAll({
+					rule: {
+						kind: 'identifier',
+						pattern: localName,
+					},
+				});
+
+				for (const id of ids) {
+					edits.push(id.replace("('TRAVIS' in process.env)"));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+
 assert.notOk(Object.prototype.toString.call(undefined) === '[object Boolean]');
 assert.notOk(Object.prototype.toString.call(null) === '[object Boolean]');
 assert.notOk(Object.prototype.toString.call('foo') === '[object Boolean]');

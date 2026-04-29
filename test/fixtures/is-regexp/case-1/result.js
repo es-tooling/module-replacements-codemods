@@ -1,3 +1,5 @@
+
+
 console.log(('unicorn' instanceof RegExp));
 //=> false
 

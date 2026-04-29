@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+
 assert.notOk(Object.prototype.toString.call(undefined) === '[object Date]');
 assert.notOk(Object.prototype.toString.call(null) === '[object Date]');
 assert.notOk(Object.prototype.toString.call(false) === '[object Date]');

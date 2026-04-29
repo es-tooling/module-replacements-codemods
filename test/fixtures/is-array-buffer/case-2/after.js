@@ -1,5 +1,6 @@
 var assert = require('assert');
 
+
 assert(!(function () {} instanceof ArrayBuffer));
 assert(!(null instanceof ArrayBuffer));
 assert(

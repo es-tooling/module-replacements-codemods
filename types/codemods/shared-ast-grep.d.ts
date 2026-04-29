@@ -19,13 +19,5 @@ export function removeImport(root: SgNode, moduleName: string): {
     edits: Edit[];
     localNames: string[];
 };
-/**
- * Find all named imports from a specific module in the AST.
- *
- * @param {SgNode} root - The root of the AST.
- * @param {string} moduleName - The name of the module to find imports from.
- * @returns {SgNode[]} - An array of matched import nodes.
- */
-export function findNamedDefaultImport(root: SgNode, moduleName: string): SgNode[];
 export type SgNode = import("@ast-grep/napi").SgNode;
 export type Edit = import("@ast-grep/napi").Edit;

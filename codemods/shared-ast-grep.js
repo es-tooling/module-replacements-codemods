@@ -119,6 +119,18 @@ function findNamedDefaultImports(root, moduleName) {
 						strictness: 'relaxed',
 					},
 				},
+				{
+					pattern: {
+						context: `$NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `$NAME = require('${moduleName}');`,
+						strictness: 'relaxed',
+					},
+				},
 			],
 		},
 	});

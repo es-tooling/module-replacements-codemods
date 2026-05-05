@@ -51,7 +51,7 @@ export default function (options) {
 					if (flags) {
 						newText = `new RegExp(${firstArg}, '${flags}')`;
 					} else {
-						newText = `new RegExp(${firstArg} /* Todo (, ${secondArg.text()}) */)`;
+						newText = `new RegExp(${firstArg}) /* Todo options: ${secondArg.text()} */`;
 						console.warn(
 							'[WARNING] Options are being passed to `clone-regexp`. Please modify the new regular expression accordingly.',
 						);

@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { transformArrayMethod } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.prototype.tospliced';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,20 +17,33 @@ import { transformArrayMethod } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.tospliced',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const dirty = transformArrayMethod(
-				'array.prototype.tospliced',
-				'toSpliced',
+			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
-				j,
+				MODULE_NAME,
 			);
 
-			return dirty ? root.toSource(options) : file.source;
+			if (!identifierName) {
+				return file.source;
+			}
+
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'toSpliced',
+				(args) => args.length >= 1,
+			);
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

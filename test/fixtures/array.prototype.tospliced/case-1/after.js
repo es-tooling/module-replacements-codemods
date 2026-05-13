@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 var input = [5, 4, 3, 2, 1, 0];

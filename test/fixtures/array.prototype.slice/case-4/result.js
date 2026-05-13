@@ -1,3 +1,4 @@
+
 var assert = require('assert');
 
 var a = [1, 2, 3];

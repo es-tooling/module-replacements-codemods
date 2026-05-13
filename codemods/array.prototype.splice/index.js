@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'array.prototype.splice';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,38 +17,33 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'array.prototype.splice',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('array.prototype.splice', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length > 1) {
-						const [array, ...elements] = args;
+			if (!identifierName) {
+				return file.source;
+			}
 
-						const newExpression = j.callExpression(
-							//@ts-ignore
-							j.memberExpression(array, j.identifier('splice')),
-							[...elements],
-						);
-						j(path).replaceWith(newExpression);
-						dirtyFlag = true;
-					}
-				});
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'splice',
+				(args) => args.length >= 1,
+			);
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

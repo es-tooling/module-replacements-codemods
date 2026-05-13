@@ -312,45 +312,6 @@ export function replaceDefaultImport(name, newSpecifier, newName, root, j) {
 }
 
 /**
- * @param {string} method - e.g. `array.prototype.flatMap`
- * @param {string} identifierName - e.g. `flatMap`
- * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for
- * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
- * @returns {boolean} - true if the method was found and transformed, false otherwise
- */
-export function transformArrayMethod(method, identifierName, root, j) {
-	const { identifier, dirtyFlag: importDirtyFlag } = removeImport(
-		method,
-		root,
-		j,
-	);
-
-	let dirtyFlag = importDirtyFlag;
-
-	root
-		.find(j.CallExpression, {
-			callee: {
-				type: 'Identifier',
-				name: identifier,
-			},
-		})
-		.forEach((path) => {
-			const [arrayArg, ...otherArgs] = path.node.arguments;
-			if (j.Identifier.check(arrayArg) || j.ArrayExpression.check(arrayArg)) {
-				path.replace(
-					j.callExpression(
-						j.memberExpression(arrayArg, j.identifier(identifierName)),
-						otherArgs,
-					),
-				);
-				dirtyFlag = true;
-			}
-		});
-
-	return dirtyFlag;
-}
-
-/**
  * @param {import("jscodeshift").ASTPath<import("jscodeshift").CallExpression>} path -  jscodeshift path
  * @param {string} instanceName - e.g. `Uint8Array`
  * @param {string} propertyName - e.g. `length`

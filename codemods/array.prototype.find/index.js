@@ -36,7 +36,7 @@ export default function (options) {
 				root,
 				identifierName,
 				'find',
-				(args) => args.length === 2,
+				(args) => args.length >= 2,
 			);
 
 			for (const imp of imports) {

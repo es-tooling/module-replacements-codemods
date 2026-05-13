@@ -62,14 +62,6 @@ export function getImportIdentifierMap(packageName: string, root: import("jscode
  */
 export function replaceDefaultImport(name: string, newSpecifier: string, newName: string, root: import("jscodeshift").Collection, j: import("jscodeshift").JSCodeshift): ReplaceDefaultImport;
 /**
- * @param {string} method - e.g. `array.prototype.flatMap`
- * @param {string} identifierName - e.g. `flatMap`
- * @param {import("jscodeshift").Collection} root - package name to remove import/require calls for
- * @param {import("jscodeshift").JSCodeshift} j - jscodeshift instance
- * @returns {boolean} - true if the method was found and transformed, false otherwise
- */
-export function transformArrayMethod(method: string, identifierName: string, root: import("jscodeshift").Collection, j: import("jscodeshift").JSCodeshift): boolean;
-/**
  * @param {import("jscodeshift").ASTPath<import("jscodeshift").CallExpression>} path -  jscodeshift path
  * @param {string} instanceName - e.g. `Uint8Array`
  * @param {string} propertyName - e.g. `length`

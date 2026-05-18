@@ -1,5 +1,5 @@
 import { ts } from '@ast-grep/napi';
-import { findNamedDefaultImport } from '../shared-ast-grep.js';
+import { removeImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -17,20 +17,10 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
-			const importNames = new Set();
 
-			const imports = findNamedDefaultImport(root, 'iterate-iterator');
+			const { edits, localNames } = removeImport(root, 'iterate-iterator');
 
-			for (const imp of imports) {
-				const nameMatch = imp.getMatch('NAME');
-				if (nameMatch) {
-					importNames.add(nameMatch.text());
-				}
-				edits.push(imp.replace(''));
-			}
-
-			for (const importName of importNames) {
+			for (const importName of localNames) {
 				const singleArgCalls = root.findAll({
 					rule: {
 						pattern: {

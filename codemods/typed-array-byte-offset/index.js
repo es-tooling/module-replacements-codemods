@@ -1,6 +1,11 @@
-import jscodeshift from 'jscodeshift';
-import { ALL_TYPED_ARRAY_OBJECTS } from '../CONSTANTS.js';
-import { removeImport, transformInstanceProperty } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillPropertyReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'typed-array-byte-offset';
+const PROPERTY_NAME = 'byteOffset';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -13,39 +18,24 @@ import { removeImport, transformInstanceProperty } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'typed-array-byte-offset',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirty = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('typed-array-byte-offset', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					for (const typedArrayObject of ALL_TYPED_ARRAY_OBJECTS) {
-						const dirtyFlag = transformInstanceProperty(
-							path,
-							typedArrayObject,
-							'byteOffset',
-							j,
-						);
+			for (const name of localNames) {
+				const propEdits = computePolyfillPropertyReplacementEdits(
+					root,
+					name,
+					PROPERTY_NAME,
+				);
+				edits.push(...propEdits);
+			}
 
-						if (dirtyFlag) {
-							dirty = true;
-							break;
-						}
-					}
-				});
-
-			return dirty ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

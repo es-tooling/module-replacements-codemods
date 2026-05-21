@@ -290,6 +290,34 @@ export function replaceDefaultImport(
 }
 
 /**
+ * Compute edits that replace every call of `identifierName(arg)` with
+ * `arg.propertyName`, converting a polyfill function call to a native property access.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} identifierName - The identifier currently being called.
+ * @param {string} propertyName - The native property name to replace with (e.g., 'length').
+ * @returns {Edit[]}
+ */
+export function computePolyfillPropertyReplacementEdits(
+	root,
+	identifierName,
+	propertyName,
+) {
+	/** @type {Edit[]} */
+	const edits = [];
+	const calls = root.findAll({
+		rule: { pattern: `${identifierName}($ARG)` },
+	});
+	for (const call of calls) {
+		const arg = call.getMatch('ARG');
+		if (arg) {
+			edits.push(call.replace(`${arg.text()}.${propertyName}`));
+		}
+	}
+	return edits;
+}
+
+/**
  * Replace a default import/require of one package with a named import from another package.
  *
  * @param {SgNode} root - The root of the AST.

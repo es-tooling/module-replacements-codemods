@@ -1,3 +1,5 @@
+
+
 const int8Array = new Int8Array(0);
 console.log(int8Array.buffer);
 console.log(new Int8Array(0).buffer);

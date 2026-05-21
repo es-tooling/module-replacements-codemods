@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'string.prototype.repeat';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -7,46 +12,38 @@ import { removeImport } from '../shared.js';
  */
 
 /**
- * @NOTE
- * `for-each` also supports passing objects to it, but this can't always be statically
- * analyzed. This codemod assumes usage of `for-each` on arrays only.
- *
- * If a project does use `for-each` on an object, you can replace it with `Object.entries(obj).forEach`
- *
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
 export default function (options) {
 	return {
-		name: 'string.prototype.repeat',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('string.prototype.repeat', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					const args = node.arguments;
-					if (args.length === 2) {
-						const [string, ...otherArgs] = args;
+			if (!identifierName) {
+				return file.source;
+			}
 
-						return j.callExpression(
-							//@ts-ignore
-							j.memberExpression(string, j.identifier('repeat')),
-							otherArgs,
-						);
-					}
-				});
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'repeat',
+				(args) => args.length >= 1,
+			);
 
-			return root.toSource(options);
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

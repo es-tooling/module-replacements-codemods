@@ -1,5 +1,6 @@
 var assert = require("assert");
 
+
 assert("abcabc".lastIndexOf("abc") === 3);
 assert("abcabc".lastIndexOf("abc", 0) === 0);
 assert("abcabc".lastIndexOf("abc", 1) === 0);

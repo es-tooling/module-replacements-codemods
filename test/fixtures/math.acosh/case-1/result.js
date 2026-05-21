@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 assert.equal(Math.acosh(1), 0);

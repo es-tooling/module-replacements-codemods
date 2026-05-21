@@ -1,6 +1,8 @@
 import { ts } from '@ast-grep/napi';
 import { replaceDefaultImport } from '../shared-ast-grep.js';
 
+const MODULE_NAME = 'invariant';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -12,7 +14,7 @@ import { replaceDefaultImport } from '../shared-ast-grep.js';
  */
 export default function (options) {
 	return {
-		name: 'invariant',
+		name: MODULE_NAME,
 		to: 'tiny-invariant',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
@@ -20,7 +22,7 @@ export default function (options) {
 
 			const { edits } = replaceDefaultImport(
 				root,
-				'invariant',
+				MODULE_NAME,
 				'tiny-invariant',
 			);
 

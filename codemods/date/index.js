@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	findDefaultImportIdentifier,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'date';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,26 +17,40 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'date',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			removeImport('date/auto', root, j);
-			const { identifier } = removeImport('date', root, j);
+			/** @type {import('@ast-grep/napi').Edit[]} */
+			const edits = [];
 
-			root
-				.find(j.Identifier, {
-					name: identifier,
-				})
-				.forEach((path) => {
-					path.node.name = 'Date';
-					dirtyFlag = true;
+			const { edits: autoEdits } = removeImport(root, `${MODULE_NAME}/auto`);
+			edits.push(...autoEdits);
+
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
+
+			if (identifierName) {
+				const identifiers = root.findAll({
+					rule: {
+						kind: 'identifier',
+						regex: `^${identifierName}$`,
+					},
 				});
+				for (const id of identifiers) {
+					edits.push(id.replace('Date'));
+				}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+				for (const imp of imports) {
+					edits.push(imp.replace(''));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

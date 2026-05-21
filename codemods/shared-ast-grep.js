@@ -73,13 +73,12 @@ export function removeImport(root, moduleName) {
 	// CJS side-effect: require('pkg') as a standalone expression statement
 	for (const imp of root.findAll({
 		rule: {
-			pattern: {
-				context: `require('${moduleName}')`,
-				strictness: 'relaxed',
-			},
-			not: {
-				inside: {
-					kind: 'variable_declarator',
+			kind: 'expression_statement',
+			has: {
+				stopBy: 'neighbor',
+				pattern: {
+					context: `require('${moduleName}')`,
+					strictness: 'relaxed',
 				},
 			},
 		},

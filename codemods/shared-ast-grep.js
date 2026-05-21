@@ -316,6 +316,7 @@ export function replacePolyfillUsage(root, moduleName, replacement) {
 		edits.push(usage.replace(replacement));
 	}
 	return { edits };
+}
 
 /**
  * Compute edits that replace every call of `identifierName(arg)` with

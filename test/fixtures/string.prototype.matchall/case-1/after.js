@@ -1,5 +1,6 @@
 const assert = require("assert");
 
+
 const str = "aabc";
 const nonRegexStr = "ab";
 const globalRegex = /[ac]/g;

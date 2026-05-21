@@ -1,5 +1,5 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -17,14 +17,12 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-
-			const { edits } = removeImport(root, 'abort-controller');
-
-			if (edits.length === 0) {
-				return file.source;
-			}
-
-			return root.commitEdits(edits);
+			const { edits } = replacePolyfillUsage(
+				root,
+				'abort-controller',
+				'AbortController',
+			);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

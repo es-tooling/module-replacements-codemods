@@ -290,6 +290,35 @@ export function replaceDefaultImport(
 }
 
 /**
+ * Remove the import of a polyfill module and replace all references to its
+ * default import identifier with the given replacement string.
+ *
+ * Handles:
+ * - `import X from 'pkg'`
+ * - `const/var X = require('pkg')`
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} moduleName - The polyfill module to remove.
+ * @param {string} replacement - The replacement text for identifier references.
+ * @returns {{ edits: Edit[] }}
+ */
+export function replacePolyfillUsage(root, moduleName, replacement) {
+	const { edits, localNames } = removeImport(root, moduleName);
+	const identifierName = localNames[0];
+	if (!identifierName) return { edits };
+	const usages = root.findAll({
+		rule: {
+			kind: 'identifier',
+			pattern: identifierName,
+		},
+	});
+	for (const usage of usages) {
+		edits.push(usage.replace(replacement));
+	}
+	return { edits };
+}
+
+/**
  * Replace a default import/require of one package with a named import from another package.
  *
  * @param {SgNode} root - The root of the AST.

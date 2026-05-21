@@ -1,5 +1,7 @@
 import { ts } from '@ast-grep/napi';
 
+const MODULE_NAME = 'globalthis';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -11,7 +13,7 @@ import { ts } from '@ast-grep/napi';
  */
 export default function (options) {
 	return {
-		name: 'globalthis',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);

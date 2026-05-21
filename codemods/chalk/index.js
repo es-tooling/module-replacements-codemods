@@ -1,5 +1,7 @@
 import { ts } from '@ast-grep/napi';
 
+const MODULE_NAME = 'chalk';
+
 const picoNames = [
 	'isColorSupported',
 	'reset',
@@ -58,7 +60,7 @@ const picoNames = [
  */
 export default function (options) {
 	return {
-		name: 'chalk',
+		name: MODULE_NAME,
 		to: 'picocolors',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);

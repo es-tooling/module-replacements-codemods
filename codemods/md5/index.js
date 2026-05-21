@@ -1,6 +1,8 @@
 import { ts } from '@ast-grep/napi';
 import { replaceDefaultImport } from '../shared-ast-grep.js';
 
+const MODULE_NAME = 'md5';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -12,7 +14,7 @@ import { replaceDefaultImport } from '../shared-ast-grep.js';
  */
 export default function (options) {
 	return {
-		name: 'md5',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
@@ -20,7 +22,7 @@ export default function (options) {
 
 			const { edits, localNames, quoteType } = replaceDefaultImport(
 				root,
-				'md5',
+				MODULE_NAME,
 				'crypto',
 				'crypto',
 			);

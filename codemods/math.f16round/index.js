@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { transformMathPolyfill } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'math.f16round';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,15 +14,17 @@ import { transformMathPolyfill } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'math.f16round',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-
-			const dirty = transformMathPolyfill('math.f16round', 'f16round', root, j);
-
-			return dirty ? root.toSource(options) : file.source;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const { edits } = replacePolyfillUsage(
+				root,
+				MODULE_NAME,
+				'Math.f16round',
+			);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

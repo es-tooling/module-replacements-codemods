@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { transformMathPolyfill } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'math.log1p';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,20 +14,17 @@ import { transformMathPolyfill } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'math.log1p',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-
-			const dirty = transformMathPolyfill(
-				'math.log1p/polyfill',
-				'log1p',
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const { edits } = replacePolyfillUsage(
 				root,
-				j,
+				'math.log1p/polyfill',
+				'Math.log1p',
 			);
-
-			return dirty ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

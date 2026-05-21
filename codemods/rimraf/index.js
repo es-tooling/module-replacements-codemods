@@ -1,5 +1,7 @@
 import { ts } from '@ast-grep/napi';
 
+const MODULE_NAME = 'rimraf';
+
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
@@ -27,7 +29,7 @@ const computeImport = (useRequire, quoteType, names, source) => {
  */
 export default function (options) {
 	return {
-		name: 'rimraf',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);

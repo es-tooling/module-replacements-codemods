@@ -23,11 +23,7 @@ export default function (options) {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
 
-			/** @type {import('@ast-grep/napi').Edit[]} */
-			const edits = [];
-
-			const { edits: autoEdits } = removeImport(root, `${MODULE_NAME}/auto`);
-			edits.push(...autoEdits);
+			const { edits } = removeImport(root, `${MODULE_NAME}/auto`);
 
 			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,

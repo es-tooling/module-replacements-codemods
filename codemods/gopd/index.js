@@ -1,5 +1,12 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeSimpleCallReplacementEdits,
+	findDefaultImportIdentifier,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'gopd';
+const REPLACEMENT = 'Object.getOwnPropertyDescriptor';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,58 +19,36 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'gopd',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('gopd', root, j);
+			const { identifierName } = findDefaultImportIdentifier(root, MODULE_NAME);
 
-			root
-				.find(j.UnaryExpression, {
-					operator: 'typeof',
-					argument: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const newExpression = j.unaryExpression(
-						'typeof',
-						j.memberExpression(
-							j.identifier('Object'),
-							j.identifier('getOwnPropertyDescriptor'),
-						),
-					);
+			if (!identifierName) {
+				return file.source;
+			}
 
-					j(path).replaceWith(newExpression);
-					dirtyFlag = true;
-				});
+			const edits = computeSimpleCallReplacementEdits(
+				root,
+				identifierName,
+				REPLACEMENT,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					const newExpression = j.callExpression(
-						j.memberExpression(
-							j.identifier('Object'),
-							j.identifier('getOwnPropertyDescriptor'),
-						),
-						//@ts-ignore
-						args,
-					);
-					j(path).replaceWith(newExpression);
-					dirtyFlag = true;
-				});
+			// TODO (jg): do we actually need this? seems to be an edge case
+			// and/or to satisfy the tests
+			for (const typeofExpr of root.findAll({
+				rule: { pattern: `typeof ${identifierName}` },
+			})) {
+				edits.push(typeofExpr.replace(`typeof ${REPLACEMENT}`));
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			const { edits: importEdits } = removeImport(root, MODULE_NAME);
+			edits.push(...importEdits);
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

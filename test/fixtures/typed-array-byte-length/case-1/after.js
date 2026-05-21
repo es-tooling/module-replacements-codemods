@@ -1,3 +1,5 @@
+
+
 const int8Array = new Int8Array(0);
 console.log(int8Array.byteLength);
 console.log(new Int8Array(0).byteLength);

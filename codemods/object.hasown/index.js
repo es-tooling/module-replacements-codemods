@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeSimpleCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'object.hasown';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,34 +17,24 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'object.hasown',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('object.hasown', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					const newExpression = j.callExpression(
-						j.memberExpression(j.identifier('Object'), j.identifier('hasOwn')),
-						//@ts-ignore
-						args,
-					);
-					j(path).replaceWith(newExpression);
-					dirtyFlag = true;
-				});
+			for (const name of localNames) {
+				const callEdits = computeSimpleCallReplacementEdits(
+					root,
+					name,
+					'Object.hasOwn',
+				);
+				edits.push(...callEdits);
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

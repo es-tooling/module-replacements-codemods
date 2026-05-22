@@ -1,3 +1,5 @@
+
+
 Object.assign({}, {foo: 303}, {bar: 808});
 
 Object.assign({}, {});

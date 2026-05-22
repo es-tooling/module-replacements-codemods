@@ -1,8 +1,10 @@
-Object.assign({}, {foo: 303}, {bar: 808});
+const assign = require('object.assign').getPolyfill();
 
-Object.assign({}, {});
+assign({}, {foo: 303}, {bar: 808});
+
+assign({}, {});
 
 const foo = {};
 const bar = {};
 
-Object.assign(foo, bar);
+assign(foo, bar);

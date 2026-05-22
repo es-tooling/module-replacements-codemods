@@ -1,4 +1,4 @@
-import pq from 'picoquery';
+import * as pq from 'picoquery';
 
 const obj = {foo: 'bar'};
 const query = 'foo=bar';

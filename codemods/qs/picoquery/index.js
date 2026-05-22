@@ -1,5 +1,7 @@
 import { ts } from '@ast-grep/napi';
 
+const MODULE_NAME = 'qs';
+
 const qsLikeOptions = {
 	nesting: true,
 	nestingSyntax: 'js',
@@ -131,7 +133,7 @@ const replacements = {
  */
 export default function (options) {
 	return {
-		name: 'qs',
+		name: MODULE_NAME,
 		to: 'picoquery',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
@@ -167,10 +169,11 @@ export default function (options) {
 
 				if (nameMatch) {
 					importName = nameMatch.text();
-					edits.push(nameMatch.replace('pq'));
 				}
 
-				edits.push(source.replace(`${quoteType}picoquery${quoteType}`));
+				edits.push(
+					imp.replace(`import * as pq from ${quoteType}picoquery${quoteType};`),
+				);
 			}
 
 			for (const req of requires) {

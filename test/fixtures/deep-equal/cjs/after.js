@@ -1,6 +1,4 @@
-const {
-  dequal
-} = require("dequal");
+const { dequal } = require('dequal');
 
 dequal("a", "a");
 

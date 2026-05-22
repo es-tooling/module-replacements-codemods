@@ -19,71 +19,47 @@
 export function removeImport(root, moduleName) {
 	/** @type {Edit[]} */
 	const edits = [];
-	/** @type {string[]} */
-	const localNames = [];
 
-	// ESM: import X from 'pkg' and import 'pkg' (side-effect)
-	for (const imp of root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `import $NAME from '${moduleName}'`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `import '${moduleName}'`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	})) {
-		const nameMatch = imp.getMatch('NAME');
-		if (nameMatch) localNames.push(nameMatch.text());
+	// 1. Reuse findNamedDefaultImports for bound imports/requires and assignments
+	const { imports, localNames } = findNamedDefaultImports(root, moduleName);
+
+	for (const imp of imports) {
 		edits.push(imp.replace(''));
 	}
 
-	// CJS: const/var X = require('pkg')
-	for (const imp of root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `const $NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `var $NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	})) {
-		const nameMatch = imp.getMatch('NAME');
-		if (nameMatch) localNames.push(nameMatch.text());
-		edits.push(imp.replace(''));
-	}
-
-	// CJS side-effect: require('pkg') as a standalone expression statement
-	for (const imp of root.findAll({
+	// 2. Handle ESM side-effect imports: import 'pkg'
+	const esmSideEffects = root.findAll({
 		rule: {
 			pattern: {
-				context: `require('${moduleName}')`,
+				context: `import '${moduleName}'`,
 				strictness: 'relaxed',
 			},
-			not: {
-				inside: {
-					kind: 'variable_declarator',
+		},
+	});
+	for (const imp of esmSideEffects) {
+		edits.push(imp.replace(''));
+	}
+
+	// 3. Handle CJS side-effect expressions: require('pkg')
+	const cjsSideEffects = root.findAll({
+		rule: {
+			kind: 'expression_statement',
+			has: {
+				pattern: {
+					context: `require('${moduleName}')`,
+					strictness: 'relaxed',
+				},
+				not: {
+					any: [
+						{ inside: { kind: 'variable_declarator' } },
+						{ inside: { kind: 'assignment_expression' } },
+					],
 				},
 			},
 		},
-	})) {
+	});
+
+	for (const imp of cjsSideEffects) {
 		edits.push(imp.replace(''));
 	}
 

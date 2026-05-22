@@ -251,10 +251,11 @@ export function findDefaultImportIdentifier(root, moduleName) {
 /**
  * Low-level helper that finds all calls to `fromIdentifier(...)` and applies
  * a custom format callback to produce the replacement text for each call.
+ * Return `null` from the callback to skip a call without producing an edit.
  *
  * @param {SgNode} root - The root of the AST.
  * @param {string} fromIdentifier - The identifier currently being called.
- * @param {(args: string[]) => string} formatReplacement - Receives the argument texts and returns the full replacement string.
+ * @param {(args: string[]) => string | null} formatReplacement - Receives the argument texts and returns the replacement string, or null to skip.
  * @returns {Edit[]}
  */
 export function computeCallReplacementEdits(
@@ -274,7 +275,9 @@ export function computeCallReplacementEdits(
 		const args = argsMatch
 			? argsMatch.filter((m) => m.kind() !== ',').map((m) => m.text())
 			: [];
-		edits.push(call.replace(formatReplacement(args)));
+		const replacement = formatReplacement(args);
+		if (replacement === null) continue;
+		edits.push(call.replace(replacement));
 	}
 	return edits;
 }

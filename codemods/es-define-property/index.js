@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'es-define-property';
 
@@ -21,27 +24,14 @@ export default function (options) {
 			const root = ast.root();
 
 			const { edits, localNames } = removeImport(root, MODULE_NAME);
-			const identifierName = localNames[0];
 
-			if (!identifierName) {
-				return edits.length > 0 ? root.commitEdits(edits) : file.source;
-			}
-
-			const calls = root.findAll({
-				rule: {
-					pattern: `${identifierName}($$$ARGS)`,
-				},
-			});
-
-			for (const call of calls) {
-				const argsMatch = call.getMultipleMatches('ARGS');
-				const argsText = argsMatch
-					? argsMatch
-							.filter((m) => m.kind() !== ',')
-							.map((m) => m.text())
-							.join(', ')
-					: '';
-				edits.push(call.replace(`Object.defineProperty(${argsText})`));
+			for (const identifierName of localNames) {
+				const callEdits = computeCallReplacementEdits(
+					root,
+					identifierName,
+					(args) => `Object.defineProperty(${args.join(', ')})`,
+				);
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

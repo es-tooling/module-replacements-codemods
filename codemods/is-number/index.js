@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'is-number';
 
@@ -22,28 +25,12 @@ export default function (options) {
 
 			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (localNames.length === 0) {
-				return file.source;
-			}
-
-			for (const localName of localNames) {
-				const calls = root.findAll({
-					rule: {
-						pattern: `${localName}($$$ARGS)`,
-					},
+			for (const name of localNames) {
+				const callEdits = computeCallReplacementEdits(root, name, (args) => {
+					if (args.length !== 1) return null;
+					return `(typeof ${args[0]} === 'number' || typeof ${args[0]} === 'string' && Number.isFinite(+${args[0]}))`;
 				});
-
-				for (const call of calls) {
-					const argsMatch = call.getMultipleMatches('ARGS');
-					if (!argsMatch) continue;
-
-					const args = argsMatch.filter((m) => m.kind() !== ',');
-					if (args.length !== 1) continue;
-
-					const argText = args[0].text();
-					const replacement = `(typeof ${argText} === 'number' || typeof ${argText} === 'string' && Number.isFinite(+${argText}))`;
-					edits.push(call.replace(replacement));
-				}
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

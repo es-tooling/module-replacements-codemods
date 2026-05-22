@@ -249,6 +249,37 @@ export function findDefaultImportIdentifier(root, moduleName) {
 }
 
 /**
+ * Low-level helper that finds all calls to `fromIdentifier(...)` and applies
+ * a custom format callback to produce the replacement text for each call.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} fromIdentifier - The identifier currently being called.
+ * @param {(args: string[]) => string} formatReplacement - Receives the argument texts and returns the full replacement string.
+ * @returns {Edit[]}
+ */
+export function computeCallReplacementEdits(
+	root,
+	fromIdentifier,
+	formatReplacement,
+) {
+	/** @type {Edit[]} */
+	const edits = [];
+	const calls = root.findAll({
+		rule: {
+			pattern: `${fromIdentifier}($$$ARGS)`,
+		},
+	});
+	for (const call of calls) {
+		const argsMatch = call.getMultipleMatches('ARGS');
+		const args = argsMatch
+			? argsMatch.filter((m) => m.kind() !== ',').map((m) => m.text())
+			: [];
+		edits.push(call.replace(formatReplacement(args)));
+	}
+	return edits;
+}
+
+/**
  * Compute edits that replace every call of `fromIdentifier(...)` with
  * `toCallee(...)`, preserving the original argument list verbatim.
  *
@@ -262,24 +293,11 @@ export function computeSimpleCallReplacementEdits(
 	fromIdentifier,
 	toCallee,
 ) {
-	/** @type {Edit[]} */
-	const edits = [];
-	const calls = root.findAll({
-		rule: {
-			pattern: `${fromIdentifier}($$$ARGS)`,
-		},
-	});
-	for (const call of calls) {
-		const argsMatch = call.getMultipleMatches('ARGS');
-		const argsText = argsMatch
-			? argsMatch
-					.filter((m) => m.kind() !== ',')
-					.map((m) => m.text())
-					.join(', ')
-			: '';
-		edits.push(call.replace(`${toCallee}(${argsText})`));
-	}
-	return edits;
+	return computeCallReplacementEdits(
+		root,
+		fromIdentifier,
+		(args) => `${toCallee}(${args.join(', ')})`,
+	);
 }
 
 /**

@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 assert.equal(("foo").toString().padStart(5), "foo  ");

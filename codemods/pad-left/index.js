@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'pad-left';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,36 +20,20 @@ export default function (options) {
 		name: 'pad-left',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('pad-left', root, j);
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					const [stringArg, ...otherArgs] = node.arguments;
-					return j.callExpression(
-						j.memberExpression(
-							j.callExpression(
-								j.memberExpression(
-									// @ts-ignore
-									j.parenthesizedExpression(stringArg),
-									j.identifier('toString'),
-								),
-								[],
-							),
-							j.identifier('padStart'),
-						),
-						[...otherArgs],
-					);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
+
+			for (const name of localNames) {
+				const callEdits = computeCallReplacementEdits(root, name, (args) => {
+					const [first, ...rest] = args;
+					return `(${first}).toString().padStart(${rest.join(', ')})`;
 				});
+				edits.push(...callEdits);
+			}
 
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,54 +15,28 @@ export default function (options) {
 		name: 'is-number-object',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('is-number-object', root, j);
+			const { edits, localNames } = removeImport(root, 'is-number-object');
 
-			// Replace all calls to isNumber with Object.prototype.toString.call
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.replaceWith((path) => {
-					const arg = path.node.arguments[0];
-					return j.callExpression(
-						j.memberExpression(
-							j.memberExpression(
-								j.memberExpression(
-									j.identifier('Object'),
-									j.identifier('prototype'),
-								),
-								j.identifier('toString'),
-							),
-							j.identifier('call'),
-						),
-						[arg],
-					);
-				})
-				.forEach((path) => {
-					const parent = path.parent.node;
-					if (j.BinaryExpression.check(parent)) {
-						parent.operator = '===';
-						parent.right = j.literal('[object Number]');
-					} else if (
-						j.CallExpression.check(parent) &&
-						parent.arguments.length === 1
-					) {
-						const newExpression = j.binaryExpression(
-							'===',
-							path.node,
-							j.literal('[object Number]'),
-						);
-						parent.arguments[0] = newExpression;
-					}
+			for (const name of localNames) {
+				const calls = root.findAll({
+					rule: { pattern: `${name}($ARG)` },
 				});
+				for (const call of calls) {
+					const arg = call.getMatch('ARG');
+					if (arg) {
+						edits.push(
+							call.replace(
+								`Object.prototype.toString.call(${arg.text()}) === '[object Number]'`,
+							),
+						);
+					}
+				}
+			}
 
-			return root.toSource({ quote: 'single' });
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

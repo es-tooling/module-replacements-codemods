@@ -1,3 +1,4 @@
+
 import assert from 'assert';
 
 const buffer = new ArrayBuffer(123);

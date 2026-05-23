@@ -1,3 +1,4 @@
+
 var assert = require('assert');
 
 assert.equal('a'.anchor('b'), '<a name="b">a</a>');

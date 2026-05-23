@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -25,25 +25,20 @@ export default function (options) {
 		name: 'es-errors',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
 			for (const [moduleName, errorName] of Object.entries(moduleToErrorMap)) {
-				const { identifier } = removeImport(moduleName, root, j);
-
-				root
-					.find(j.NewExpression, {
-						callee: {
-							type: 'Identifier',
-							name: identifier,
-						},
-					})
-					.replaceWith(({ node }) => {
-						return j.newExpression(j.identifier(errorName), node.arguments);
-					});
+				const { edits: moduleEdits } = replacePolyfillUsage(
+					root,
+					moduleName,
+					errorName,
+				);
+				edits.push(...moduleEdits);
 			}
 
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

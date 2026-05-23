@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'function.prototype.name';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,37 +14,29 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'function.prototype.name',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('function.prototype.name', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
+			for (const name of localNames) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${name}($ARG)`,
 					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length === 1) {
-						const newExpression = j.memberExpression(
-							//@ts-ignore
-							j.parenthesizedExpression(args[0]),
-							j.identifier('name'),
-						);
-
-						j(path).replaceWith(newExpression);
-						dirtyFlag = true;
-					}
 				});
+				for (const call of calls) {
+					const arg = call.getMatch('ARG');
+					if (arg) {
+						edits.push(call.replace(`(${arg.text()}).name`));
+					}
+				}
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

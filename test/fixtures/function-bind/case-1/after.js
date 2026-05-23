@@ -1,3 +1,4 @@
+
 const assert = require('assert');
 
 const testObject = {
@@ -6,7 +7,7 @@ const testObject = {
 
 function testFunc() {
   return this.name;
-}
+};
 
 const boundFunc = testFunc.bind(testObject);
 

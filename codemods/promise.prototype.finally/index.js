@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'promise.prototype.finally';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,37 +17,33 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'promise.prototype.finally',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('promise.prototype.finally', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length === 2) {
-						const [promise, callback] = args;
-						const newExpression = j.callExpression(
-							//@ts-ignore
-							j.memberExpression(promise, j.identifier('finally')),
-							[callback],
-						);
-						j(path).replaceWith(newExpression);
-						dirtyFlag = true;
-					}
-				});
+			if (!identifierName) {
+				return file.source;
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'finally',
+				(args) => args.length === 2,
+			);
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

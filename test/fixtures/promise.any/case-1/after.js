@@ -1,5 +1,6 @@
 var assert = require("assert");
 
+
 var resolved = Promise.resolve(42);
 var rejected = Promise.reject(-1);
 var alsoRejected = Promise.reject(Infinity);

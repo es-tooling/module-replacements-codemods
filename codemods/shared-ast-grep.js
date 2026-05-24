@@ -91,6 +91,12 @@ function findNamedDefaultImports(root, moduleName) {
 				},
 				{
 					pattern: {
+						context: `const $NAME = require('${moduleName}').$METHOD($$$ARGS)`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
 						context: `var $NAME = require('${moduleName}')`,
 						strictness: 'relaxed',
 					},

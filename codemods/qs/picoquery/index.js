@@ -1,4 +1,7 @@
 import { ts } from '@ast-grep/napi';
+import { replaceDefaultImport } from '../../shared-ast-grep.js';
+
+const MODULE_NAME = 'qs';
 
 const qsLikeOptions = {
 	nesting: true,
@@ -131,65 +134,19 @@ const replacements = {
  */
 export default function (options) {
 	return {
-		name: 'qs',
+		name: MODULE_NAME,
 		to: 'picoquery',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const imports = root.findAll({
-				rule: {
-					pattern: {
-						context: "import $NAME from 'qs'",
-						strictness: 'relaxed',
-					},
-				},
-			});
-			const requires = root.findAll({
-				rule: {
-					pattern: {
-						context: "require('qs')",
-						strictness: 'relaxed',
-					},
-				},
-			});
-			let importName = 'qs';
-			const edits = [];
-
-			for (const imp of imports) {
-				const source = imp.field('source');
-
-				if (!source) {
-					continue;
-				}
-
-				const quoteType = source.text().startsWith("'") ? "'" : '"';
-				const nameMatch = imp.getMatch('NAME');
-
-				if (nameMatch) {
-					importName = nameMatch.text();
-					edits.push(nameMatch.replace('pq'));
-				}
-
-				edits.push(source.replace(`${quoteType}picoquery${quoteType}`));
-			}
-
-			for (const req of requires) {
-				const args = req.field('arguments');
-				const firstArg = args?.child(1);
-				const quoteType = firstArg?.text().startsWith('"') ? '"' : "'";
-
-				edits.push(req.replace(`require(${quoteType}picoquery${quoteType})`));
-
-				const parent = req.parent();
-
-				if (parent && parent.kind() === 'variable_declarator') {
-					const name = parent.field('name');
-					if (name) {
-						importName = name.text();
-						edits.push(name.replace('pq'));
-					}
-				}
-			}
+			const { edits, localNames } = replaceDefaultImport(
+				root,
+				MODULE_NAME,
+				'picoquery',
+				'pq',
+				true,
+			);
+			const importName = localNames.length > 0 ? localNames[0] : MODULE_NAME;
 
 			const expressions = root.findAll({
 				rule: {

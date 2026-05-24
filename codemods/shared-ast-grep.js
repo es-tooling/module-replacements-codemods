@@ -248,6 +248,7 @@ export function computePolyfillMethodCallReplacementEdits(
  * @param {string} fromPackage - The package being replaced
  * @param {string} toPackage - The new package specifier
  * @param {string} [toIdentifier] - The local name to use in the replacement (defaults to original name)
+ * @param {boolean} [asNamespace=false] - When true, uses `import * as NAME from` instead of `import NAME from`
  * @returns {{ edits: Edit[], localNames: string[], quoteType: string }}
  */
 export function replaceDefaultImport(
@@ -255,6 +256,7 @@ export function replaceDefaultImport(
 	fromPackage,
 	toPackage,
 	toIdentifier,
+	asNamespace = false,
 ) {
 	const { imports, localNames, quoteType } = findNamedDefaultImports(
 		root,
@@ -278,9 +280,10 @@ export function replaceDefaultImport(
 				),
 			);
 		} else {
+			const prefix = asNamespace ? 'import * as ' : 'import ';
 			edits.push(
 				imp.replace(
-					`import ${identifier} from ${quoteType}${toPackage}${quoteType};`,
+					`${prefix}${identifier} from ${quoteType}${toPackage}${quoteType};`,
 				),
 			);
 		}

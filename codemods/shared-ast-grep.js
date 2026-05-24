@@ -107,6 +107,7 @@ export function findNamedImports(root, moduleName) {
 		for (const spec of specs) {
 			const alias = spec.field('alias');
 			const name = spec.field('name');
+			if (!name) continue;
 			const exported = name.text();
 			const local = alias ? alias.text() : exported;
 			localNames.push(local);

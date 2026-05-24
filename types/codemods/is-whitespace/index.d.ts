@@ -3,11 +3,6 @@
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
  */
 /**
- * @TODO
- * Remove the dep from package.json!
- * - can glob for all package.jsons, and remove it?
- */
-/**
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */

@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 assert.notOk(Number.isNaN(undefined));

@@ -1,10 +1,12 @@
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'number.parsefloat';
+
 /**
- * @import { Codemod, CodemodOptions } from "../../types.js"
+ * @typedef {import('../../types.js').Codemod} Codemod
+ * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
  */
-
-import jscodeshift from 'jscodeshift';
-
-import { removeImport } from '../shared.js';
 
 /**
  * @param {CodemodOptions} [options]
@@ -12,18 +14,15 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'number.parsefloat',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			const importDeclaration = removeImport('number.parsefloat', root, j);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			if (importDeclaration) {
-				return root.toSource({ quote: 'single' });
-			}
+			const { edits } = removeImport(root, MODULE_NAME);
 
-			return file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

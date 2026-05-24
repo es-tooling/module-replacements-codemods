@@ -1,5 +1,11 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport, transformInstanceProperty } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillPropertyReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'data-view-byte-offset';
+const PROPERTY_NAME = 'byteOffset';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,26 +18,24 @@ import { removeImport, transformInstanceProperty } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'data-view-byte-offset',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('data-view-byte-offset', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					transformInstanceProperty(path, 'DataView', 'byteOffset', j);
-				});
+			for (const name of localNames) {
+				const propEdits = computePolyfillPropertyReplacementEdits(
+					root,
+					name,
+					PROPERTY_NAME,
+				);
+				edits.push(...propEdits);
+			}
 
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

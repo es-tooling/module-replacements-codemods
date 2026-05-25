@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeSimpleCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'object-keys';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,75 +17,61 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'object-keys',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			let { identifier } = removeImport('object-keys', root, j);
+			const { edits: removeEdits, localNames } = removeImport(
+				root,
+				MODULE_NAME,
+			);
+			edits.push(...removeEdits);
 
-			// Replace `$identifier(obj)` with `Object.keys(obj)`
-			root
-				.find(j.CallExpression, {
-					callee: {
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					return j.callExpression(
-						j.memberExpression(j.identifier('Object'), j.identifier('keys')),
-						node.arguments,
-					);
-				});
-
-			// Remove recommended usage of `var keys = Object.keys || require("object-keys")`
-			const logicalExpressionRequire = root.find(j.VariableDeclarator, {
-				init: {
-					type: 'LogicalExpression',
-					left: {
-						object: {
-							name: 'Object',
-						},
-						property: {
-							name: 'keys',
-						},
-					},
-					right: {
-						callee: {
-							name: 'require',
-						},
-						arguments: [
-							{
-								value: 'object-keys',
+			const logicalMatches = root.findAll({
+				rule: {
+					any: [
+						{
+							pattern: {
+								context: `var $NAME = $LEFT || require('${MODULE_NAME}')`,
+								strictness: 'relaxed',
 							},
-						],
-					},
+						},
+						{
+							pattern: {
+								context: `let $NAME = $LEFT || require('${MODULE_NAME}')`,
+								strictness: 'relaxed',
+							},
+						},
+						{
+							pattern: {
+								context: `const $NAME = $LEFT || require('${MODULE_NAME}')`,
+								strictness: 'relaxed',
+							},
+						},
+					],
 				},
 			});
+			for (const match of logicalMatches) {
+				const nameMatch = match.getMatch('NAME');
+				if (nameMatch) {
+					localNames.push(nameMatch.text());
+					edits.push(match.replace(''));
+				}
+			}
 
-			identifier =
-				logicalExpressionRequire.paths().length > 0
-					? logicalExpressionRequire.get().node.id.name
-					: null;
+			for (const name of [...new Set(localNames)]) {
+				const callEdits = computeSimpleCallReplacementEdits(
+					root,
+					name,
+					'Object.keys',
+				);
+				edits.push(...callEdits);
+			}
 
-			logicalExpressionRequire.remove();
-
-			// Replace `$identifier(obj)` with `Object.keys(obj)`
-			root
-				.find(j.CallExpression, {
-					callee: {
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					return j.callExpression(
-						j.memberExpression(j.identifier('Object'), j.identifier('keys')),
-						node.arguments,
-					);
-				});
-
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

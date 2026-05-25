@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'object-assign';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,28 +14,15 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'object-assign',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('object-assign', root, j);
+			const { edits } = removeImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					return j.callExpression(
-						j.memberExpression(j.identifier('Object'), j.identifier('assign')),
-						node.arguments,
-					);
-				});
-
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

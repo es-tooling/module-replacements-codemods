@@ -1,3 +1,4 @@
+
 const assert = require('assert');
 
 assert.equal(Object.getPrototypeOf(true), Boolean.prototype);

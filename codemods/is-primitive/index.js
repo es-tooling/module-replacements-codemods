@@ -6,10 +6,10 @@ import { ts } from '@ast-grep/napi';
 import { removeImport } from '../shared-ast-grep.js';
 
 const IS_PRIMITIVE_FN = `function isPrimitive(val) {
-\tif (typeof val === 'object') {
-\t\treturn val === null;
-\t}
-\treturn typeof val !== 'function';
+	if (typeof val === 'object') {
+		return val === null;
+	}
+	return typeof val !== 'function';
 }`;
 
 /**

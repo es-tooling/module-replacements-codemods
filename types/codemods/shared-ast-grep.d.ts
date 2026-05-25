@@ -1,4 +1,8 @@
 /**
+ * @typedef {import('@ast-grep/napi').SgNode} SgNode
+ * @typedef {import('@ast-grep/napi').Edit} Edit
+ */
+/**
  * Find named ESM imports and destructured CJS requires for a module.
  *
  * Handles:

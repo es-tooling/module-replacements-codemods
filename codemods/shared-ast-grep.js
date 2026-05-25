@@ -4,74 +4,6 @@
  */
 
 /**
- * Find all default imports/requires for a package and extract common metadata.
- *
- * @param {SgNode} root - The root of the AST.
- * @param {string} moduleName - The package to find imports for.
- * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
- */
-function findNamedDefaultImports(root, moduleName) {
-	const imports = root.findAll({
-		rule: {
-			any: [
-				{
-					pattern: {
-						context: `import $NAME from '${moduleName}'`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `const $NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `var $NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `$NAME = require('${moduleName}')`,
-						strictness: 'relaxed',
-					},
-				},
-				{
-					pattern: {
-						context: `$NAME = require('${moduleName}');`,
-						strictness: 'relaxed',
-					},
-				},
-			],
-		},
-	});
-
-	/** @type {string[]} */
-	const localNames = [];
-	let quoteType = "'";
-
-	for (let i = imports.length - 1; i >= 0; i--) {
-		const imp = imports[i];
-		const nameMatch = imp.getMatch('NAME');
-		if (
-			!nameMatch ||
-			imp.find({ rule: { kind: 'named_imports' } }) ||
-			imp.find({ rule: { kind: 'object_pattern' } })
-		) {
-			imports.splice(i, 1);
-			continue;
-		}
-		localNames.push(nameMatch.text());
-		const impText = imp.text();
-		if (impText.includes('"')) quoteType = '"';
-	}
-
-	return { imports, localNames, quoteType };
-}
-
-/**
  * Find named ESM imports and destructured CJS requires for a module.
  *
  * Handles:
@@ -221,6 +153,74 @@ export function removeImport(root, moduleName) {
 	}
 
 	return { edits, localNames };
+}
+
+/**
+ * Find all default imports/requires for a package and extract common metadata.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} moduleName - The package to find imports for.
+ * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
+ */
+function findNamedDefaultImports(root, moduleName) {
+	const imports = root.findAll({
+		rule: {
+			any: [
+				{
+					pattern: {
+						context: `import $NAME from '${moduleName}'`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `const $NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `var $NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `$NAME = require('${moduleName}')`,
+						strictness: 'relaxed',
+					},
+				},
+				{
+					pattern: {
+						context: `$NAME = require('${moduleName}');`,
+						strictness: 'relaxed',
+					},
+				},
+			],
+		},
+	});
+
+	/** @type {string[]} */
+	const localNames = [];
+	let quoteType = "'";
+
+	for (let i = imports.length - 1; i >= 0; i--) {
+		const imp = imports[i];
+		const nameMatch = imp.getMatch('NAME');
+		if (
+			!nameMatch ||
+			imp.find({ rule: { kind: 'named_imports' } }) ||
+			imp.find({ rule: { kind: 'object_pattern' } })
+		) {
+			imports.splice(i, 1);
+			continue;
+		}
+		localNames.push(nameMatch.text());
+		const impText = imp.text();
+		if (impText.includes('"')) quoteType = '"';
+	}
+
+	return { imports, localNames, quoteType };
 }
 
 /**

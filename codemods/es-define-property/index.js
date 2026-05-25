@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'es-define-property';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,36 +14,37 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'es-define-property',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('es-define-property', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
+			const identifierName = localNames[0];
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					const newExpression = j.callExpression(
-						j.memberExpression(
-							j.identifier('Object'),
-							j.identifier('defineProperty'),
-						),
-						args,
-					);
-					j(path).replaceWith(newExpression);
-					dirtyFlag = true;
-				});
+			if (!identifierName) {
+				return edits.length > 0 ? root.commitEdits(edits) : file.source;
+			}
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			const calls = root.findAll({
+				rule: {
+					pattern: `${identifierName}($$$ARGS)`,
+				},
+			});
+
+			for (const call of calls) {
+				const argsMatch = call.getMultipleMatches('ARGS');
+				const argsText = argsMatch
+					? argsMatch
+							.filter((m) => m.kind() !== ',')
+							.map((m) => m.text())
+							.join(', ')
+					: '';
+				edits.push(call.replace(`Object.defineProperty(${argsText})`));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

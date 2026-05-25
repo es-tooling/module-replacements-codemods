@@ -1,10 +1,26 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
  * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
  */
+
+const methods = [
+	'anchor',
+	'big',
+	'blink',
+	'bold',
+	'fixed',
+	'fontcolor',
+	'fontsize',
+	'italics',
+	'link',
+	'small',
+	'strike',
+	'sub',
+	'sup',
+];
 
 /**
  * @param {CodemodOptions} [options]
@@ -15,64 +31,73 @@ export default function (options) {
 		name: 'es-string-html-methods',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const edits = [];
 
-			const methods = [
-				'anchor',
-				'big',
-				'blink',
-				'bold',
-				'fixed',
-				'fontcolor',
-				'fontsize',
-				'italics',
-				'link',
-				'small',
-				'strike',
-				'sub',
-				'sup',
-			];
+			/** @type {Record<string,string>} */
+			const methodIdentifiers = {};
 
-			// Remove all imports
-			const entries = methods.map((method) => [
-				method,
-				removeImport(`es-string-html-methods/${method}`, root, j).identifier,
-			]);
-			const methodIdentifiers = Object.fromEntries(entries);
-			methods.forEach((method) => {
-				removeImport(`es-string-html-methods/${method}/auto`, root, j);
-			});
-			removeImport('es-string-html-methods/auto', root, j);
+			for (const method of methods) {
+				const { edits: removeEdits, localNames } = removeImport(
+					root,
+					`es-string-html-methods/${method}`,
+				);
+				edits.push(...removeEdits);
+				if (localNames[0]) {
+					methodIdentifiers[method] = localNames[0];
+				}
+			}
 
-			// Replace all calls, e.g. blink('foo') -> 'foo'.blink()
-			methods.forEach((method) => {
-				root
-					.find(j.CallExpression, {
-						callee: {
-							type: 'Identifier',
-							name: methodIdentifiers[method],
-						},
-					})
-					.forEach((path) => {
-						const args = path.node.arguments;
-						if (args.length === 0) return;
-						if (
-							j.Expression.check(args[0]) &&
-							!j.SpreadElement.check(args[0])
-						) {
-							const additionalArgs = args.length > 1 ? [args[1]] : [];
-							path.replace(
-								j.memberExpression(
-									args[0],
-									j.callExpression(j.identifier(method), additionalArgs),
-								),
-							);
-						}
-					});
-			});
+			for (const method of methods) {
+				const { edits: removeAutoEdits } = removeImport(
+					root,
+					`es-string-html-methods/${method}/auto`,
+				);
+				edits.push(...removeAutoEdits);
+			}
 
-			return root.toSource({ quote: 'single' });
+			const { edits: removeGlobalAutoEdits } = removeImport(
+				root,
+				'es-string-html-methods/auto',
+			);
+			edits.push(...removeGlobalAutoEdits);
+
+			for (const [method, identifierName] of Object.entries(
+				methodIdentifiers,
+			)) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${identifierName}($$$ARGS)`,
+					},
+				});
+
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+
+					if (args.length === 0) continue;
+
+					const firstArg = args[0];
+					if (firstArg.kind() === 'spread_element') continue;
+
+					const target = firstArg.text();
+					const methodArgs = args
+						.slice(1)
+						.map((m) => m.text())
+						.join(', ');
+
+					edits.push(
+						call.replace(
+							`${target}.${method}${methodArgs ? `(${methodArgs})` : '()'}`,
+						),
+					);
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

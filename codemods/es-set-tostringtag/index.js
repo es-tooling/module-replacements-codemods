@@ -1,5 +1,24 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'es-set-tostringtag';
+
+/**
+ * @param {string} tagText
+ * @returns {string}
+ */
+function defineDescriptor(tagText) {
+	return `{\n  configurable: true,\n  enumerable: false,\n  value: ${tagText},\n  writable: false\n}`;
+}
+
+/**
+ * @param {string} objText
+ * @param {string} tagText
+ * @returns {string}
+ */
+function defineProperty(objText, tagText) {
+	return `Object.defineProperty(${objText}, Symbol.toStringTag, ${defineDescriptor(tagText)})`;
+}
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,91 +31,52 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'es-set-tostringtag',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('es-set-tostringtag', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
+			const identifierName = localNames[0];
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.replaceWith((path) => {
-					const [obj, tag, options] = path.node.arguments;
+			if (!identifierName) {
+				return edits.length > 0 ? root.commitEdits(edits) : file.source;
+			}
 
-					const force =
-						options &&
-						j.ObjectExpression.check(options) &&
-						options.properties.some(
-							(prop) =>
-								j.Property.check(prop) &&
-								j.Identifier.check(prop.key) &&
-								prop.key.name === 'force' &&
-								j.Literal.check(prop.value) &&
-								prop.value.value === true,
-						);
+			// With force: true - always define property
+			const forceCalls = root.findAll({
+				rule: {
+					pattern: `${identifierName}($OBJ, $TAG, {force: true})`,
+				},
+			});
 
-					const condition = j.unaryExpression(
-						'!',
-						j.callExpression(
-							j.memberExpression(
-								j.identifier('Object'),
-								j.identifier('hasOwn'),
-							),
-							[
-								obj,
-								j.memberExpression(
-									j.identifier('Symbol'),
-									j.identifier('toStringTag'),
-								),
-							],
-						),
-					);
+			for (const call of forceCalls) {
+				const obj = call.getMatch('OBJ');
+				const tag = call.getMatch('TAG');
+				if (!obj || !tag) continue;
+				edits.push(call.replace(defineProperty(obj.text(), tag.text())));
+			}
 
-					const definePropertyCall = j.callExpression(
-						j.memberExpression(
-							j.identifier('Object'),
-							j.identifier('defineProperty'),
-						),
-						[
-							obj,
-							j.memberExpression(
-								j.identifier('Symbol'),
-								j.identifier('toStringTag'),
-							),
-							j.objectExpression([
-								j.property(
-									'init',
-									j.identifier('configurable'),
-									j.literal(true),
-								),
-								j.property(
-									'init',
-									j.identifier('enumerable'),
-									j.literal(false),
-								),
-								// @ts-ignore
-								j.property('init', j.identifier('value'), tag),
-								j.property('init', j.identifier('writable'), j.literal(false)),
-							]),
-						],
-					);
+			// Without force or without options arg - conditional define property
+			const regularCalls = root.findAll({
+				rule: {
+					pattern: `${identifierName}($OBJ, $TAG)`,
+				},
+			});
 
-					dirtyFlag = true;
+			for (const call of regularCalls) {
+				const obj = call.getMatch('OBJ');
+				const tag = call.getMatch('TAG');
+				if (!obj || !tag) continue;
+				edits.push(
+					call.replace(
+						`!Object.hasOwn(${obj.text()}, Symbol.toStringTag) && ${defineProperty(obj.text(), tag.text())}`,
+					),
+				);
+			}
 
-					return force
-						? definePropertyCall
-						: j.logicalExpression('&&', condition, definePropertyCall);
-				});
-
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -1,5 +1,6 @@
 const assert = require("assert");
 
+
 const o = { a: 1 };
 
 Object.defineProperty(o, "b", { enumerable: true, value: 2 });

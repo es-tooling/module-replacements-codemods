@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'es-aggregate-error';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,28 +14,17 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'es-aggregate-error',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-
-			const { identifier } = removeImport('es-aggregate-error', root, j);
-
-			const expressions = root.find(j.NewExpression, {
-				callee: {
-					type: 'Identifier',
-					name: identifier,
-				},
-			});
-
-			if (!expressions.length) return file.source;
-
-			expressions.replaceWith(({ node }) =>
-				j.newExpression(j.identifier('AggregateError'), node.arguments),
+			const ast = ts.parse(file.source);
+			const root = ast.root();
+			const { edits } = replacePolyfillUsage(
+				root,
+				MODULE_NAME,
+				'AggregateError',
 			);
-
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

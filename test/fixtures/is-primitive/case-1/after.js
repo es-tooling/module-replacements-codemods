@@ -1,3 +1,4 @@
+
 var assert = require('assert');
 
 assert.ok(isPrimitive(undefined));
@@ -18,9 +19,8 @@ assert.ok(isPrimitive('foo'));
 assert.notOk(isPrimitive(Object('foo')));
 
 function isPrimitive(val) {
-  if (typeof val === 'object') {
-    return val === null;
-  }
-
-  return typeof val !== 'function';
+	if (typeof val === 'object') {
+		return val === null;
+	}
+	return typeof val !== 'function';
 }

@@ -4,12 +4,87 @@
  */
 
 /**
+ * Find named ESM imports and destructured CJS requires for a module.
+ *
+ * Handles:
+ * - `import { X } from 'pkg'` / `import { X as Y } from 'pkg'`
+ * - `const/var/let { X } = require('pkg')`
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} moduleName - The module to find.
+ * @returns {{ imports: SgNode[], localNames: string[], exportToLocal: Record<string, string> }}
+ */
+export function findNamedImports(root, moduleName) {
+	/** @type {SgNode[]} */
+	const imports = [];
+	/** @type {string[]} */
+	const localNames = [];
+	/** @type {Record<string, string>} */
+	const exportToLocal = {};
+
+	// 1. Handle named ESM imports: import { X as Y } from 'pkg'
+	const namedEsm = root.findAll({
+		rule: {
+			pattern: {
+				context: `import { $$$SPECS } from '${moduleName}'`,
+				strictness: 'relaxed',
+			},
+		},
+	});
+	for (const imp of namedEsm) {
+		imports.push(imp);
+		const specs = imp
+			.getMultipleMatches('SPECS')
+			.filter((m) => m.kind() !== ',');
+		for (const spec of specs) {
+			const alias = spec.field('alias');
+			const name = spec.field('name');
+			if (!name) continue;
+			const exported = name.text();
+			const local = alias ? alias.text() : exported;
+			localNames.push(local);
+			exportToLocal[exported] = local;
+		}
+	}
+
+	// 2. Handle CJS destructured requires: const { X } = require('pkg')
+	for (const decl of ['const', 'var', 'let']) {
+		const cjsDestruct = root.findAll({
+			rule: {
+				pattern: {
+					context: `${decl} { $$$PROPS } = require('${moduleName}')`,
+					strictness: 'relaxed',
+				},
+			},
+		});
+		for (const imp of cjsDestruct) {
+			imports.push(imp);
+			const props = imp
+				.getMultipleMatches('PROPS')
+				.filter((m) => m.kind() !== ',');
+			for (const prop of props) {
+				const key = prop.field('key');
+				const value = prop.field('value');
+				const exported = key ? key.text() : prop.text();
+				const local = value ? value.text() : prop.text();
+				localNames.push(local);
+				exportToLocal[exported] = local;
+			}
+		}
+	}
+
+	return { imports, localNames, exportToLocal };
+}
+
+/**
  * Remove all import/require statements for a given module.
  *
  * Handles:
  * - `import X from 'pkg'`
+ * - `import { X } from 'pkg'` / `import { X as Y } from 'pkg'`
  * - `import 'pkg'` (side-effect)
  * - `const/var X = require('pkg')`
+ * - `const { X } = require('pkg')`
  * - `require('pkg')` (side-effect expression statement)
  *
  * @param {SgNode} root - The root of the AST.
@@ -19,15 +94,29 @@
 export function removeImport(root, moduleName) {
 	/** @type {Edit[]} */
 	const edits = [];
+	/** @type {string[]} */
+	const localNames = [];
 
-	// 1. Reuse findNamedDefaultImports for bound imports/requires and assignments
-	const { imports, localNames } = findNamedDefaultImports(root, moduleName);
+	// 1. Default imports/requires and assignments
+	const { imports, localNames: defaultLocalNames } = findNamedDefaultImports(
+		root,
+		moduleName,
+	);
 
 	for (const imp of imports) {
 		edits.push(imp.replace(''));
 	}
+	localNames.push(...defaultLocalNames);
 
-	// 2. Handle ESM side-effect imports: import 'pkg'
+	// 2. Named ESM and destructured CJS imports
+	const { imports: namedImports, localNames: namedLocalNames } =
+		findNamedImports(root, moduleName);
+	for (const imp of namedImports) {
+		edits.push(imp.replace(''));
+	}
+	localNames.push(...namedLocalNames);
+
+	// 3. Handle ESM side-effect imports: import 'pkg'
 	const esmSideEffects = root.findAll({
 		rule: {
 			pattern: {
@@ -40,7 +129,7 @@ export function removeImport(root, moduleName) {
 		edits.push(imp.replace(''));
 	}
 
-	// 3. Handle CJS side-effect expressions: require('pkg')
+	// 4. Handle CJS side-effect expressions: require('pkg')
 	const cjsSideEffects = root.findAll({
 		rule: {
 			kind: 'expression_statement',
@@ -115,9 +204,17 @@ function findNamedDefaultImports(root, moduleName) {
 	const localNames = [];
 	let quoteType = "'";
 
-	for (const imp of imports) {
+	for (let i = imports.length - 1; i >= 0; i--) {
+		const imp = imports[i];
 		const nameMatch = imp.getMatch('NAME');
-		if (!nameMatch) continue;
+		if (
+			!nameMatch ||
+			imp.find({ rule: { kind: 'named_imports' } }) ||
+			imp.find({ rule: { kind: 'object_pattern' } })
+		) {
+			imports.splice(i, 1);
+			continue;
+		}
 		localNames.push(nameMatch.text());
 		const impText = imp.text();
 		if (impText.includes('"')) quoteType = '"';

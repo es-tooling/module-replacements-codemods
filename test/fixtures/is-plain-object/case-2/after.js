@@ -1,5 +1,6 @@
 const assert = require('assert');
 
+
 // Test cases
 assert.strictEqual((v => {
     return !!(v && (typeof v === "object" && (Object.getPrototypeOf(v) === null || Object.getPrototypeOf(v) === Object.prototype)));

@@ -2,9 +2,15 @@
  * @import { Codemod, CodemodOptions } from "../../types.js"
  */
 
-import jscodeshift from 'jscodeshift';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
-import { removeImport } from '../shared.js';
+const IS_PRIMITIVE_FN = `function isPrimitive(val) {
+	if (typeof val === 'object') {
+		return val === null;
+	}
+	return typeof val !== 'function';
+}`;
 
 /**
  * @param {CodemodOptions} [options]
@@ -15,45 +21,25 @@ export default function (options) {
 		name: 'is-primitive',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const isPrimitiveImport = removeImport('is-primitive', root, j);
+			const { edits, localNames } = removeImport(root, 'is-primitive');
 
-			if (isPrimitiveImport) {
-				const val = j.identifier('val');
-				const func = j.functionDeclaration(
-					j.identifier('isPrimitive'),
-					[val],
-					j.blockStatement([
-						j.ifStatement(
-							j.binaryExpression(
-								'===',
-								j.unaryExpression('typeof', val),
-								j.literal('object'),
-							),
-							j.blockStatement([
-								j.returnStatement(
-									j.binaryExpression('===', val, j.literal(null)),
-								),
-							]),
+			if (localNames.length > 0) {
+				const body = root.children();
+				if (body.length > 0) {
+					edits.push(
+						body[body.length - 1].replace(
+							`${body[body.length - 1].text()}\n\n${IS_PRIMITIVE_FN}`,
 						),
-						j.returnStatement(
-							j.binaryExpression(
-								'!==',
-								j.unaryExpression('typeof', val, true),
-								j.literal('function'),
-							),
-						),
-					]),
-				);
-
-				root.find(j.Program).get('body').push(func);
-
-				return root.toSource({ quote: 'single' });
+					);
+				} else {
+					edits.push(root.replace(IS_PRIMITIVE_FN));
+				}
 			}
 
-			return file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -32,10 +32,26 @@ export default function (options) {
 
 			const logicalMatches = root.findAll({
 				rule: {
-					pattern: {
-						context: `var $NAME = $LEFT || require('${MODULE_NAME}')`,
-						strictness: 'relaxed',
-					},
+					any: [
+						{
+							pattern: {
+								context: `var $NAME = $LEFT || require('${MODULE_NAME}')`,
+								strictness: 'relaxed',
+							},
+						},
+						{
+							pattern: {
+								context: `let $NAME = $LEFT || require('${MODULE_NAME}')`,
+								strictness: 'relaxed',
+							},
+						},
+						{
+							pattern: {
+								context: `const $NAME = $LEFT || require('${MODULE_NAME}')`,
+								strictness: 'relaxed',
+							},
+						},
+					],
 				},
 			});
 			for (const match of logicalMatches) {

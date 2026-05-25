@@ -369,5 +369,42 @@ export function replaceDefaultWithNamedImport(
 		}
 	}
 
+	const namespaceImports = root.findAll({
+		rule: {
+			pattern: {
+				context: `import * as $NS from '${fromPackage}'`,
+				strictness: 'relaxed',
+			},
+		},
+	});
+
+	for (const imp of namespaceImports) {
+		const nsName = imp.getMatch('NS')?.text();
+		if (!nsName) continue;
+
+		const aliases = root.findAll({
+			rule: {
+				any: [
+					{ pattern: { context: `const $NAME = ${nsName}.default` } },
+					{ pattern: { context: `const { default: $NAME } = ${nsName}` } },
+				],
+			},
+		});
+
+		for (const decl of aliases) {
+			const nameMatch = decl.getMatch('NAME');
+			if (nameMatch) {
+				localNames.push(nameMatch.text());
+				edits.push(decl.replace(''));
+			}
+		}
+
+		edits.push(
+			imp.replace(
+				`import { ${namedImport} } from ${quoteType}${toPackage}${quoteType};`,
+			),
+		);
+	}
+
 	return { edits, localNames, quoteType };
 }

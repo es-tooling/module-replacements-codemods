@@ -28,16 +28,14 @@ export default function (options) {
 			}
 
 			const calls = root.findAll({
-				rule: {
-					any: [
-						{ pattern: `${identifierName}($$$ARGS)` },
-						{ pattern: `${identifierName}($$$ARGS);` },
-					],
-				},
+				rule: { pattern: `${identifierName}($$$ARGS)` },
 			});
 
 			for (const call of calls) {
-				edits.push(call.replace(''));
+				const parent = call.parent();
+				const target =
+					parent?.kind() === 'expression_statement' ? parent : call;
+				edits.push(target.replace(''));
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

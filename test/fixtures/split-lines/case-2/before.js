@@ -1,4 +1,3 @@
-// Test cases to ensure the codemod works correctly
 var splitLines = require('split-lines');
 var assert = require('assert');
 

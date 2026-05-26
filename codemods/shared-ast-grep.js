@@ -98,7 +98,7 @@ export function removeImport(root, moduleName) {
 	const localNames = [];
 
 	// 1. Default imports/requires and assignments
-	const { imports, localNames: defaultLocalNames } = findNamedDefaultImports(
+	const { imports, localNames: defaultLocalNames } = findDefaultImports(
 		root,
 		moduleName,
 	);
@@ -158,11 +158,17 @@ export function removeImport(root, moduleName) {
 /**
  * Find all default imports/requires for a package and extract common metadata.
  *
+ * Handles:
+ * - `import X from 'pkg'`
+ * - `const/var X = require('pkg')`
+ * - `const/var X = require('pkg').method(...)`
+ * - `X = require('pkg')`
+ *
  * @param {SgNode} root - The root of the AST.
  * @param {string} moduleName - The package to find imports for.
  * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
  */
-function findNamedDefaultImports(root, moduleName) {
+export function findDefaultImports(root, moduleName) {
 	const imports = root.findAll({
 		rule: {
 			any: [
@@ -243,7 +249,7 @@ function findNamedDefaultImports(root, moduleName) {
  * @returns {{ imports: SgNode[], identifierName: string | null }}
  */
 export function findDefaultImportIdentifier(root, moduleName) {
-	const { imports } = findNamedDefaultImports(root, moduleName);
+	const { imports } = findDefaultImports(root, moduleName);
 	const identifierName = imports[0]?.getMatch('NAME')?.text() ?? null;
 	return { imports, identifierName };
 }
@@ -364,7 +370,7 @@ export function replaceDefaultImport(
 	toIdentifier,
 	asNamespace = false,
 ) {
-	const { imports, localNames, quoteType } = findNamedDefaultImports(
+	const { imports, localNames, quoteType } = findDefaultImports(
 		root,
 		fromPackage,
 	);
@@ -379,23 +385,44 @@ export function replaceDefaultImport(
 		const identifier = toIdentifier || nameMatch.text();
 		const isCommonJS = imp.find('require($SOURCE)') !== null;
 
-		if (isCommonJS) {
-			edits.push(
-				imp.replace(
-					`const ${identifier} = require(${quoteType}${toPackage}${quoteType});`,
-				),
-			);
-		} else {
-			const prefix = asNamespace ? 'import * as ' : 'import ';
-			edits.push(
-				imp.replace(
-					`${prefix}${identifier} from ${quoteType}${toPackage}${quoteType};`,
-				),
-			);
-		}
+		const kind = asNamespace ? 'namespace' : 'default';
+		edits.push(
+			imp.replace(
+				generateImport(isCommonJS, quoteType, identifier, toPackage, kind),
+			),
+		);
 	}
 
 	return { edits, localNames, quoteType };
+}
+
+/**
+ * Generate an import or require statement as a string.
+ *
+ * @param {boolean} useRequire - Use require() instead of import.
+ * @param {string} quoteType - Quote character (" or ').
+ * @param {string} name - The local identifier or import name.
+ * @param {string} source - Module specifier.
+ * @param {'named' | 'default' | 'namespace'} [kind='named'] - Import kind.
+ * @returns {string}
+ */
+export function generateImport(
+	useRequire,
+	quoteType,
+	name,
+	source,
+	kind = 'named',
+) {
+	const from = `${quoteType}${source}${quoteType}`;
+	const specifier =
+		kind === 'named'
+			? `{ ${name} }`
+			: kind === 'namespace'
+				? `* as ${name}`
+				: name;
+	return useRequire
+		? `const ${specifier} = require(${from});`
+		: `import ${specifier} from ${from};`;
 }
 
 /**
@@ -462,7 +489,7 @@ export function replaceDefaultWithNamedImport(
 	toPackage,
 	namedImport,
 ) {
-	const { imports, localNames, quoteType } = findNamedDefaultImports(
+	const { imports, localNames, quoteType } = findDefaultImports(
 		root,
 		fromPackage,
 	);
@@ -476,19 +503,11 @@ export function replaceDefaultWithNamedImport(
 
 		const isCommonJS = imp.find('require($SOURCE)') !== null;
 
-		if (isCommonJS) {
-			edits.push(
-				imp.replace(
-					`const { ${namedImport} } = require(${quoteType}${toPackage}${quoteType});`,
-				),
-			);
-		} else {
-			edits.push(
-				imp.replace(
-					`import { ${namedImport} } from ${quoteType}${toPackage}${quoteType};`,
-				),
-			);
-		}
+		edits.push(
+			imp.replace(
+				generateImport(isCommonJS, quoteType, namedImport, toPackage),
+			),
+		);
 	}
 
 	const namespaceImports = root.findAll({
@@ -522,9 +541,7 @@ export function replaceDefaultWithNamedImport(
 		}
 
 		edits.push(
-			imp.replace(
-				`import { ${namedImport} } from ${quoteType}${toPackage}${quoteType};`,
-			),
+			imp.replace(generateImport(false, quoteType, namedImport, toPackage)),
 		);
 	}
 

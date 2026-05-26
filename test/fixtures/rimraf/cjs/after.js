@@ -1,5 +1,5 @@
-const {rm} = require('node:fs/promises');
-const {rmSync} = require('node:fs');
+const { rm } = require('node:fs/promises');
+const { rmSync } = require('node:fs');
 
 await rm('./dist', {recursive: true, force: true});
 

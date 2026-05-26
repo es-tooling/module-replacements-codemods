@@ -38,6 +38,24 @@ export function removeImport(root: SgNode, moduleName: string): {
     localNames: string[];
 };
 /**
+ * Find all default imports/requires for a package and extract common metadata.
+ *
+ * Handles:
+ * - `import X from 'pkg'`
+ * - `const/var X = require('pkg')`
+ * - `const/var X = require('pkg').method(...)`
+ * - `X = require('pkg')`
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} moduleName - The package to find imports for.
+ * @returns {{ imports: SgNode[], localNames: string[], quoteType: string }}
+ */
+export function findDefaultImports(root: SgNode, moduleName: string): {
+    imports: SgNode[];
+    localNames: string[];
+    quoteType: string;
+};
+/**
  * Find default imports of a module and resolve the local identifier name.
  *
  * @param {SgNode} root - The root of the AST.
@@ -95,6 +113,17 @@ export function replaceDefaultImport(root: SgNode, fromPackage: string, toPackag
     localNames: string[];
     quoteType: string;
 };
+/**
+ * Generate an import or require statement as a string.
+ *
+ * @param {boolean} useRequire - Use require() instead of import.
+ * @param {string} quoteType - Quote character (" or ').
+ * @param {string} name - The local identifier or import name.
+ * @param {string} source - Module specifier.
+ * @param {'named' | 'default' | 'namespace'} [kind='named'] - Import kind.
+ * @returns {string}
+ */
+export function generateImport(useRequire: boolean, quoteType: string, name: string, source: string, kind?: "named" | "default" | "namespace"): string;
 /**
  * Remove the import of a polyfill module and replace all references to its
  * default import identifier with the given replacement string.

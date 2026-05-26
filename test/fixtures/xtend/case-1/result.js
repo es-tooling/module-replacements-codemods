@@ -1,3 +1,4 @@
+
 const assert = require('assert');
 
 const objectA = {
@@ -11,7 +12,4 @@ const objectB = {
   d: 40,
 };
 
-assert.equal({
-  ...objectA,
-  ...objectB
-}, { a: 20, b: 2, c: 3, d: 40 });
+assert.equal({ ...objectA, ...objectB }, { a: 20, b: 2, c: 3, d: 40 });

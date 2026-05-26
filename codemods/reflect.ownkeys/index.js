@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'reflect.ownkeys';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,38 +14,19 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'reflect.ownkeys',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('reflect.ownkeys', root, j);
+			const { edits } = replacePolyfillUsage(
+				root,
+				MODULE_NAME,
+				'Reflect.ownKeys',
+			);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length === 1) {
-						const newExpression = j.callExpression(
-							j.memberExpression(
-								j.identifier('Reflect'),
-								j.identifier('ownKeys'),
-							),
-							args,
-						);
-						j(path).replaceWith(newExpression);
-						dirtyFlag = true;
-					}
-				});
-
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

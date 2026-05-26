@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'arraybuffer.prototype.slice';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,46 +17,33 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'arraybuffer.prototype.slice',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport(
-				'arraybuffer.prototype.slice',
+			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
-				j,
+				MODULE_NAME,
 			);
 
-			let dirtyFlag = false;
+			if (!identifierName) {
+				return file.source;
+			}
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const [bufferArg, ...otherArgs] = path.node.arguments;
-					if (
-						j.Identifier.check(bufferArg) ||
-						(j.NewExpression.check(bufferArg) &&
-							bufferArg.callee.type === 'Identifier' &&
-							bufferArg.callee.name === 'ArrayBuffer')
-					) {
-						path.replace(
-							j.callExpression(
-								j.memberExpression(bufferArg, j.identifier('slice')),
-								otherArgs,
-							),
-						);
-						dirtyFlag = true;
-					}
-				});
+			const edits = computePolyfillMethodCallReplacementEdits(
+				root,
+				identifierName,
+				'slice',
+				(args) => args.length >= 1,
+			);
 
-			return dirtyFlag ? root.toSource(options) : file.source;
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

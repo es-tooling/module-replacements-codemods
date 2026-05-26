@@ -441,18 +441,10 @@ export function computePolyfillPropertyReplacementEdits(
 	identifierName,
 	propertyName,
 ) {
-	/** @type {Edit[]} */
-	const edits = [];
-	const calls = root.findAll({
-		rule: { pattern: `${identifierName}($ARG)` },
+	return computeCallReplacementEdits(root, identifierName, (args) => {
+		if (args.length !== 1) return null;
+		return `${args[0]}.${propertyName}`;
 	});
-	for (const call of calls) {
-		const arg = call.getMatch('ARG');
-		if (arg) {
-			edits.push(call.replace(`${arg.text()}.${propertyName}`));
-		}
-	}
-	return edits;
 }
 
 /**

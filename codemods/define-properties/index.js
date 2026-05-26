@@ -1,26 +1,14 @@
-import jscodeshift from 'jscodeshift';
-import {
-	DEFAULT_IMPORT,
-	getImportIdentifierMap,
-	getVariableExpressionHasIdentifier,
-	insertAfterImports,
-	insertCommentAboveNode,
-	removeImport,
-	replaceRequireMemberExpression,
-} from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'define-properties';
 
 /**
- * @typedef {import('../../types.js').Codemod} Codemod
- * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
- */
-
-/**
- *
  * @param {string} name
- * @returns
+ * @returns {string}
  */
-const definePropertiesTemplate = (name) => `
-const ${name} = function (object, map) {
+const definePropertiesTemplate = (name) =>
+	`const ${name} = function (object, map) {
   let propKeys = Object.keys(map);
   propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));
 
@@ -44,94 +32,97 @@ const ${name} = function (object, map) {
 };`;
 
 /**
+ * @typedef {import('../../types.js').Codemod} Codemod
+ * @typedef {import('../../types.js').CodemodOptions} CodemodOptions
+ */
+
+/**
  * @param {CodemodOptions} [options]
  * @returns {Codemod}
  */
 export default function (options) {
 	return {
-		name: 'define-properties',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			const variableExpressionHasIdentifier =
-				getVariableExpressionHasIdentifier(
-					'define-properties',
-					'supportsDescriptors',
-					root,
-					j,
-				);
+			const root = ts.parse(file.source).root();
+			const edits = [];
 
-			// Use case 1: require('define-properties').supportsDescriptors
-			if (variableExpressionHasIdentifier) {
-				const didReplace = replaceRequireMemberExpression(
-					'define-properties',
-					true,
-					root,
-					j,
-				);
-				return didReplace ? root.toSource(options) : file.source;
-			}
-
-			const map = getImportIdentifierMap('define-properties', root, j);
-
-			const identifier = map[DEFAULT_IMPORT];
-
-			const callExpressions = root.find(j.CallExpression, {
-				callee: {
-					name: identifier,
-				},
+			const memberExprs = root.findAll({
+				rule: { pattern: "require('define-properties').supportsDescriptors" },
 			});
 
-			if (!callExpressions.length) {
-				removeImport('define-properties', root, j);
-				return root.toSource(options);
+			if (memberExprs.length > 0) {
+				for (const expr of memberExprs) edits.push(expr.replace('true'));
+				return root.commitEdits(edits);
+			}
+
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
+			if (!identifierName) return file.source;
+
+			const calls = root.findAll({
+				rule: { pattern: `${identifierName}($$$ARGS)` },
+			});
+
+			if (calls.length === 0) {
+				for (const imp of imports) edits.push(imp.replace(''));
+				return root.commitEdits(edits);
 			}
 
 			let transformCount = 0;
-			let dirty = false;
 
-			callExpressions.forEach((path) => {
-				const node = path.node;
-				const newIdentifier = `$${identifier}`;
+			for (const call of calls) {
+				const args = (call.getMultipleMatches('ARGS') || []).filter(
+					(m) => m.kind() !== ',',
+				);
 
-				// Use case 2: define(object, map);
-				if (node.arguments.length === 2) {
-					if (transformCount === 0) {
-						const defineFunction = definePropertiesTemplate(newIdentifier);
-						insertAfterImports(defineFunction, root, j);
-					}
-
-					// Not all call expressions have a name property, but node.callee should be of type Identifi
-					if ('name' in node.callee) {
-						node.callee.name = newIdentifier;
-					}
-
+				if (args.length === 2) {
+					const fn = call.field('function');
+					if (fn) edits.push(fn.replace(`$${identifierName}`));
 					transformCount++;
-					dirty = true;
 				}
 
-				// Use case 3: define(object, map, predicates);
-				if (node.arguments.length === 3) {
-					const comment = j.commentBlock(
-						'\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: https://github.com/es-tooling/module-replacements-codemods/issues/66 \n',
-						true,
-						false,
-					);
-
-					const startLine = node.loc?.start.line ?? 0;
-
-					insertCommentAboveNode(comment, startLine, root, j);
-
-					dirty = true;
+				if (args.length === 3) {
+					let stmt = call;
+					while (stmt) {
+						const parent = stmt.parent();
+						if (!parent) break;
+						const k = parent.kind();
+						if (
+							k === 'expression_statement' ||
+							k === 'lexical_declaration' ||
+							k === 'variable_declaration'
+						) {
+							stmt = parent;
+							break;
+						}
+						stmt = parent;
+					}
+					const comment =
+						'/*\n This usage of `define-properties` usage can be cleaned up through a mix of Object.defineProperty() and a custom predicate function.\n details can be found here: https://github.com/es-tooling/module-replacements-codemods/issues/66 \n*/';
+					edits.push(stmt.replace(`${comment}\n${stmt.text()}`));
 				}
-			});
-
-			if (transformCount === callExpressions.length) {
-				removeImport('define-properties', root, j);
 			}
 
-			return dirty ? root.toSource(options) : file.source;
+			if (transformCount === 0) {
+				return edits.length > 0 ? root.commitEdits(edits) : file.source;
+			}
+
+			const newName = `$${identifierName}`;
+			const polyfill = definePropertiesTemplate(newName);
+			const allTransformed = transformCount === calls.length;
+
+			if (allTransformed) {
+				for (const imp of imports) edits.push(imp.replace(polyfill));
+			} else {
+				for (const imp of imports)
+					edits.push(imp.replace(`${imp.text()}\n\n${polyfill}`));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

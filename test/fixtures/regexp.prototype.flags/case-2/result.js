@@ -1,4 +1,6 @@
+
 var assert = require('assert');
+
 
 assert(/a/.flags === /a/.flags);
 assert(new RegExp('a').flags === new RegExp('a').flags);

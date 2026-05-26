@@ -1,4 +1,5 @@
-var assert = require('assert');
+
+import assert from 'assert';
 
 var a = [1, 2, 3];
 assert.equal(

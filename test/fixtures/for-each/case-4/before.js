@@ -1,5 +1,5 @@
-var banana = require('for-each');
-var assert = require('assert');
+import banana from 'for-each';
+import assert from 'assert';
 
 var a = [1, 2, 3];
 assert.equal(

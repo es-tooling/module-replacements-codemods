@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 var testSymbol = symbol("foo");

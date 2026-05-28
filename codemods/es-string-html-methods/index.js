@@ -1,5 +1,10 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computePolyfillMethodCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'es-string-html-methods';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -28,7 +33,7 @@ const methods = [
  */
 export default function (options) {
 	return {
-		name: 'es-string-html-methods',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
@@ -41,7 +46,7 @@ export default function (options) {
 			for (const method of methods) {
 				const { edits: removeEdits, localNames } = removeImport(
 					root,
-					`es-string-html-methods/${method}`,
+					`${MODULE_NAME}/${method}`,
 				);
 				edits.push(...removeEdits);
 				if (localNames[0]) {
@@ -52,49 +57,27 @@ export default function (options) {
 			for (const method of methods) {
 				const { edits: removeAutoEdits } = removeImport(
 					root,
-					`es-string-html-methods/${method}/auto`,
+					`${MODULE_NAME}/${method}/auto`,
 				);
 				edits.push(...removeAutoEdits);
 			}
 
 			const { edits: removeGlobalAutoEdits } = removeImport(
 				root,
-				'es-string-html-methods/auto',
+				`${MODULE_NAME}/auto`,
 			);
 			edits.push(...removeGlobalAutoEdits);
 
 			for (const [method, identifierName] of Object.entries(
 				methodIdentifiers,
 			)) {
-				const calls = root.findAll({
-					rule: {
-						pattern: `${identifierName}($$$ARGS)`,
-					},
-				});
-
-				for (const call of calls) {
-					const argsMatch = call.getMultipleMatches('ARGS');
-					if (!argsMatch) continue;
-
-					const args = argsMatch.filter((m) => m.kind() !== ',');
-
-					if (args.length === 0) continue;
-
-					const firstArg = args[0];
-					if (firstArg.kind() === 'spread_element') continue;
-
-					const target = firstArg.text();
-					const methodArgs = args
-						.slice(1)
-						.map((m) => m.text())
-						.join(', ');
-
-					edits.push(
-						call.replace(
-							`${target}.${method}${methodArgs ? `(${methodArgs})` : '()'}`,
-						),
-					);
-				}
+				const methodEdits = computePolyfillMethodCallReplacementEdits(
+					root,
+					identifierName,
+					method,
+					(args) => args.length > 0 && args[0].kind() !== 'spread_element',
+				);
+				edits.push(...methodEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

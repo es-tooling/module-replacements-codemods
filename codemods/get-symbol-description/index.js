@@ -1,5 +1,11 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillPropertyReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'get-symbol-description';
+const PROPERTY_NAME = 'description';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,37 +18,24 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'get-symbol-description',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('get-symbol-description', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.value.arguments;
-					if (args.length === 1) {
-						const newExpression = j.memberExpression(
-							//@ts-ignore
-							args[0],
-							j.identifier('description'),
-						);
+			for (const name of localNames) {
+				const propEdits = computePolyfillPropertyReplacementEdits(
+					root,
+					name,
+					PROPERTY_NAME,
+				);
+				edits.push(...propEdits);
+			}
 
-						j(path).replaceWith(newExpression);
-						dirtyFlag = true;
-					}
-				});
-
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -25,20 +28,15 @@ export default function (options) {
 			}
 
 			const identifierName = localNames[0];
-			const calls = root.findAll({
-				rule: {
-					pattern: `${identifierName}($$$ARGS)`,
+			const callEdits = computeCallReplacementEdits(
+				root,
+				identifierName,
+				(args) => {
+					const spreadArgs = args.map((a) => `...${a}`);
+					return `{ ${spreadArgs.join(', ')} }`;
 				},
-			});
-
-			for (const call of calls) {
-				const argsMatch = call.getMultipleMatches('ARGS');
-				if (!argsMatch) continue;
-
-				const args = argsMatch.filter((m) => m.kind() !== ',');
-				const spreadArgs = args.map((a) => `...${a.text()}`);
-				edits.push(call.replace(`{ ${spreadArgs.join(', ')} }`));
-			}
+			);
+			edits.push(...callEdits);
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},

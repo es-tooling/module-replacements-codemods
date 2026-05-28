@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeSimpleCallReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'parseint';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,29 +17,32 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'parseint',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('parseint', root, j);
+			const { imports, identifierName } = findDefaultImportIdentifier(
+				root,
+				MODULE_NAME,
+			);
 
-			let dirty = false;
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					// @ts-ignore
-					path.node.callee.name = 'parseInt';
-					dirty = true;
-				});
+			if (!identifierName) {
+				return file.source;
+			}
 
-			return dirty ? root.toSource(options) : file.source;
+			const edits = computeSimpleCallReplacementEdits(
+				root,
+				identifierName,
+				'parseInt',
+			);
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

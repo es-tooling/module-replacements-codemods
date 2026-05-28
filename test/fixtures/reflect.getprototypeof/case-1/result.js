@@ -1,3 +1,4 @@
+
 var assert = require("assert");
 
 assert.throws(() => Reflect.getPrototypeOf(true));

@@ -249,6 +249,40 @@ export function findDefaultImportIdentifier(root, moduleName) {
 }
 
 /**
+ * Low-level helper that finds all calls to `fromIdentifier(...)` and applies
+ * a custom format callback to produce the replacement text for each call.
+ * Return `null` from the callback to skip a call without producing an edit.
+ *
+ * @param {SgNode} root - The root of the AST.
+ * @param {string} fromIdentifier - The identifier currently being called.
+ * @param {(args: string[]) => string | null} formatReplacement - Receives the argument texts and returns the replacement string, or null to skip.
+ * @returns {Edit[]}
+ */
+export function computeCallReplacementEdits(
+	root,
+	fromIdentifier,
+	formatReplacement,
+) {
+	/** @type {Edit[]} */
+	const edits = [];
+	const calls = root.findAll({
+		rule: {
+			pattern: `${fromIdentifier}($$$ARGS)`,
+		},
+	});
+	for (const call of calls) {
+		const argsMatch = call.getMultipleMatches('ARGS');
+		const args = argsMatch
+			? argsMatch.filter((m) => m.kind() !== ',').map((m) => m.text())
+			: [];
+		const replacement = formatReplacement(args);
+		if (replacement === null) continue;
+		edits.push(call.replace(replacement));
+	}
+	return edits;
+}
+
+/**
  * Compute edits that replace every call of `fromIdentifier(...)` with
  * `toCallee(...)`, preserving the original argument list verbatim.
  *
@@ -262,24 +296,11 @@ export function computeSimpleCallReplacementEdits(
 	fromIdentifier,
 	toCallee,
 ) {
-	/** @type {Edit[]} */
-	const edits = [];
-	const calls = root.findAll({
-		rule: {
-			pattern: `${fromIdentifier}($$$ARGS)`,
-		},
-	});
-	for (const call of calls) {
-		const argsMatch = call.getMultipleMatches('ARGS');
-		const argsText = argsMatch
-			? argsMatch
-					.filter((m) => m.kind() !== ',')
-					.map((m) => m.text())
-					.join(', ')
-			: '';
-		edits.push(call.replace(`${toCallee}(${argsText})`));
-	}
-	return edits;
+	return computeCallReplacementEdits(
+		root,
+		fromIdentifier,
+		(args) => `${toCallee}(${args.join(', ')})`,
+	);
 }
 
 /**
@@ -420,18 +441,10 @@ export function computePolyfillPropertyReplacementEdits(
 	identifierName,
 	propertyName,
 ) {
-	/** @type {Edit[]} */
-	const edits = [];
-	const calls = root.findAll({
-		rule: { pattern: `${identifierName}($ARG)` },
+	return computeCallReplacementEdits(root, identifierName, (args) => {
+		if (args.length !== 1) return null;
+		return `${args[0]}.${propertyName}`;
 	});
-	for (const call of calls) {
-		const arg = call.getMatch('ARG');
-		if (arg) {
-			edits.push(call.replace(`${arg.text()}.${propertyName}`));
-		}
-	}
-	return edits;
 }
 
 /**

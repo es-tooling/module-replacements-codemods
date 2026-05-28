@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'is-negative-zero';
 
@@ -42,20 +45,15 @@ export default function (options) {
 				}
 
 				// Find remaining localName(...) calls and replace with Object.is(arg, -0)
-				const calls = root.findAll({
-					rule: {
-						pattern: `${localName}($$$ARGS)`,
+				const callEdits = computeCallReplacementEdits(
+					root,
+					localName,
+					(args) => {
+						if (args.length !== 1) return null;
+						return `Object.is(${args[0]}, -0)`;
 					},
-				});
-
-				for (const call of calls) {
-					const argsMatch = call.getMultipleMatches('ARGS');
-					if (!argsMatch) continue;
-					const args = argsMatch.filter((m) => m.kind() !== ',');
-					if (args.length !== 1) continue;
-					const argText = args[0].text();
-					edits.push(call.replace(`Object.is(${argText}, -0)`));
-				}
+				);
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

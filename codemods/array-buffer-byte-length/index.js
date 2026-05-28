@@ -1,5 +1,8 @@
 import { ts } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array-buffer-byte-length';
 
@@ -22,37 +25,16 @@ export default function (options) {
 
 			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (localNames.length === 0) {
-				return file.source;
-			}
-
-			const identifierName = localNames[0];
-
-			const callExpressions = root.findAll({
-				rule: {
-					pattern: `${identifierName}($$$ARG)`,
-				},
-			});
-
-			for (const call of callExpressions) {
-				const argsMatch = call.getMultipleMatches('ARG');
-				if (!argsMatch) continue;
-
-				const args = argsMatch.filter((m) => m.kind() !== ',');
-
-				if (args.length !== 1) continue;
-
-				const argNode = args[0];
-				const argText = argNode.text();
-
-				const isIdentifier = argNode.kind() === 'identifier';
-				const isNewArrayBuffer =
-					argNode.kind() === 'new_expression' &&
-					argText.startsWith('new ArrayBuffer');
-
-				if (isIdentifier || isNewArrayBuffer) {
-					edits.push(call.replace(`${argText}.byteLength`));
-				}
+			for (const identifierName of localNames) {
+				const callEdits = computeCallReplacementEdits(
+					root,
+					identifierName,
+					(args) => {
+						if (args.length !== 1) return null;
+						return `${args[0]}.byteLength`;
+					},
+				);
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

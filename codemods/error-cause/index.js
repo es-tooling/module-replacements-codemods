@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'error-cause';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,15 +14,15 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'error-cause',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			removeImport('error-cause/auto', root, j);
+			const { edits } = removeImport(root, `${MODULE_NAME}/auto`);
 
-			return root.toSource(options);
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

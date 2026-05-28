@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport, replacePolyfillUsage } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'date';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,26 +14,17 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'date',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let dirtyFlag = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			removeImport('date/auto', root, j);
-			const { identifier } = removeImport('date', root, j);
+			const { edits } = replacePolyfillUsage(root, MODULE_NAME, 'Date');
+			const { edits: autoEdits } = removeImport(root, `${MODULE_NAME}/auto`);
+			edits.push(...autoEdits);
 
-			root
-				.find(j.Identifier, {
-					name: identifier,
-				})
-				.forEach((path) => {
-					path.node.name = 'Date';
-					dirtyFlag = true;
-				});
-
-			return dirtyFlag ? root.toSource(options) : file.source;
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

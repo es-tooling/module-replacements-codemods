@@ -1,4 +1,5 @@
 import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'iterate-value';
 
@@ -18,69 +19,30 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const imports = root.findAll({
-				rule: {
-					any: [
-						{
-							pattern: {
-								context: "import $NAME from 'iterate-value'",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "const $NAME = require('iterate-value')",
-								strictness: 'relaxed',
-							},
-						},
-					],
-				},
-			});
 
-			const edits = [];
-			/** @type {string|null} */
-			let importedName = null;
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (imports.length === 0) {
-				return file.source;
-			}
+			for (const importedName of localNames) {
+				const calls = root.findAll({
+					rule: {
+						any: [
+							{ pattern: `${importedName}($ITERABLE)` },
+							{ pattern: `${importedName}($ITERABLE, $CALLBACK)` },
+						],
+					},
+				});
 
-			for (const node of imports) {
-				if (!importedName) {
-					const name = node.getMatch('NAME')?.text();
+				for (const node of calls) {
+					const iter = node.getMatch('ITERABLE');
+					if (!iter) continue;
 
-					if (name) {
-						importedName = name;
+					const callback = node.getMatch('CALLBACK');
+
+					if (!callback) {
+						edits.push(node.replace(`Array.from(${iter.text()})`));
+						continue;
 					}
-				}
 
-				edits.push(node.replace(''));
-			}
-
-			const calls = root.findAll({
-				rule: {
-					any: [
-						{
-							pattern: `${importedName}($ITERABLE)`,
-						},
-						{
-							pattern: `${importedName}($ITERABLE, $CALLBACK)`,
-						},
-					],
-				},
-			});
-
-			for (const node of calls) {
-				const iter = node.getMatch('ITERABLE');
-				const callback = node.getMatch('CALLBACK');
-
-				if (!iter) {
-					continue;
-				}
-
-				if (!callback) {
-					edits.push(node.replace(`Array.from(${iter.text()})`));
-				} else {
 					const callbackKind = callback.kind();
 					const callbackBody = callback.field('body');
 

@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'global';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,35 +14,25 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'global',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const globalIdentifier = removeImport('global', root, j).identifier;
-			const documentIdentifier = removeImport(
-				'global/document',
+			const { edits } = replacePolyfillUsage(root, MODULE_NAME, 'globalThis');
+
+			const d = replacePolyfillUsage(
 				root,
-				j,
-			).identifier;
-			const windowIdentifier = removeImport(
-				'global/window',
-				root,
-				j,
-			).identifier;
+				`${MODULE_NAME}/document`,
+				'document',
+			);
+			edits.push(...d.edits);
 
-			root
-				.find(j.Identifier, { name: globalIdentifier })
-				.replaceWith(j.identifier('globalThis'));
-			root
-				.find(j.Identifier, { name: documentIdentifier })
-				.replaceWith(j.identifier('document'));
-			root
-				.find(j.Identifier, { name: windowIdentifier })
-				.replaceWith(j.identifier('window'));
+			const w = replacePolyfillUsage(root, `${MODULE_NAME}/window`, 'window');
+			edits.push(...w.edits);
 
-			return root.toSource({ quote: 'single' });
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

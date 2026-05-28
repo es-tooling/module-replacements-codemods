@@ -1,6 +1,8 @@
 import { ts } from '@ast-grep/napi';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'globalthis';
+const TARGET = 'globalThis';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -18,63 +20,18 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const edits = [];
-
-			const matches = root.findAll({
-				rule: {
-					any: [
-						{
-							pattern: {
-								context: "const $NAME = require('globalthis')()",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "const $NAME = require('globalthis/polyfill')()",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "const $NAME = require('globalthis/shim')()",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "const $NAME = require('globalthis').shim()",
-								strictness: 'relaxed',
-							},
-						},
-					],
-				},
-			});
-
-			let identifierToReplace = null;
-
-			for (const match of matches) {
-				const nameMatch = match.getMatch('NAME');
-				if (nameMatch) {
-					identifierToReplace = nameMatch.text();
-					edits.push(match.replace(''));
-				}
-			}
-
-			if (identifierToReplace) {
-				const usages = root.findAll({
-					rule: {
-						kind: 'identifier',
-						pattern: identifierToReplace,
-					},
-				});
-
-				for (const usage of usages) {
-					edits.push(usage.replace('globalThis'));
-				}
-			}
-
-			return root.commitEdits(edits);
+			const { edits: edits1 } = replacePolyfillUsage(root, MODULE_NAME, TARGET);
+			const { edits: edits2 } = replacePolyfillUsage(
+				root,
+				`${MODULE_NAME}/polyfill`,
+				TARGET,
+			);
+			const { edits: edits3 } = replacePolyfillUsage(
+				root,
+				`${MODULE_NAME}/shim`,
+				TARGET,
+			);
+			return root.commitEdits([...edits1, ...edits2, ...edits3]);
 		},
 	};
 }

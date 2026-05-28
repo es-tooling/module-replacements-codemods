@@ -1,5 +1,10 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillPropertyReplacementEdits,
+	findDefaultImportIdentifier,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'symbol.prototype.description';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,57 +17,44 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'symbol.prototype.description',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			// Remove import/require statement
-			const { identifier } = removeImport(
-				'symbol.prototype.description',
+			const { imports, identifierName } = findDefaultImportIdentifier(
 				root,
-				j,
+				MODULE_NAME,
 			);
 
-			// Remove description.shim()
-			root
-				.find(j.ExpressionStatement, {
-					expression: {
-						callee: {
-							type: 'MemberExpression',
-							object: { name: identifier },
-							property: { name: 'shim' },
-						},
-					},
-				})
-				.forEach((path) => {
-					j(path).remove();
-				});
+			if (!identifierName) {
+				return file.source;
+			}
 
-			// Replace description(Symbol('foo')) with Symbol('foo').description
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.node.arguments;
-					const newArgs =
-						args.length === 1 && j.CallExpression.check(args[0])
-							? args[0].arguments
-							: [];
-					path.replace(
-						j.memberExpression(
-							j.callExpression(j.identifier('Symbol'), newArgs),
-							j.identifier('description'),
-						),
-					);
-				});
+			const edits = computePolyfillPropertyReplacementEdits(
+				root,
+				identifierName,
+				'description',
+			);
 
-			return root.toSource({ quote: 'single' });
+			const shimCalls = root.findAll({
+				rule: {
+					kind: 'expression_statement',
+					has: {
+						pattern: `${identifierName}.shim()`,
+					},
+				},
+			});
+			for (const call of shimCalls) {
+				edits.push(call.replace(''));
+			}
+
+			for (const imp of imports) {
+				edits.push(imp.replace(''));
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

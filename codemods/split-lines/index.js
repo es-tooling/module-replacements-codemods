@@ -1,5 +1,5 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,111 +15,56 @@ export default function (options) {
 		name: 'split-lines',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
-			let isDirty = false;
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('split-lines', root, j);
+			const { edits, localNames } = removeImport(root, 'split-lines');
 
-			root
-				.find(j.CallExpression, { callee: { name: identifier } })
-				.replaceWith((path) => {
-					const { node } = path;
-					const [stringArg, optionsArg] = node.arguments;
-
-					if (stringArg && stringArg.type !== 'Literal') {
-						return;
-					}
-
-					if (optionsArg && optionsArg.type !== 'ObjectExpression') {
-						return;
-					}
-
-					isDirty = true;
-
-					const defaultCallExpression = j.callExpression(
-						j.memberExpression(stringArg, j.identifier('split')),
-						[j.literal(/\r?\n/)],
-					);
-
-					const hasPreserveNewlines = optionsArg?.properties.some(
-						(prop) =>
-							prop.type === 'Property' &&
-							prop.key.type === 'Identifier' &&
-							prop.key.name === 'preserveNewlines',
-					);
-
-					if (hasPreserveNewlines) {
-						return j.callExpression(
-							j.memberExpression(
-								j.callExpression(
-									j.memberExpression(stringArg, j.identifier('split')),
-									[j.literal(/(\r?\n)/)],
-								),
-								j.identifier('reduce'),
-							),
-							[
-								j.arrowFunctionExpression(
-									[
-										j.identifier('acc'),
-										j.identifier('part'),
-										j.identifier('index'),
-										j.identifier('array'),
-									],
-									j.blockStatement([
-										j.ifStatement(
-											j.binaryExpression(
-												'===',
-												j.binaryExpression(
-													'%',
-													j.identifier('index'),
-													j.literal(2),
-												),
-												j.literal(0),
-											),
-											j.blockStatement([
-												j.expressionStatement(
-													j.callExpression(
-														j.memberExpression(
-															j.identifier('acc'),
-															j.identifier('push'),
-														),
-														[
-															j.binaryExpression(
-																'+',
-																j.identifier('part'),
-																j.logicalExpression(
-																	'||',
-																	j.memberExpression(
-																		j.identifier('array'),
-																		j.binaryExpression(
-																			'+',
-																			j.identifier('index'),
-																			j.literal(1),
-																		),
-																		true,
-																	),
-																	j.literal(''),
-																),
-															),
-														],
-													),
-												),
-											]),
-										),
-										j.returnStatement(j.identifier('acc')),
-									]),
-									false,
-								),
-								j.arrayExpression([]),
-							],
-						);
-					}
-
-					return defaultCallExpression;
+			for (const name of localNames) {
+				const calls = root.findAll({
+					rule: {
+						pattern: `${name}($$$ARGS)`,
+					},
 				});
 
-			return isDirty ? root.toSource(options) : file.source;
+				for (const call of calls) {
+					const argsMatch = call.getMultipleMatches('ARGS');
+					if (!argsMatch) continue;
+
+					const args = argsMatch.filter((m) => m.kind() !== ',');
+					if (args.length < 1 || args[0].kind() !== 'string') continue;
+
+					const stringArg = args[0];
+
+					if (args.length >= 2) {
+						const optsArg = args[1];
+						if (optsArg.kind() !== 'object') continue;
+
+						const hasPreserveNewlines = optsArg
+							.text()
+							.includes('preserveNewlines');
+
+						if (hasPreserveNewlines) {
+							edits.push(
+								call.replace(
+									`${stringArg.text()}.split(/(\\r?\\n)/).reduce((acc, part, index, array) => {
+  if (index % 2 === 0) {
+    acc.push(part + (array[index + 1] || ""));
+  }
+
+  return acc;
+}, [])`,
+								),
+							);
+							continue;
+						}
+					}
+
+					edits.push(call.replace(`${stringArg.text()}.split(/\\r?\\n/)`));
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

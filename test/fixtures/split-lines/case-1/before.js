@@ -1,4 +1,3 @@
-// Test cases to ensure the codemod works correctly
 import splitLines from 'split-lines';
 import assert from 'assert';
 

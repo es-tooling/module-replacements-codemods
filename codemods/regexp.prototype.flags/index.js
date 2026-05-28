@@ -1,5 +1,11 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computePolyfillPropertyReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'regexp.prototype.flags';
+const PROPERTY_NAME = 'flags';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,47 +18,34 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'regexp.prototype.flags',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			// Remove import/require statement
-			const { identifier } = removeImport('regexp.prototype.flags', root, j);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			// Remove flags.shim()
-			root
-				.find(j.ExpressionStatement, {
-					expression: {
-						callee: {
-							type: 'MemberExpression',
-							object: { name: identifier },
-							property: { name: 'shim' },
-						},
+			for (const name of localNames) {
+				const shimCalls = root.findAll({
+					rule: {
+						kind: 'expression_statement',
+						has: { pattern: `${name}.shim()` },
 					},
-				})
-				.forEach((path) => {
-					j(path).remove();
 				});
+				for (const call of shimCalls) {
+					edits.push(call.replace(''));
+				}
 
-			// Replace flags(arg) with arg.flags
-			root
-				.find(j.CallExpression, {
-					callee: {
-						type: 'Identifier',
-						name: identifier,
-					},
-				})
-				.forEach((path) => {
-					const args = path.node.arguments;
-					if (args.length !== 1) return; // flags takes exactly one argument
-					if (j.Expression.check(args[0]) && !j.SpreadElement.check(args[0])) {
-						path.replace(j.memberExpression(args[0], j.identifier('flags')));
-					}
-				});
+				const propEdits = computePolyfillPropertyReplacementEdits(
+					root,
+					name,
+					PROPERTY_NAME,
+				);
+				edits.push(...propEdits);
+			}
 
-			return root.toSource({ quote: 'single' });
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

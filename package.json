@@ -21,8 +21,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@ast-grep/napi": "^0.42.3",
-    "jscodeshift": "^17.3.0"
+    "@ast-grep/napi": "^0.42.3"
   },
   "files": [
     "types",
@@ -32,7 +31,6 @@
   ],
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
-    "@types/jscodeshift": "^17.3.0",
     "@types/node": "^25.9.1",
     "module-replacements": "^2.11.0",
     "typescript": "~6.0.3"
@@ -718,5 +716,6 @@
       "types": "./types/index.d.ts",
       "default": "./index.js"
     }
-  }
+  },
+  "packageManager": "npm@11.16.0"
 }

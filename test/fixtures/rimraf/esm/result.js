@@ -1,5 +1,5 @@
-import {rm} from 'node:fs/promises';
-import {glob} from 'tinyglobby';
+import { rm } from 'node:fs/promises';
+import { glob } from 'tinyglobby';
 
 await rm('./dist', {recursive: true, force: true});
 

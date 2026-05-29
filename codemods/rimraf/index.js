@@ -1,4 +1,9 @@
 import { ts } from '@ast-grep/napi';
+import {
+	findDefaultImports,
+	findNamedImports,
+	generateImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'rimraf';
 
@@ -9,19 +14,6 @@ const MODULE_NAME = 'rimraf';
  */
 
 const defaultOptions = `{recursive: true, force: true}`;
-/**
- * @param {boolean} useRequire
- * @param {string} quoteType
- * @param {string[]} names
- * @param {string} source
- * @returns {string}
- */
-const computeImport = (useRequire, quoteType, names, source) => {
-	if (useRequire) {
-		return `const {${names.join(', ')}} = require(${quoteType}${source}${quoteType});`;
-	}
-	return `import {${names.join(', ')}} from ${quoteType}${source}${quoteType};`;
-};
 
 /**
  * @param {CodemodOptions} [options]
@@ -34,42 +26,21 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = ts.parse(file.source);
 			const root = ast.root();
-			const imports = root.findAll({
+			const { imports: namedImports, localNames: namedLocals } =
+				findNamedImports(root, MODULE_NAME);
+			const { imports: defaultImports, localNames: defaultLocals } =
+				findDefaultImports(root, MODULE_NAME);
+
+			const namespaceImports = root.findAll({
 				rule: {
-					any: [
-						{
-							pattern: {
-								context: "import * as $NAME from 'rimraf'",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "import {$$$NAMES} from 'rimraf'",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "import $NAME from 'rimraf'",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "const {$$$NAMES} = require('rimraf')",
-								strictness: 'relaxed',
-							},
-						},
-						{
-							pattern: {
-								context: "const $NAME = require('rimraf')",
-								strictness: 'relaxed',
-							},
-						},
-					],
+					pattern: {
+						context: `import * as $NAME from '${MODULE_NAME}'`,
+						strictness: 'relaxed',
+					},
 				},
 			});
+
+			const imports = [...namedImports, ...defaultImports, ...namespaceImports];
 
 			if (imports.length === 0) {
 				return file.source;
@@ -77,86 +48,39 @@ export default function (options) {
 
 			/** @type {Edit[]} */
 			const edits = [];
-			let quoteType = "'";
+			const quoteType = imports.some((imp) => imp.text().includes('"'))
+				? '"'
+				: "'";
+			const isCommonJS = imports.some(
+				(imp) => imp.find('require($SOURCE)') !== null,
+			);
+
 			/** @type {string[]} */
 			const localNames = [];
-			let isCommonJS = false;
 
-			for (const imp of imports) {
-				const importSource = imp.field('source');
-				const requireCall = imp.find('require($SOURCE)');
-				let source = null;
-
-				if (importSource) {
-					// ESM
-					source = importSource.text();
-				} else {
-					// CJS
-					source = requireCall?.getMatch('SOURCE')?.text();
-				}
-
-				if (!source) {
-					continue;
-				}
-
-				if (!isCommonJS) {
-					isCommonJS = requireCall !== null;
-				}
-
-				if (source?.startsWith('"')) {
-					quoteType = '"';
-				}
-
-				const importedNames = imp.getMultipleMatches('NAMES');
-				const importedName = imp.getMatch('NAME');
-
-				// Its a default or namespace import
-				if (importedName) {
-					const importedNameText = importedName.text();
-					localNames.push(
-						importedNameText,
-						`${importedNameText}.$_METHOD`,
-						`${importedNameText}.$_METHOD.sync`,
-					);
-				}
-
-				for (const importSpecifier of importedNames) {
-					const importedName = importSpecifier.field('name');
-					const value = importSpecifier.field('value');
-
-					let localNameText;
-
-					if (importedName) {
-						// ESM
-						const localName = importSpecifier.field('alias') ?? importedName;
-						localNameText = localName.text();
-					} else if (value) {
-						// CJS
-						localNameText = value.text();
-					} else {
-						localNameText = importSpecifier.text();
-					}
-
-					localNames.push(localNameText, `${localNameText}.sync`);
+			for (const name of namedLocals) {
+				localNames.push(name, `${name}.sync`);
+			}
+			for (const name of defaultLocals) {
+				localNames.push(name, `${name}.$_METHOD`, `${name}.$_METHOD.sync`);
+			}
+			for (const imp of namespaceImports) {
+				const name = imp.getMatch('NAME')?.text();
+				if (name) {
+					localNames.push(name, `${name}.$_METHOD`, `${name}.$_METHOD.sync`);
 				}
 			}
 
 			const usagePatterns = [];
 			for (const name of localNames) {
 				usagePatterns.push(
-					{
-						pattern: `${name}($PATH, $OPTIONS)`,
-					},
-					{
-						pattern: `${name}($PATH)`,
-					},
+					{ pattern: `${name}($PATH, $OPTIONS)` },
+					{ pattern: `${name}($PATH)` },
 				);
 			}
 
 			const usages = root.findAll({
-				rule: {
-					any: usagePatterns,
-				},
+				rule: { any: usagePatterns },
 			});
 
 			let seenSync = false;
@@ -240,19 +164,19 @@ Promise.all(
 
 				if (seenAsync) {
 					replacedImports.push(
-						computeImport(isCommonJS, quoteType, ['rm'], 'node:fs/promises'),
+						generateImport(isCommonJS, quoteType, 'rm', 'node:fs/promises'),
 					);
 				}
 
 				if (seenSync) {
 					replacedImports.push(
-						computeImport(isCommonJS, quoteType, ['rmSync'], 'node:fs'),
+						generateImport(isCommonJS, quoteType, 'rmSync', 'node:fs'),
 					);
 				}
 
 				if (seenGlob) {
 					replacedImports.push(
-						computeImport(isCommonJS, quoteType, ['glob'], 'tinyglobby'),
+						generateImport(isCommonJS, quoteType, 'glob', 'tinyglobby'),
 					);
 				}
 

@@ -1,5 +1,5 @@
-import {rm} from 'node:fs/promises';
-import {rmSync} from 'node:fs';
+import { rm } from 'node:fs/promises';
+import { rmSync } from 'node:fs';
 
 await rm('./dist', {recursive: true, force: true});
 

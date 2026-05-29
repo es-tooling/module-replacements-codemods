@@ -58,7 +58,9 @@ export default function (options) {
 			});
 
 			if (memberExprs.length > 0) {
-				for (const expr of memberExprs) edits.push(expr.replace('true'));
+				for (const expr of memberExprs) {
+					edits.push(expr.replace('true'));
+				}
 				return root.commitEdits(edits);
 			}
 
@@ -73,7 +75,9 @@ export default function (options) {
 			});
 
 			if (calls.length === 0) {
-				for (const imp of imports) edits.push(imp.replace(''));
+				for (const imp of imports) {
+					edits.push(imp.replace(''));
+				}
 				return root.commitEdits(edits);
 			}
 

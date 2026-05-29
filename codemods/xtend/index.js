@@ -1,5 +1,8 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -15,25 +18,27 @@ export default function (options) {
 		name: 'xtend',
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('xtend', root, j);
+			const { edits, localNames } = removeImport(root, 'xtend');
 
-			root
-				.find(j.CallExpression, {
-					callee: {
-						name: identifier,
-					},
-				})
-				.replaceWith(({ node }) => {
-					return j.objectExpression(
-						//@ts-ignore
-						node.arguments.map((arg) => j.spreadElement(arg)),
-					);
-				});
+			if (localNames.length === 0) {
+				return file.source;
+			}
 
-			return root.toSource(options);
+			const identifierName = localNames[0];
+			const callEdits = computeCallReplacementEdits(
+				root,
+				identifierName,
+				(args) => {
+					const spreadArgs = args.map((a) => `...${a}`);
+					return `{ ${spreadArgs.join(', ')} }`;
+				},
+			);
+			edits.push(...callEdits);
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

@@ -1,5 +1,7 @@
-import jscodeshift from 'jscodeshift';
-import { removeImport } from '../shared.js';
+import { ts } from '@ast-grep/napi';
+import { removeImport } from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'string.raw';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,28 +14,35 @@ import { removeImport } from '../shared.js';
  */
 export default function (options) {
 	return {
-		name: 'string.raw',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const j = jscodeshift;
-			const root = j(file.source);
+			const ast = ts.parse(file.source);
+			const root = ast.root();
 
-			const { identifier } = removeImport('string.raw', root, j);
-			root
-				.find(j.TaggedTemplateExpression, {
-					tag: {
-						type: 'Identifier',
-						name: identifier,
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
+
+			for (const name of localNames) {
+				const taggedTemplates = root.findAll({
+					rule: {
+						kind: 'call_expression',
+						has: { kind: 'template_string' },
 					},
-				})
-				.replaceWith(({ node }) => {
-					return j.taggedTemplateExpression(
-						j.memberExpression(j.identifier('String'), j.identifier('raw')),
-						node.quasi,
-					);
 				});
 
-			return root.toSource(options);
+				for (const tt of taggedTemplates) {
+					const children = tt.children();
+					if (children.length >= 2) {
+						const tag = children[0];
+						const template = children[1];
+						if (tag.kind() === 'identifier' && tag.text() === name) {
+							edits.push(tt.replace(`String.raw${template.text()}`));
+						}
+					}
+				}
+			}
+
+			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},
 	};
 }

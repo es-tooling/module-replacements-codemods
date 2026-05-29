@@ -1,6 +1,3 @@
-const assert = require('assert');
-
-
 const $define = function (object, map) {
   let propKeys = Object.keys(map);
   propKeys = propKeys.concat(Object.getOwnPropertySymbols(map));
@@ -23,6 +20,7 @@ const $define = function (object, map) {
 
   return object;
 };
+const assert = require('assert');
 
 const object1 = { a: 1, b: 2 };
 

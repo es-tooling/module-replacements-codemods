@@ -49,7 +49,12 @@ export default function (options) {
 			const edits = [];
 
 			const memberExprs = root.findAll({
-				rule: { pattern: "require('define-properties').supportsDescriptors" },
+				rule: {
+					pattern: {
+						context: "require('define-properties').supportsDescriptors",
+						strictness: 'relaxed',
+					},
+				},
 			});
 
 			if (memberExprs.length > 0) {

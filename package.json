@@ -21,7 +21,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@ast-grep/napi": "^0.42.3"
+    "@ast-grep/napi": "^0.43.0"
   },
   "files": [
     "types",

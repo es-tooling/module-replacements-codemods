@@ -126,7 +126,7 @@ export default function (options) {
 
 				if (parent && parent.kind() === 'variable_declarator') {
 					const name = parent.field('name');
-					if (name) {
+					if (name && name.kind() !== 'object_pattern') {
 						chalkName = name.text();
 						edits.push(name.replace('pc'));
 					}

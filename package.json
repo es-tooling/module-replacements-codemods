@@ -30,8 +30,8 @@
     "codemods"
   ],
   "devDependencies": {
-    "@biomejs/biome": "2.5.14",
-    "@types/node": "^26.6.3",
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "^26.6.4",
     "module-replacements": "^3.4.0",
     "typescript": "~7.0.2"
   },

@@ -45,7 +45,7 @@ export default function (options) {
 		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const root = ts.parse(file.source).root();
+			const root = parse(Lang.TypeScript, file.source).root();
 			const edits = [];
 
 			const memberExprs = root.findAll({

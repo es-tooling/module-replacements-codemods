@@ -1,4 +1,4 @@
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import { replacePolyfillUsage } from '../shared-ast-grep.js';
 
 /**
@@ -25,7 +25,7 @@ export default function (options) {
 		name: 'es-errors',
 		to: 'native',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
+			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 			const edits = [];
 

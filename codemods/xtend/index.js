@@ -1,4 +1,4 @@
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import {
 	computeCallReplacementEdits,
 	removeImport,
@@ -18,7 +18,7 @@ export default function (options) {
 		name: 'xtend',
 		to: 'native',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
+			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
 			const { edits, localNames } = removeImport(root, 'xtend');

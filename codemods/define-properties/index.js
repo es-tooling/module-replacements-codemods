@@ -1,4 +1,4 @@
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'define-properties';

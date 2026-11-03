@@ -1,4 +1,4 @@
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import { replaceDefaultImport } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'invariant';
@@ -17,7 +17,7 @@ export default function (options) {
 		name: MODULE_NAME,
 		to: 'tiny-invariant',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
+			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
 			const { edits } = replaceDefaultImport(

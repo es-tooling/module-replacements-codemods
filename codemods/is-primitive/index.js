@@ -2,7 +2,7 @@
  * @import { Codemod, CodemodOptions } from "../../types.js"
  */
 
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import { removeImport } from '../shared-ast-grep.js';
 
 const IS_PRIMITIVE_FN = `function isPrimitive(val) {
@@ -21,7 +21,7 @@ export default function (options) {
 		name: 'is-primitive',
 		to: 'native',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
+			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
 			const { edits, localNames } = removeImport(root, 'is-primitive');

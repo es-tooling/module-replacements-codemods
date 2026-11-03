@@ -1,4 +1,4 @@
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import {
 	computePolyfillPropertyReplacementEdits,
 	findDefaultImportIdentifier,
@@ -20,7 +20,7 @@ export default function (options) {
 		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
+			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
 			const { imports, identifierName } = findDefaultImportIdentifier(

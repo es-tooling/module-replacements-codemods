@@ -21,11 +21,7 @@ export default function (options) {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
-			const { edits } = replacePolyfillUsage(
-				root,
-				MODULE_NAME,
-				REGEX_LITERAL,
-			);
+			const { edits } = replacePolyfillUsage(root, MODULE_NAME, REGEX_LITERAL);
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},

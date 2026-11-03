@@ -134,6 +134,7 @@ import reflectOwnkeys from './codemods/reflect.ownkeys/index.js';
 import regexpPrototypeFlags from './codemods/regexp.prototype.flags/index.js';
 import rimraf from './codemods/rimraf/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
+import shebangRegex from './codemods/shebang-regex/index.js';
 import splitLines from './codemods/split-lines/index.js';
 import stringPrototypeAt from './codemods/string.prototype.at/index.js';
 import stringPrototypeLastindexof from './codemods/string.prototype.lastindexof/index.js';
@@ -308,6 +309,7 @@ export const codemods = {
   "regexp.prototype.flags": regexpPrototypeFlags,
   "rimraf": rimraf,
   "setprototypeof": setprototypeof,
+  "shebang-regex": shebangRegex,
   "split-lines": splitLines,
   "string.prototype.at": stringPrototypeAt,
   "string.prototype.lastindexof": stringPrototypeLastindexof,

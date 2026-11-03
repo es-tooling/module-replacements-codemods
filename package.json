@@ -708,6 +708,10 @@
       "types": "./types/codemods/typedarray.prototype.slice/index.d.ts",
       "default": "./codemods/typedarray.prototype.slice/index.js"
     },
+    "./codemods/unc-path-regex/index.js": {
+      "types": "./types/codemods/unc-path-regex/index.d.ts",
+      "default": "./codemods/unc-path-regex/index.js"
+    },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",
       "default": "./codemods/xtend/index.js"

@@ -133,6 +133,7 @@ import reflectGetprototypeof from './codemods/reflect.getprototypeof/index.js';
 import reflectOwnkeys from './codemods/reflect.ownkeys/index.js';
 import regexpPrototypeFlags from './codemods/regexp.prototype.flags/index.js';
 import rimraf from './codemods/rimraf/index.js';
+import setFunctionLength from './codemods/set-function-length/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
 import splitLines from './codemods/split-lines/index.js';
 import stringPrototypeAt from './codemods/string.prototype.at/index.js';
@@ -307,6 +308,7 @@ export const codemods = {
   "reflect.ownkeys": reflectOwnkeys,
   "regexp.prototype.flags": regexpPrototypeFlags,
   "rimraf": rimraf,
+  "set-function-length": setFunctionLength,
   "setprototypeof": setprototypeof,
   "split-lines": splitLines,
   "string.prototype.at": stringPrototypeAt,

@@ -588,6 +588,10 @@
       "types": "./types/codemods/rimraf/index.d.ts",
       "default": "./codemods/rimraf/index.js"
     },
+    "./codemods/set-function-length/index.js": {
+      "types": "./types/codemods/set-function-length/index.d.ts",
+      "default": "./codemods/set-function-length/index.js"
+    },
     "./codemods/setprototypeof/index.js": {
       "types": "./types/codemods/setprototypeof/index.d.ts",
       "default": "./codemods/setprototypeof/index.js"

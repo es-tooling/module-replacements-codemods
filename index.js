@@ -3,6 +3,8 @@ import arrayBufferByteLength from './codemods/array-buffer-byte-length/index.js'
 import arrayEvery from './codemods/array-every/index.js';
 import arrayIncludes from './codemods/array-includes/index.js';
 import arrayMap from './codemods/array-map/index.js';
+import arrayUniq from './codemods/array-uniq/index.js';
+import arrayUnique from './codemods/array-unique/index.js';
 import arrayFrom from './codemods/array.from/index.js';
 import arrayOf from './codemods/array.of/index.js';
 import arrayPrototypeAt from './codemods/array.prototype.at/index.js';
@@ -94,6 +96,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
 import mathCbrt from './codemods/math.cbrt/index.js';
@@ -163,6 +166,7 @@ import typedArrayByteOffset from './codemods/typed-array-byte-offset/index.js';
 import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
 import uncPathRegex from './codemods/unc-path-regex/index.js';
+import uniq from './codemods/uniq/index.js';
 import xtend from './codemods/xtend/index.js';
 
 
@@ -180,6 +184,8 @@ export const codemods = {
   "array-every": arrayEvery,
   "array-includes": arrayIncludes,
   "array-map": arrayMap,
+  "array-uniq": arrayUniq,
+  "array-unique": arrayUnique,
   "array.from": arrayFrom,
   "array.of": arrayOf,
   "array.prototype.at": arrayPrototypeAt,
@@ -271,6 +277,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,
   "math.cbrt": mathCbrt,
@@ -340,5 +347,6 @@ export const codemods = {
   "typed-array-length": typedArrayLength,
   "typedarray.prototype.slice": typedarrayPrototypeSlice,
   "unc-path-regex": uncPathRegex,
+  "uniq": uniq,
   "xtend": xtend,
 };

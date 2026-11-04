@@ -60,6 +60,14 @@
       "types": "./types/codemods/array-map/index.d.ts",
       "default": "./codemods/array-map/index.js"
     },
+    "./codemods/array-uniq/index.js": {
+      "types": "./types/codemods/array-uniq/index.d.ts",
+      "default": "./codemods/array-uniq/index.js"
+    },
+    "./codemods/array-unique/index.js": {
+      "types": "./types/codemods/array-unique/index.d.ts",
+      "default": "./codemods/array-unique/index.js"
+    },
     "./codemods/array.from/index.js": {
       "types": "./types/codemods/array.from/index.d.ts",
       "default": "./codemods/array.from/index.js"
@@ -428,6 +436,10 @@
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
     },
+    "./codemods/lodash.uniq/index.js": {
+      "types": "./types/codemods/lodash.uniq/index.d.ts",
+      "default": "./codemods/lodash.uniq/index.js"
+    },
     "./codemods/math.acosh/index.js": {
       "types": "./types/codemods/math.acosh/index.d.ts",
       "default": "./codemods/math.acosh/index.js"
@@ -719,6 +731,10 @@
     "./codemods/unc-path-regex/index.js": {
       "types": "./types/codemods/unc-path-regex/index.d.ts",
       "default": "./codemods/unc-path-regex/index.js"
+    },
+    "./codemods/uniq/index.js": {
+      "types": "./types/codemods/uniq/index.d.ts",
+      "default": "./codemods/uniq/index.js"
     },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",

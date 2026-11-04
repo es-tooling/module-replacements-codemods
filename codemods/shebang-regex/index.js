@@ -2,7 +2,7 @@ import { Lang, parse } from '@ast-grep/napi';
 import { replacePolyfillUsage } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'shebang-regex';
-const REGEX_LITERAL = '/^#!(.*)/';
+const REGEX_LITERAL = '/^#!(.+)/';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod

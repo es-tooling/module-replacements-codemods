@@ -3,6 +3,8 @@ import arrayBufferByteLength from './codemods/array-buffer-byte-length/index.js'
 import arrayEvery from './codemods/array-every/index.js';
 import arrayIncludes from './codemods/array-includes/index.js';
 import arrayMap from './codemods/array-map/index.js';
+import arrayUniq from './codemods/array-uniq/index.js';
+import arrayUnique from './codemods/array-unique/index.js';
 import arrayFrom from './codemods/array.from/index.js';
 import arrayOf from './codemods/array.of/index.js';
 import arrayPrototypeAt from './codemods/array.prototype.at/index.js';
@@ -78,6 +80,7 @@ import isBuiltinModule from './codemods/is-builtin-module/index.js';
 import isDateObject from './codemods/is-date-object/index.js';
 import isEven from './codemods/is-even/index.js';
 import isJpg from './codemods/is-jpg/index.js';
+import isLambda from './codemods/is-lambda/index.js';
 import isNan from './codemods/is-nan/index.js';
 import isNegativeZero from './codemods/is-negative-zero/index.js';
 import isNpm from './codemods/is-npm/index.js';
@@ -85,6 +88,7 @@ import isNumber from './codemods/is-number/index.js';
 import isNumberObject from './codemods/is-number-object/index.js';
 import isOdd from './codemods/is-odd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
+import isPng from './codemods/is-png/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isString from './codemods/is-string/index.js';
@@ -95,6 +99,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
 import mathCbrt from './codemods/math.cbrt/index.js';
@@ -137,6 +142,7 @@ import rimraf from './codemods/rimraf/index.js';
 import setFunctionLength from './codemods/set-function-length/index.js';
 import setFunctionName from './codemods/set-function-name/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
+import shebangRegex from './codemods/shebang-regex/index.js';
 import splitLines from './codemods/split-lines/index.js';
 import stringPrototypeAt from './codemods/string.prototype.at/index.js';
 import stringPrototypeLastindexof from './codemods/string.prototype.lastindexof/index.js';
@@ -164,6 +170,7 @@ import typedArrayByteOffset from './codemods/typed-array-byte-offset/index.js';
 import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
 import uncPathRegex from './codemods/unc-path-regex/index.js';
+import uniq from './codemods/uniq/index.js';
 import xtend from './codemods/xtend/index.js';
 
 
@@ -181,6 +188,8 @@ export const codemods = {
   "array-every": arrayEvery,
   "array-includes": arrayIncludes,
   "array-map": arrayMap,
+  "array-uniq": arrayUniq,
+  "array-unique": arrayUnique,
   "array.from": arrayFrom,
   "array.of": arrayOf,
   "array.prototype.at": arrayPrototypeAt,
@@ -256,6 +265,7 @@ export const codemods = {
   "is-date-object": isDateObject,
   "is-even": isEven,
   "is-jpg": isJpg,
+  "is-lambda": isLambda,
   "is-nan": isNan,
   "is-negative-zero": isNegativeZero,
   "is-npm": isNpm,
@@ -263,6 +273,7 @@ export const codemods = {
   "is-number-object": isNumberObject,
   "is-odd": isOdd,
   "is-plain-object": isPlainObject,
+  "is-png": isPng,
   "is-primitive": isPrimitive,
   "is-regexp": isRegexp,
   "is-string": isString,
@@ -273,6 +284,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,
   "math.cbrt": mathCbrt,
@@ -315,6 +327,7 @@ export const codemods = {
   "set-function-length": setFunctionLength,
   "set-function-name": setFunctionName,
   "setprototypeof": setprototypeof,
+  "shebang-regex": shebangRegex,
   "split-lines": splitLines,
   "string.prototype.at": stringPrototypeAt,
   "string.prototype.lastindexof": stringPrototypeLastindexof,
@@ -342,5 +355,6 @@ export const codemods = {
   "typed-array-length": typedArrayLength,
   "typedarray.prototype.slice": typedarrayPrototypeSlice,
   "unc-path-regex": uncPathRegex,
+  "uniq": uniq,
   "xtend": xtend,
 };

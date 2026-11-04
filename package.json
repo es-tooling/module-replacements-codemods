@@ -60,6 +60,14 @@
       "types": "./types/codemods/array-map/index.d.ts",
       "default": "./codemods/array-map/index.js"
     },
+    "./codemods/array-uniq/index.js": {
+      "types": "./types/codemods/array-uniq/index.d.ts",
+      "default": "./codemods/array-uniq/index.js"
+    },
+    "./codemods/array-unique/index.js": {
+      "types": "./types/codemods/array-unique/index.d.ts",
+      "default": "./codemods/array-unique/index.js"
+    },
     "./codemods/array.from/index.js": {
       "types": "./types/codemods/array.from/index.d.ts",
       "default": "./codemods/array.from/index.js"
@@ -364,6 +372,10 @@
       "types": "./types/codemods/is-jpg/index.d.ts",
       "default": "./codemods/is-jpg/index.js"
     },
+    "./codemods/is-lambda/index.js": {
+      "types": "./types/codemods/is-lambda/index.d.ts",
+      "default": "./codemods/is-lambda/index.js"
+    },
     "./codemods/is-nan/index.js": {
       "types": "./types/codemods/is-nan/index.d.ts",
       "default": "./codemods/is-nan/index.js"
@@ -391,6 +403,10 @@
     "./codemods/is-plain-object/index.js": {
       "types": "./types/codemods/is-plain-object/index.d.ts",
       "default": "./codemods/is-plain-object/index.js"
+    },
+    "./codemods/is-png/index.js": {
+      "types": "./types/codemods/is-png/index.d.ts",
+      "default": "./codemods/is-png/index.js"
     },
     "./codemods/is-primitive/index.js": {
       "types": "./types/codemods/is-primitive/index.d.ts",
@@ -431,6 +447,10 @@
     "./codemods/left-pad/index.js": {
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/lodash.uniq/index.js": {
+      "types": "./types/codemods/lodash.uniq/index.d.ts",
+      "default": "./codemods/lodash.uniq/index.js"
     },
     "./codemods/math.acosh/index.js": {
       "types": "./types/codemods/math.acosh/index.d.ts",
@@ -604,6 +624,10 @@
       "types": "./types/codemods/setprototypeof/index.d.ts",
       "default": "./codemods/setprototypeof/index.js"
     },
+    "./codemods/shebang-regex/index.js": {
+      "types": "./types/codemods/shebang-regex/index.d.ts",
+      "default": "./codemods/shebang-regex/index.js"
+    },
     "./codemods/split-lines/index.js": {
       "types": "./types/codemods/split-lines/index.d.ts",
       "default": "./codemods/split-lines/index.js"
@@ -723,6 +747,10 @@
     "./codemods/unc-path-regex/index.js": {
       "types": "./types/codemods/unc-path-regex/index.d.ts",
       "default": "./codemods/unc-path-regex/index.js"
+    },
+    "./codemods/uniq/index.js": {
+      "types": "./types/codemods/uniq/index.d.ts",
+      "default": "./codemods/uniq/index.js"
     },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",

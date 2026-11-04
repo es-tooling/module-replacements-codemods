@@ -133,6 +133,8 @@ import reflectGetprototypeof from './codemods/reflect.getprototypeof/index.js';
 import reflectOwnkeys from './codemods/reflect.ownkeys/index.js';
 import regexpPrototypeFlags from './codemods/regexp.prototype.flags/index.js';
 import rimraf from './codemods/rimraf/index.js';
+import setFunctionLength from './codemods/set-function-length/index.js';
+import setFunctionName from './codemods/set-function-name/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
 import shebangRegex from './codemods/shebang-regex/index.js';
 import splitLines from './codemods/split-lines/index.js';
@@ -161,6 +163,7 @@ import typedArrayByteLength from './codemods/typed-array-byte-length/index.js';
 import typedArrayByteOffset from './codemods/typed-array-byte-offset/index.js';
 import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
+import uncPathRegex from './codemods/unc-path-regex/index.js';
 import xtend from './codemods/xtend/index.js';
 
 
@@ -308,6 +311,8 @@ export const codemods = {
   "reflect.ownkeys": reflectOwnkeys,
   "regexp.prototype.flags": regexpPrototypeFlags,
   "rimraf": rimraf,
+  "set-function-length": setFunctionLength,
+  "set-function-name": setFunctionName,
   "setprototypeof": setprototypeof,
   "shebang-regex": shebangRegex,
   "split-lines": splitLines,
@@ -336,5 +341,6 @@ export const codemods = {
   "typed-array-byte-offset": typedArrayByteOffset,
   "typed-array-length": typedArrayLength,
   "typedarray.prototype.slice": typedarrayPrototypeSlice,
+  "unc-path-regex": uncPathRegex,
   "xtend": xtend,
 };

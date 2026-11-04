@@ -588,6 +588,14 @@
       "types": "./types/codemods/rimraf/index.d.ts",
       "default": "./codemods/rimraf/index.js"
     },
+    "./codemods/set-function-length/index.js": {
+      "types": "./types/codemods/set-function-length/index.d.ts",
+      "default": "./codemods/set-function-length/index.js"
+    },
+    "./codemods/set-function-name/index.js": {
+      "types": "./types/codemods/set-function-name/index.d.ts",
+      "default": "./codemods/set-function-name/index.js"
+    },
     "./codemods/setprototypeof/index.js": {
       "types": "./types/codemods/setprototypeof/index.d.ts",
       "default": "./codemods/setprototypeof/index.js"
@@ -711,6 +719,10 @@
     "./codemods/typedarray.prototype.slice/index.js": {
       "types": "./types/codemods/typedarray.prototype.slice/index.d.ts",
       "default": "./codemods/typedarray.prototype.slice/index.js"
+    },
+    "./codemods/unc-path-regex/index.js": {
+      "types": "./types/codemods/unc-path-regex/index.d.ts",
+      "default": "./codemods/unc-path-regex/index.js"
     },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",

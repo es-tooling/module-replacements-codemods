@@ -1,4 +1,4 @@
-import { ts } from '@ast-grep/napi';
+import { Lang, parse } from '@ast-grep/napi';
 import { findNamedImports, removeImport } from '../shared-ast-grep.js';
 
 /**
@@ -58,8 +58,12 @@ function findNamespaceNames(root) {
 			},
 		});
 		for (const imp of cjsDefault) {
-			const name = imp.getMatch('NAME')?.text();
-			if (name) names.push(name);
+			const nameMatch = imp.getMatch('NAME');
+			// A destructured require (`const { isNpm } = require('is-npm')`) matches
+			// this pattern too, but it doesn't bind the module object. Its names are
+			// handled by findNamedImports, so only keep namespace-style bindings.
+			if (nameMatch?.kind() !== 'identifier') continue;
+			names.push(nameMatch.text());
 		}
 	}
 
@@ -75,7 +79,7 @@ export default function (options) {
 		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
-			const ast = ts.parse(file.source);
+			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
 			const { edits } = removeImport(root, MODULE_NAME);

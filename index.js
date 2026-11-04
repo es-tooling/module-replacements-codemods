@@ -72,6 +72,7 @@ import hasTostringtag from './codemods/has-tostringtag/index.js';
 import hasown from './codemods/hasown/index.js';
 import indexOf from './codemods/index-of/index.js';
 import invariant from './codemods/invariant/index.js';
+import isAlphabetical from './codemods/is-alphabetical/index.js';
 import isArrayBuffer from './codemods/is-array-buffer/index.js';
 import isBooleanObject from './codemods/is-boolean-object/index.js';
 import isBuiltinModule from './codemods/is-builtin-module/index.js';
@@ -249,6 +250,7 @@ export const codemods = {
   "hasown": hasown,
   "index-of": indexOf,
   "invariant": invariant,
+  "is-alphabetical": isAlphabetical,
   "is-array-buffer": isArrayBuffer,
   "is-boolean-object": isBooleanObject,
   "is-builtin-module": isBuiltinModule,

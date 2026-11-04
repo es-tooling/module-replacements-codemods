@@ -384,6 +384,10 @@
       "types": "./types/codemods/is-odd/index.d.ts",
       "default": "./codemods/is-odd/index.js"
     },
+    "./codemods/is-path-cwd/index.js": {
+      "types": "./types/codemods/is-path-cwd/index.d.ts",
+      "default": "./codemods/is-path-cwd/index.js"
+    },
     "./codemods/is-plain-object/index.js": {
       "types": "./types/codemods/is-plain-object/index.d.ts",
       "default": "./codemods/is-plain-object/index.js"

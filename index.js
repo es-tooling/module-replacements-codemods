@@ -84,6 +84,7 @@ import isNumber from './codemods/is-number/index.js';
 import isNumberObject from './codemods/is-number-object/index.js';
 import isOdd from './codemods/is-odd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
+import isPng from './codemods/is-png/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isString from './codemods/is-string/index.js';
@@ -261,6 +262,7 @@ export const codemods = {
   "is-number-object": isNumberObject,
   "is-odd": isOdd,
   "is-plain-object": isPlainObject,
+  "is-png": isPng,
   "is-primitive": isPrimitive,
   "is-regexp": isRegexp,
   "is-string": isString,

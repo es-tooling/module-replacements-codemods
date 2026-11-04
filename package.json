@@ -352,6 +352,10 @@
       "types": "./types/codemods/is-builtin-module/index.d.ts",
       "default": "./codemods/is-builtin-module/index.js"
     },
+    "./codemods/is-ci/index.js": {
+      "types": "./types/codemods/is-ci/index.d.ts",
+      "default": "./codemods/is-ci/index.js"
+    },
     "./codemods/is-date-object/index.js": {
       "types": "./types/codemods/is-date-object/index.d.ts",
       "default": "./codemods/is-date-object/index.js"
@@ -359,6 +363,10 @@
     "./codemods/is-even/index.js": {
       "types": "./types/codemods/is-even/index.d.ts",
       "default": "./codemods/is-even/index.js"
+    },
+    "./codemods/is-in-ci/index.js": {
+      "types": "./types/codemods/is-in-ci/index.d.ts",
+      "default": "./codemods/is-in-ci/index.js"
     },
     "./codemods/is-nan/index.js": {
       "types": "./types/codemods/is-nan/index.d.ts",

@@ -58,8 +58,12 @@ function findNamespaceNames(root) {
 			},
 		});
 		for (const imp of cjsDefault) {
-			const name = imp.getMatch('NAME')?.text();
-			if (name) names.push(name);
+			const nameMatch = imp.getMatch('NAME');
+			// A destructured require (`const { isNpm } = require('is-npm')`) matches
+			// this pattern too, but it doesn't bind the module object. Its names are
+			// handled by findNamedImports, so only keep namespace-style bindings.
+			if (nameMatch?.kind() !== 'identifier') continue;
+			names.push(nameMatch.text());
 		}
 	}
 

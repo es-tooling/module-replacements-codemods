@@ -360,6 +360,10 @@
       "types": "./types/codemods/is-even/index.d.ts",
       "default": "./codemods/is-even/index.js"
     },
+    "./codemods/is-jpg/index.js": {
+      "types": "./types/codemods/is-jpg/index.d.ts",
+      "default": "./codemods/is-jpg/index.js"
+    },
     "./codemods/is-nan/index.js": {
       "types": "./types/codemods/is-nan/index.d.ts",
       "default": "./codemods/is-nan/index.js"

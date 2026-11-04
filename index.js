@@ -87,6 +87,7 @@ import isPlainObject from './codemods/is-plain-object/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isString from './codemods/is-string/index.js';
+import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js';
 import isTravis from './codemods/is-travis/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
 import isWindows from './codemods/is-windows/index.js';
@@ -264,6 +265,7 @@ export const codemods = {
   "is-primitive": isPrimitive,
   "is-regexp": isRegexp,
   "is-string": isString,
+  "is-supported-regexp-flag": isSupportedRegexpFlag,
   "is-travis": isTravis,
   "is-whitespace": isWhitespace,
   "is-windows": isWindows,

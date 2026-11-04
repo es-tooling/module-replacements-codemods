@@ -136,6 +136,7 @@ import rimraf from './codemods/rimraf/index.js';
 import setFunctionLength from './codemods/set-function-length/index.js';
 import setFunctionName from './codemods/set-function-name/index.js';
 import setprototypeof from './codemods/setprototypeof/index.js';
+import shebangRegex from './codemods/shebang-regex/index.js';
 import splitLines from './codemods/split-lines/index.js';
 import stringPrototypeAt from './codemods/string.prototype.at/index.js';
 import stringPrototypeLastindexof from './codemods/string.prototype.lastindexof/index.js';
@@ -313,6 +314,7 @@ export const codemods = {
   "set-function-length": setFunctionLength,
   "set-function-name": setFunctionName,
   "setprototypeof": setprototypeof,
+  "shebang-regex": shebangRegex,
   "split-lines": splitLines,
   "string.prototype.at": stringPrototypeAt,
   "string.prototype.lastindexof": stringPrototypeLastindexof,

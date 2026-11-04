@@ -600,6 +600,10 @@
       "types": "./types/codemods/setprototypeof/index.d.ts",
       "default": "./codemods/setprototypeof/index.js"
     },
+    "./codemods/shebang-regex/index.js": {
+      "types": "./types/codemods/shebang-regex/index.d.ts",
+      "default": "./codemods/shebang-regex/index.js"
+    },
     "./codemods/split-lines/index.js": {
       "types": "./types/codemods/split-lines/index.d.ts",
       "default": "./codemods/split-lines/index.js"

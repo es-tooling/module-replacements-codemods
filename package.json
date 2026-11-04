@@ -400,6 +400,10 @@
       "types": "./types/codemods/is-plain-object/index.d.ts",
       "default": "./codemods/is-plain-object/index.js"
     },
+    "./codemods/is-png/index.js": {
+      "types": "./types/codemods/is-png/index.d.ts",
+      "default": "./codemods/is-png/index.js"
+    },
     "./codemods/is-primitive/index.js": {
       "types": "./types/codemods/is-primitive/index.d.ts",
       "default": "./codemods/is-primitive/index.js"

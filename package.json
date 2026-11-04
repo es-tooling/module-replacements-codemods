@@ -592,6 +592,10 @@
       "types": "./types/codemods/set-function-length/index.d.ts",
       "default": "./codemods/set-function-length/index.js"
     },
+    "./codemods/set-function-name/index.js": {
+      "types": "./types/codemods/set-function-name/index.d.ts",
+      "default": "./codemods/set-function-name/index.js"
+    },
     "./codemods/setprototypeof/index.js": {
       "types": "./types/codemods/setprototypeof/index.d.ts",
       "default": "./codemods/setprototypeof/index.js"

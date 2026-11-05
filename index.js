@@ -78,8 +78,10 @@ import isAlphabetical from './codemods/is-alphabetical/index.js';
 import isArrayBuffer from './codemods/is-array-buffer/index.js';
 import isBooleanObject from './codemods/is-boolean-object/index.js';
 import isBuiltinModule from './codemods/is-builtin-module/index.js';
+import isCi from './codemods/is-ci/index.js';
 import isDateObject from './codemods/is-date-object/index.js';
 import isEven from './codemods/is-even/index.js';
+import isInCi from './codemods/is-in-ci/index.js';
 import isJpg from './codemods/is-jpg/index.js';
 import isLambda from './codemods/is-lambda/index.js';
 import isNan from './codemods/is-nan/index.js';
@@ -266,8 +268,10 @@ export const codemods = {
   "is-array-buffer": isArrayBuffer,
   "is-boolean-object": isBooleanObject,
   "is-builtin-module": isBuiltinModule,
+  "is-ci": isCi,
   "is-date-object": isDateObject,
   "is-even": isEven,
+  "is-in-ci": isInCi,
   "is-jpg": isJpg,
   "is-lambda": isLambda,
   "is-nan": isNan,

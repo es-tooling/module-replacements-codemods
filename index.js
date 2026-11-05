@@ -81,6 +81,7 @@ import isBuiltinModule from './codemods/is-builtin-module/index.js';
 import isCi from './codemods/is-ci/index.js';
 import isDateObject from './codemods/is-date-object/index.js';
 import isEven from './codemods/is-even/index.js';
+import isFunction from './codemods/is-function/index.js';
 import isInCi from './codemods/is-in-ci/index.js';
 import isJpg from './codemods/is-jpg/index.js';
 import isLambda from './codemods/is-lambda/index.js';
@@ -104,6 +105,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashIsfunction from './codemods/lodash.isfunction/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -176,6 +178,7 @@ import typedArrayLength from './codemods/typed-array-length/index.js';
 import typedarrayPrototypeSlice from './codemods/typedarray.prototype.slice/index.js';
 import uncPathRegex from './codemods/unc-path-regex/index.js';
 import uniq from './codemods/uniq/index.js';
+import validateIoFunction from './codemods/validate.io-function/index.js';
 import xtend from './codemods/xtend/index.js';
 
 
@@ -271,6 +274,7 @@ export const codemods = {
   "is-ci": isCi,
   "is-date-object": isDateObject,
   "is-even": isEven,
+  "is-function": isFunction,
   "is-in-ci": isInCi,
   "is-jpg": isJpg,
   "is-lambda": isLambda,
@@ -294,6 +298,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.isfunction": lodashIsfunction,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,
@@ -366,5 +371,6 @@ export const codemods = {
   "typedarray.prototype.slice": typedarrayPrototypeSlice,
   "unc-path-regex": uncPathRegex,
   "uniq": uniq,
+  "validate.io-function": validateIoFunction,
   "xtend": xtend,
 };

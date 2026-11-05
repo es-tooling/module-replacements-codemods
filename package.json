@@ -368,6 +368,10 @@
       "types": "./types/codemods/is-even/index.d.ts",
       "default": "./codemods/is-even/index.js"
     },
+    "./codemods/is-jpg/index.js": {
+      "types": "./types/codemods/is-jpg/index.d.ts",
+      "default": "./codemods/is-jpg/index.js"
+    },
     "./codemods/is-lambda/index.js": {
       "types": "./types/codemods/is-lambda/index.d.ts",
       "default": "./codemods/is-lambda/index.js"

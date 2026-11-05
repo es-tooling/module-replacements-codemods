@@ -79,6 +79,7 @@ import isBooleanObject from './codemods/is-boolean-object/index.js';
 import isBuiltinModule from './codemods/is-builtin-module/index.js';
 import isDateObject from './codemods/is-date-object/index.js';
 import isEven from './codemods/is-even/index.js';
+import isJpg from './codemods/is-jpg/index.js';
 import isLambda from './codemods/is-lambda/index.js';
 import isNan from './codemods/is-nan/index.js';
 import isNegativeZero from './codemods/is-negative-zero/index.js';
@@ -263,6 +264,7 @@ export const codemods = {
   "is-builtin-module": isBuiltinModule,
   "is-date-object": isDateObject,
   "is-even": isEven,
+  "is-jpg": isJpg,
   "is-lambda": isLambda,
   "is-nan": isNan,
   "is-negative-zero": isNegativeZero,

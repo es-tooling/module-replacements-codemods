@@ -376,6 +376,10 @@
       "types": "./types/codemods/is-even/index.d.ts",
       "default": "./codemods/is-even/index.js"
     },
+    "./codemods/is-function/index.js": {
+      "types": "./types/codemods/is-function/index.d.ts",
+      "default": "./codemods/is-function/index.js"
+    },
     "./codemods/is-in-ci/index.js": {
       "types": "./types/codemods/is-in-ci/index.d.ts",
       "default": "./codemods/is-in-ci/index.js"
@@ -467,6 +471,10 @@
     "./codemods/left-pad/index.js": {
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/lodash.isfunction/index.js": {
+      "types": "./types/codemods/lodash.isfunction/index.d.ts",
+      "default": "./codemods/lodash.isfunction/index.js"
     },
     "./codemods/lodash.uniq/index.js": {
       "types": "./types/codemods/lodash.uniq/index.d.ts",
@@ -771,6 +779,10 @@
     "./codemods/uniq/index.js": {
       "types": "./types/codemods/uniq/index.d.ts",
       "default": "./codemods/uniq/index.js"
+    },
+    "./codemods/validate.io-function/index.js": {
+      "types": "./types/codemods/validate.io-function/index.d.ts",
+      "default": "./codemods/validate.io-function/index.js"
     },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",

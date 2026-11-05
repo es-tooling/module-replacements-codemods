@@ -468,6 +468,10 @@
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
     },
+    "./codemods/lodash.noop/index.js": {
+      "types": "./types/codemods/lodash.noop/index.d.ts",
+      "default": "./codemods/lodash.noop/index.js"
+    },
     "./codemods/lodash.uniq/index.js": {
       "types": "./types/codemods/lodash.uniq/index.d.ts",
       "default": "./codemods/lodash.uniq/index.js"

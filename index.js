@@ -1,8 +1,10 @@
 import abortController from './codemods/abort-controller/index.js';
+import arrUnion from './codemods/arr-union/index.js';
 import arrayBufferByteLength from './codemods/array-buffer-byte-length/index.js';
 import arrayEvery from './codemods/array-every/index.js';
 import arrayIncludes from './codemods/array-includes/index.js';
 import arrayMap from './codemods/array-map/index.js';
+import arrayUnion from './codemods/array-union/index.js';
 import arrayUniq from './codemods/array-uniq/index.js';
 import arrayUnique from './codemods/array-unique/index.js';
 import arrayFrom from './codemods/array.from/index.js';
@@ -189,10 +191,12 @@ import xtend from './codemods/xtend/index.js';
  */
 export const codemods = {
   "abort-controller": abortController,
+  "arr-union": arrUnion,
   "array-buffer-byte-length": arrayBufferByteLength,
   "array-every": arrayEvery,
   "array-includes": arrayIncludes,
   "array-map": arrayMap,
+  "array-union": arrayUnion,
   "array-uniq": arrayUniq,
   "array-unique": arrayUnique,
   "array.from": arrayFrom,

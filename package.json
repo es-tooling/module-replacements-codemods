@@ -420,6 +420,10 @@
       "types": "./types/codemods/is-string/index.d.ts",
       "default": "./codemods/is-string/index.js"
     },
+    "./codemods/is-supported-regexp-flag/index.js": {
+      "types": "./types/codemods/is-supported-regexp-flag/index.d.ts",
+      "default": "./codemods/is-supported-regexp-flag/index.js"
+    },
     "./codemods/is-travis/index.js": {
       "types": "./types/codemods/is-travis/index.d.ts",
       "default": "./codemods/is-travis/index.js"

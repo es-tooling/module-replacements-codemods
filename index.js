@@ -94,6 +94,7 @@ import isPathCwd from './codemods/is-path-cwd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
 import isPng from './codemods/is-png/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
+import isRegex from './codemods/is-regex/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isString from './codemods/is-string/index.js';
 import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js';
@@ -104,6 +105,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashIsregexp from './codemods/lodash.isregexp/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -284,6 +286,7 @@ export const codemods = {
   "is-plain-object": isPlainObject,
   "is-png": isPng,
   "is-primitive": isPrimitive,
+  "is-regex": isRegex,
   "is-regexp": isRegexp,
   "is-string": isString,
   "is-supported-regexp-flag": isSupportedRegexpFlag,
@@ -294,6 +297,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.isregexp": lodashIsregexp,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,

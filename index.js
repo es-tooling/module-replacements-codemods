@@ -86,6 +86,7 @@ import isJpg from './codemods/is-jpg/index.js';
 import isLambda from './codemods/is-lambda/index.js';
 import isNan from './codemods/is-nan/index.js';
 import isNegativeZero from './codemods/is-negative-zero/index.js';
+import isNil from './codemods/is-nil/index.js';
 import isNpm from './codemods/is-npm/index.js';
 import isNumber from './codemods/is-number/index.js';
 import isNumberObject from './codemods/is-number-object/index.js';
@@ -104,6 +105,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashIsnil from './codemods/lodash.isnil/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -276,6 +278,7 @@ export const codemods = {
   "is-lambda": isLambda,
   "is-nan": isNan,
   "is-negative-zero": isNegativeZero,
+  "is-nil": isNil,
   "is-npm": isNpm,
   "is-number": isNumber,
   "is-number-object": isNumberObject,
@@ -294,6 +297,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.isnil": lodashIsnil,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,

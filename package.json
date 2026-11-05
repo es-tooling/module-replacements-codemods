@@ -396,6 +396,10 @@
       "types": "./types/codemods/is-negative-zero/index.d.ts",
       "default": "./codemods/is-negative-zero/index.js"
     },
+    "./codemods/is-nil/index.js": {
+      "types": "./types/codemods/is-nil/index.d.ts",
+      "default": "./codemods/is-nil/index.js"
+    },
     "./codemods/is-npm/index.js": {
       "types": "./types/codemods/is-npm/index.d.ts",
       "default": "./codemods/is-npm/index.js"
@@ -467,6 +471,10 @@
     "./codemods/left-pad/index.js": {
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/lodash.isnil/index.js": {
+      "types": "./types/codemods/lodash.isnil/index.d.ts",
+      "default": "./codemods/lodash.isnil/index.js"
     },
     "./codemods/lodash.uniq/index.js": {
       "types": "./types/codemods/lodash.uniq/index.d.ts",

@@ -89,6 +89,8 @@ import isNegativeZero from './codemods/is-negative-zero/index.js';
 import isNpm from './codemods/is-npm/index.js';
 import isNumber from './codemods/is-number/index.js';
 import isNumberObject from './codemods/is-number-object/index.js';
+import isObj from './codemods/is-obj/index.js';
+import isObject from './codemods/is-object/index.js';
 import isOdd from './codemods/is-odd/index.js';
 import isPathCwd from './codemods/is-path-cwd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
@@ -100,10 +102,12 @@ import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js'
 import isTravis from './codemods/is-travis/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
 import isWindows from './codemods/is-windows/index.js';
+import isobject from './codemods/isobject/index.js';
 import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashIsobject from './codemods/lodash.isobject/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -279,6 +283,8 @@ export const codemods = {
   "is-npm": isNpm,
   "is-number": isNumber,
   "is-number-object": isNumberObject,
+  "is-obj": isObj,
+  "is-object": isObject,
   "is-odd": isOdd,
   "is-path-cwd": isPathCwd,
   "is-plain-object": isPlainObject,
@@ -290,10 +296,12 @@ export const codemods = {
   "is-travis": isTravis,
   "is-whitespace": isWhitespace,
   "is-windows": isWindows,
+  "isobject": isobject,
   "iterate-iterator": iterateIterator,
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.isobject": lodashIsobject,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,

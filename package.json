@@ -424,6 +424,10 @@
       "types": "./types/codemods/is-png/index.d.ts",
       "default": "./codemods/is-png/index.js"
     },
+    "./codemods/is-posix-bracket/index.js": {
+      "types": "./types/codemods/is-posix-bracket/index.d.ts",
+      "default": "./codemods/is-posix-bracket/index.js"
+    },
     "./codemods/is-primitive/index.js": {
       "types": "./types/codemods/is-primitive/index.d.ts",
       "default": "./codemods/is-primitive/index.js"

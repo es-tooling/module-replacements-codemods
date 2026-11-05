@@ -1,6 +1,8 @@
 import abortController from './codemods/abort-controller/index.js';
+import arrayBack from './codemods/array-back/index.js';
 import arrayBufferByteLength from './codemods/array-buffer-byte-length/index.js';
 import arrayEvery from './codemods/array-every/index.js';
+import arrayIfy from './codemods/array-ify/index.js';
 import arrayIncludes from './codemods/array-includes/index.js';
 import arrayMap from './codemods/array-map/index.js';
 import arrayUniq from './codemods/array-uniq/index.js';
@@ -38,6 +40,8 @@ import arrayPrototypeUnshift from './codemods/array.prototype.unshift/index.js';
 import arrayPrototypeValues from './codemods/array.prototype.values/index.js';
 import arrayPrototypeWith from './codemods/array.prototype.with/index.js';
 import arraybufferPrototypeSlice from './codemods/arraybuffer.prototype.slice/index.js';
+import arrify from './codemods/arrify/index.js';
+import asArray from './codemods/as-array/index.js';
 import bufferEqual from './codemods/buffer-equal/index.js';
 import bufferEquals from './codemods/buffer-equals/index.js';
 import chalk from './codemods/chalk/index.js';
@@ -104,6 +108,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashCastarray from './codemods/lodash.castarray/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -189,8 +194,10 @@ import xtend from './codemods/xtend/index.js';
  */
 export const codemods = {
   "abort-controller": abortController,
+  "array-back": arrayBack,
   "array-buffer-byte-length": arrayBufferByteLength,
   "array-every": arrayEvery,
+  "array-ify": arrayIfy,
   "array-includes": arrayIncludes,
   "array-map": arrayMap,
   "array-uniq": arrayUniq,
@@ -228,6 +235,8 @@ export const codemods = {
   "array.prototype.values": arrayPrototypeValues,
   "array.prototype.with": arrayPrototypeWith,
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
+  "arrify": arrify,
+  "as-array": asArray,
   "buffer-equal": bufferEqual,
   "buffer-equals": bufferEquals,
   "chalk": chalk,
@@ -294,6 +303,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.castarray": lodashCastarray,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,

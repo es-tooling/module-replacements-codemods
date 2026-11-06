@@ -97,6 +97,7 @@ import isOdd from './codemods/is-odd/index.js';
 import isPathCwd from './codemods/is-path-cwd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
 import isPng from './codemods/is-png/index.js';
+import isPosixBracket from './codemods/is-posix-bracket/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isString from './codemods/is-string/index.js';
@@ -294,6 +295,7 @@ export const codemods = {
   "is-path-cwd": isPathCwd,
   "is-plain-object": isPlainObject,
   "is-png": isPng,
+  "is-posix-bracket": isPosixBracket,
   "is-primitive": isPrimitive,
   "is-regexp": isRegexp,
   "is-string": isString,

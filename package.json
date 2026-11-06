@@ -752,6 +752,14 @@
       "types": "./types/codemods/strip-ansi/node/index.d.ts",
       "default": "./codemods/strip-ansi/node/index.js"
     },
+    "./codemods/strip-bom-string/index.js": {
+      "types": "./types/codemods/strip-bom-string/index.d.ts",
+      "default": "./codemods/strip-bom-string/index.js"
+    },
+    "./codemods/strip-bom/index.js": {
+      "types": "./types/codemods/strip-bom/index.d.ts",
+      "default": "./codemods/strip-bom/index.js"
+    },
     "./codemods/symbol.prototype.description/index.js": {
       "types": "./types/codemods/symbol.prototype.description/index.d.ts",
       "default": "./codemods/symbol.prototype.description/index.js"

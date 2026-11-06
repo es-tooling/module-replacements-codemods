@@ -44,6 +44,10 @@
       "types": "./types/codemods/abort-controller/index.d.ts",
       "default": "./codemods/abort-controller/index.js"
     },
+    "./codemods/array-back/index.js": {
+      "types": "./types/codemods/array-back/index.d.ts",
+      "default": "./codemods/array-back/index.js"
+    },
     "./codemods/array-buffer-byte-length/index.js": {
       "types": "./types/codemods/array-buffer-byte-length/index.d.ts",
       "default": "./codemods/array-buffer-byte-length/index.js"
@@ -51,6 +55,10 @@
     "./codemods/array-every/index.js": {
       "types": "./types/codemods/array-every/index.d.ts",
       "default": "./codemods/array-every/index.js"
+    },
+    "./codemods/array-ify/index.js": {
+      "types": "./types/codemods/array-ify/index.d.ts",
+      "default": "./codemods/array-ify/index.js"
     },
     "./codemods/array-includes/index.js": {
       "types": "./types/codemods/array-includes/index.d.ts",
@@ -199,6 +207,14 @@
     "./codemods/arraybuffer.prototype.slice/index.js": {
       "types": "./types/codemods/arraybuffer.prototype.slice/index.d.ts",
       "default": "./codemods/arraybuffer.prototype.slice/index.js"
+    },
+    "./codemods/arrify/index.js": {
+      "types": "./types/codemods/arrify/index.d.ts",
+      "default": "./codemods/arrify/index.js"
+    },
+    "./codemods/as-array/index.js": {
+      "types": "./types/codemods/as-array/index.d.ts",
+      "default": "./codemods/as-array/index.js"
     },
     "./codemods/buffer-equal/index.js": {
       "types": "./types/codemods/buffer-equal/index.d.ts",
@@ -467,6 +483,10 @@
     "./codemods/left-pad/index.js": {
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/lodash.castarray/index.js": {
+      "types": "./types/codemods/lodash.castarray/index.d.ts",
+      "default": "./codemods/lodash.castarray/index.js"
     },
     "./codemods/lodash.uniq/index.js": {
       "types": "./types/codemods/lodash.uniq/index.d.ts",

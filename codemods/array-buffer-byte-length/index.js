@@ -1,10 +1,11 @@
 import { Lang, parse } from '@ast-grep/napi';
 import {
-	computeCallReplacementEdits,
+	computePolyfillPropertyReplacementEdits,
 	removeImport,
 } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array-buffer-byte-length';
+const PROPERTY_NAME = 'byteLength';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -25,16 +26,13 @@ export default function (options) {
 
 			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			for (const identifierName of localNames) {
-				const callEdits = computeCallReplacementEdits(
+			for (const name of localNames) {
+				const propEdits = computePolyfillPropertyReplacementEdits(
 					root,
-					identifierName,
-					(args) => {
-						if (args.length !== 1) return null;
-						return `${args[0]}.byteLength`;
-					},
+					name,
+					PROPERTY_NAME,
 				);
-				edits.push(...callEdits);
+				edits.push(...propEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

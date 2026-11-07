@@ -1,5 +1,10 @@
 import { Lang, parse } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-plain-object';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,29 +17,20 @@ import { removeImport } from '../shared-ast-grep.js';
  */
 export default function (options) {
 	return {
-		name: 'is-plain-object',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
-			const { edits, localNames } = removeImport(root, 'is-plain-object');
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
 			for (const name of localNames) {
-				const calls = root.findAll({
-					rule: { pattern: `${name}($$$ARGS)` },
+				const callEdits = computeCallReplacementEdits(root, name, (args) => {
+					if (args.length === 0) return null;
+					return `(v => {\n    return !!(v && (typeof v === "object" && (Object.getPrototypeOf(v) === null || Object.getPrototypeOf(v) === Object.prototype)));\n})(${args[0]})`;
 				});
-				for (const call of calls) {
-					const argsMatch = call.getMultipleMatches('ARGS');
-					if (!argsMatch) continue;
-
-					const args = argsMatch.filter((m) => m.kind() !== ',');
-					if (args.length === 0) continue;
-
-					const firstArg = args[0].text();
-					const replacement = `(v => {\n    return !!(v && (typeof v === "object" && (Object.getPrototypeOf(v) === null || Object.getPrototypeOf(v) === Object.prototype)));\n})(${firstArg})`;
-					edits.push(call.replace(replacement));
-				}
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

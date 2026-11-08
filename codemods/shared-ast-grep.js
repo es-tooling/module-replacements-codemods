@@ -207,6 +207,9 @@ export function findDefaultImports(root, moduleName) {
 						context: `$NAME = require('${moduleName}')`,
 						strictness: 'relaxed',
 					},
+					not: {
+						inside: { kind: 'expression_statement' },
+					},
 				},
 				{
 					pattern: {
@@ -228,12 +231,13 @@ export function findDefaultImports(root, moduleName) {
 		if (
 			!nameMatch ||
 			imp.find({ rule: { kind: 'named_imports' } }) ||
+			imp.find({ rule: { kind: 'namespace_import' } }) ||
 			imp.find({ rule: { kind: 'object_pattern' } })
 		) {
 			imports.splice(i, 1);
 			continue;
 		}
-		localNames.push(nameMatch.text());
+		localNames.unshift(nameMatch.text());
 		const impText = imp.text();
 		if (impText.includes('"')) quoteType = '"';
 	}

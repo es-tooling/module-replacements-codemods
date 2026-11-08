@@ -104,7 +104,9 @@ import isString from './codemods/is-string/index.js';
 import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js';
 import isTravis from './codemods/is-travis/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
+import isWhitespaceCharacter from './codemods/is-whitespace-character/index.js';
 import isWindows from './codemods/is-windows/index.js';
+import isWordCharacter from './codemods/is-word-character/index.js';
 import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
@@ -302,7 +304,9 @@ export const codemods = {
   "is-supported-regexp-flag": isSupportedRegexpFlag,
   "is-travis": isTravis,
   "is-whitespace": isWhitespace,
+  "is-whitespace-character": isWhitespaceCharacter,
   "is-windows": isWindows,
+  "is-word-character": isWordCharacter,
   "iterate-iterator": iterateIterator,
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,

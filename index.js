@@ -42,6 +42,7 @@ import arrayPrototypeWith from './codemods/array.prototype.with/index.js';
 import arraybufferPrototypeSlice from './codemods/arraybuffer.prototype.slice/index.js';
 import arrify from './codemods/arrify/index.js';
 import asArray from './codemods/as-array/index.js';
+import bail from './codemods/bail/index.js';
 import bufferEqual from './codemods/buffer-equal/index.js';
 import bufferEquals from './codemods/buffer-equals/index.js';
 import chalk from './codemods/chalk/index.js';
@@ -240,6 +241,7 @@ export const codemods = {
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
   "arrify": arrify,
   "as-array": asArray,
+  "bail": bail,
   "buffer-equal": bufferEqual,
   "buffer-equals": bufferEquals,
   "chalk": chalk,

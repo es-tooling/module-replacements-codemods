@@ -216,6 +216,10 @@
       "types": "./types/codemods/as-array/index.d.ts",
       "default": "./codemods/as-array/index.js"
     },
+    "./codemods/bail/index.js": {
+      "types": "./types/codemods/bail/index.d.ts",
+      "default": "./codemods/bail/index.js"
+    },
     "./codemods/buffer-equal/index.js": {
       "types": "./types/codemods/buffer-equal/index.d.ts",
       "default": "./codemods/buffer-equal/index.js"

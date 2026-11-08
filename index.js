@@ -80,6 +80,7 @@ import indexOf from './codemods/index-of/index.js';
 import invariant from './codemods/invariant/index.js';
 import isAlphabetical from './codemods/is-alphabetical/index.js';
 import isArrayBuffer from './codemods/is-array-buffer/index.js';
+import isBigint from './codemods/is-bigint/index.js';
 import isBooleanObject from './codemods/is-boolean-object/index.js';
 import isBuiltinModule from './codemods/is-builtin-module/index.js';
 import isCi from './codemods/is-ci/index.js';
@@ -89,6 +90,7 @@ import isInCi from './codemods/is-in-ci/index.js';
 import isJpg from './codemods/is-jpg/index.js';
 import isLambda from './codemods/is-lambda/index.js';
 import isNan from './codemods/is-nan/index.js';
+import isNegative from './codemods/is-negative/index.js';
 import isNegativeZero from './codemods/is-negative-zero/index.js';
 import isNpm from './codemods/is-npm/index.js';
 import isNumber from './codemods/is-number/index.js';
@@ -102,6 +104,7 @@ import isPrimitive from './codemods/is-primitive/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isString from './codemods/is-string/index.js';
 import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js';
+import isSymbol from './codemods/is-symbol/index.js';
 import isTravis from './codemods/is-travis/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
 import isWindows from './codemods/is-windows/index.js';
@@ -110,6 +113,12 @@ import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
 import lodashCastarray from './codemods/lodash.castarray/index.js';
+import lodashIsboolean from './codemods/lodash.isboolean/index.js';
+import lodashIsnull from './codemods/lodash.isnull/index.js';
+import lodashIsnumber from './codemods/lodash.isnumber/index.js';
+import lodashIsstring from './codemods/lodash.isstring/index.js';
+import lodashIssymbol from './codemods/lodash.issymbol/index.js';
+import lodashIsundefined from './codemods/lodash.isundefined/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -278,6 +287,7 @@ export const codemods = {
   "invariant": invariant,
   "is-alphabetical": isAlphabetical,
   "is-array-buffer": isArrayBuffer,
+  "is-bigint": isBigint,
   "is-boolean-object": isBooleanObject,
   "is-builtin-module": isBuiltinModule,
   "is-ci": isCi,
@@ -287,6 +297,7 @@ export const codemods = {
   "is-jpg": isJpg,
   "is-lambda": isLambda,
   "is-nan": isNan,
+  "is-negative": isNegative,
   "is-negative-zero": isNegativeZero,
   "is-npm": isNpm,
   "is-number": isNumber,
@@ -300,6 +311,7 @@ export const codemods = {
   "is-regexp": isRegexp,
   "is-string": isString,
   "is-supported-regexp-flag": isSupportedRegexpFlag,
+  "is-symbol": isSymbol,
   "is-travis": isTravis,
   "is-whitespace": isWhitespace,
   "is-windows": isWindows,
@@ -308,6 +320,12 @@ export const codemods = {
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
   "lodash.castarray": lodashCastarray,
+  "lodash.isboolean": lodashIsboolean,
+  "lodash.isnull": lodashIsnull,
+  "lodash.isnumber": lodashIsnumber,
+  "lodash.isstring": lodashIsstring,
+  "lodash.issymbol": lodashIssymbol,
+  "lodash.isundefined": lodashIsundefined,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,

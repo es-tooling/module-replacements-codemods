@@ -1,5 +1,8 @@
 import { Lang, parse } from '@ast-grep/napi';
-import { findDefaultImportIdentifier } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'is-windows';
 
@@ -19,29 +22,15 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
-			const edits = [];
 
-			const { imports, identifierName } = findDefaultImportIdentifier(
-				root,
-				MODULE_NAME,
-			);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (!identifierName) {
-				return file.source;
-			}
-
-			const callExpressions = root.findAll({
-				rule: {
-					pattern: `${identifierName}()`,
-				},
-			});
-
-			for (const call of callExpressions) {
-				edits.push(call.replace("(process.platform === 'win32')"));
-			}
-
-			for (const imp of imports) {
-				edits.push(imp.replace(''));
+			for (const name of localNames) {
+				edits.push(
+					...computeCallReplacementEdits(root, name, (args) =>
+						args.length === 0 ? "(process.platform === 'win32')" : null,
+					),
+				);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

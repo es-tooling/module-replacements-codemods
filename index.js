@@ -1,6 +1,8 @@
 import abortController from './codemods/abort-controller/index.js';
+import arrayBack from './codemods/array-back/index.js';
 import arrayBufferByteLength from './codemods/array-buffer-byte-length/index.js';
 import arrayEvery from './codemods/array-every/index.js';
+import arrayIfy from './codemods/array-ify/index.js';
 import arrayIncludes from './codemods/array-includes/index.js';
 import arrayMap from './codemods/array-map/index.js';
 import arrayUniq from './codemods/array-uniq/index.js';
@@ -38,6 +40,9 @@ import arrayPrototypeUnshift from './codemods/array.prototype.unshift/index.js';
 import arrayPrototypeValues from './codemods/array.prototype.values/index.js';
 import arrayPrototypeWith from './codemods/array.prototype.with/index.js';
 import arraybufferPrototypeSlice from './codemods/arraybuffer.prototype.slice/index.js';
+import arrify from './codemods/arrify/index.js';
+import asArray from './codemods/as-array/index.js';
+import bail from './codemods/bail/index.js';
 import bufferEqual from './codemods/buffer-equal/index.js';
 import bufferEquals from './codemods/buffer-equals/index.js';
 import chalk from './codemods/chalk/index.js';
@@ -75,37 +80,69 @@ import hasown from './codemods/hasown/index.js';
 import indexOf from './codemods/index-of/index.js';
 import invariant from './codemods/invariant/index.js';
 import isAlphabetical from './codemods/is-alphabetical/index.js';
+import isArguments from './codemods/is-arguments/index.js';
 import isArrayBuffer from './codemods/is-array-buffer/index.js';
+import isBigint from './codemods/is-bigint/index.js';
+import isAsyncFunction from './codemods/is-async-function/index.js';
 import isBooleanObject from './codemods/is-boolean-object/index.js';
 import isBuiltinModule from './codemods/is-builtin-module/index.js';
 import isCi from './codemods/is-ci/index.js';
 import isDateObject from './codemods/is-date-object/index.js';
 import isEven from './codemods/is-even/index.js';
+import isGeneratorFunction from './codemods/is-generator-function/index.js';
 import isInCi from './codemods/is-in-ci/index.js';
 import isJpg from './codemods/is-jpg/index.js';
 import isLambda from './codemods/is-lambda/index.js';
+import isMap from './codemods/is-map/index.js';
 import isNan from './codemods/is-nan/index.js';
+import isNegative from './codemods/is-negative/index.js';
 import isNegativeZero from './codemods/is-negative-zero/index.js';
 import isNil from './codemods/is-nil/index.js';
 import isNpm from './codemods/is-npm/index.js';
 import isNumber from './codemods/is-number/index.js';
 import isNumberObject from './codemods/is-number-object/index.js';
+import isObj from './codemods/is-obj/index.js';
+import isObject from './codemods/is-object/index.js';
 import isOdd from './codemods/is-odd/index.js';
 import isPathCwd from './codemods/is-path-cwd/index.js';
 import isPlainObject from './codemods/is-plain-object/index.js';
 import isPng from './codemods/is-png/index.js';
+import isPosixBracket from './codemods/is-posix-bracket/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
+import isRegex from './codemods/is-regex/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
+import isSet from './codemods/is-set/index.js';
 import isString from './codemods/is-string/index.js';
 import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js';
+import isSymbol from './codemods/is-symbol/index.js';
 import isTravis from './codemods/is-travis/index.js';
+import isUncPath from './codemods/is-unc-path/index.js';
+import isTypedarray from './codemods/is-typedarray/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
+import isWhitespaceCharacter from './codemods/is-whitespace-character/index.js';
 import isWindows from './codemods/is-windows/index.js';
+import isobject from './codemods/isobject/index.js';
+import isWordCharacter from './codemods/is-word-character/index.js';
 import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
 import lodashIsnil from './codemods/lodash.isnil/index.js';
+import lodashIsobject from './codemods/lodash.isobject/index.js';
+import lodashIsregexp from './codemods/lodash.isregexp/index.js';
+import lodashCastarray from './codemods/lodash.castarray/index.js';
+import lodashIsboolean from './codemods/lodash.isboolean/index.js';
+import lodashIsnull from './codemods/lodash.isnull/index.js';
+import lodashIsnumber from './codemods/lodash.isnumber/index.js';
+import lodashIsstring from './codemods/lodash.isstring/index.js';
+import lodashIssymbol from './codemods/lodash.issymbol/index.js';
+import lodashIsundefined from './codemods/lodash.isundefined/index.js';
+import lodashIsdate from './codemods/lodash.isdate/index.js';
+import lodashIsmap from './codemods/lodash.ismap/index.js';
+import lodashIsset from './codemods/lodash.isset/index.js';
+import lodashIstypedarray from './codemods/lodash.istypedarray/index.js';
+import lodashIsweakmap from './codemods/lodash.isweakmap/index.js';
+import lodashIsweakset from './codemods/lodash.isweakset/index.js';
 import lodashUniq from './codemods/lodash.uniq/index.js';
 import mathAcosh from './codemods/math.acosh/index.js';
 import mathAtanh from './codemods/math.atanh/index.js';
@@ -169,6 +206,8 @@ import stringPrototypeTrimright from './codemods/string.prototype.trimright/inde
 import stringPrototypeTrimstart from './codemods/string.prototype.trimstart/index.js';
 import stringRaw from './codemods/string.raw/index.js';
 import stripAnsi from './codemods/strip-ansi/index.js';
+import stripBom from './codemods/strip-bom/index.js';
+import stripBomString from './codemods/strip-bom-string/index.js';
 import symbolPrototypeDescription from './codemods/symbol.prototype.description/index.js';
 import traverse from './codemods/traverse/index.js';
 import typedArrayBuffer from './codemods/typed-array-buffer/index.js';
@@ -191,8 +230,10 @@ import xtend from './codemods/xtend/index.js';
  */
 export const codemods = {
   "abort-controller": abortController,
+  "array-back": arrayBack,
   "array-buffer-byte-length": arrayBufferByteLength,
   "array-every": arrayEvery,
+  "array-ify": arrayIfy,
   "array-includes": arrayIncludes,
   "array-map": arrayMap,
   "array-uniq": arrayUniq,
@@ -230,6 +271,9 @@ export const codemods = {
   "array.prototype.values": arrayPrototypeValues,
   "array.prototype.with": arrayPrototypeWith,
   "arraybuffer.prototype.slice": arraybufferPrototypeSlice,
+  "arrify": arrify,
+  "as-array": asArray,
+  "bail": bail,
   "buffer-equal": bufferEqual,
   "buffer-equals": bufferEquals,
   "chalk": chalk,
@@ -267,37 +311,69 @@ export const codemods = {
   "index-of": indexOf,
   "invariant": invariant,
   "is-alphabetical": isAlphabetical,
+  "is-arguments": isArguments,
   "is-array-buffer": isArrayBuffer,
+  "is-bigint": isBigint,
+  "is-async-function": isAsyncFunction,
   "is-boolean-object": isBooleanObject,
   "is-builtin-module": isBuiltinModule,
   "is-ci": isCi,
   "is-date-object": isDateObject,
   "is-even": isEven,
+  "is-generator-function": isGeneratorFunction,
   "is-in-ci": isInCi,
   "is-jpg": isJpg,
   "is-lambda": isLambda,
+  "is-map": isMap,
   "is-nan": isNan,
+  "is-negative": isNegative,
   "is-negative-zero": isNegativeZero,
   "is-nil": isNil,
   "is-npm": isNpm,
   "is-number": isNumber,
   "is-number-object": isNumberObject,
+  "is-obj": isObj,
+  "is-object": isObject,
   "is-odd": isOdd,
   "is-path-cwd": isPathCwd,
   "is-plain-object": isPlainObject,
   "is-png": isPng,
+  "is-posix-bracket": isPosixBracket,
   "is-primitive": isPrimitive,
+  "is-regex": isRegex,
   "is-regexp": isRegexp,
+  "is-set": isSet,
   "is-string": isString,
   "is-supported-regexp-flag": isSupportedRegexpFlag,
+  "is-symbol": isSymbol,
   "is-travis": isTravis,
+  "is-unc-path": isUncPath,
+  "is-typedarray": isTypedarray,
   "is-whitespace": isWhitespace,
+  "is-whitespace-character": isWhitespaceCharacter,
   "is-windows": isWindows,
+  "isobject": isobject,
+  "is-word-character": isWordCharacter,
   "iterate-iterator": iterateIterator,
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
   "lodash.isnil": lodashIsnil,
+  "lodash.isobject": lodashIsobject,
+  "lodash.isregexp": lodashIsregexp,
+  "lodash.castarray": lodashCastarray,
+  "lodash.isboolean": lodashIsboolean,
+  "lodash.isnull": lodashIsnull,
+  "lodash.isnumber": lodashIsnumber,
+  "lodash.isstring": lodashIsstring,
+  "lodash.issymbol": lodashIssymbol,
+  "lodash.isundefined": lodashIsundefined,
+  "lodash.isdate": lodashIsdate,
+  "lodash.ismap": lodashIsmap,
+  "lodash.isset": lodashIsset,
+  "lodash.istypedarray": lodashIstypedarray,
+  "lodash.isweakmap": lodashIsweakmap,
+  "lodash.isweakset": lodashIsweakset,
   "lodash.uniq": lodashUniq,
   "math.acosh": mathAcosh,
   "math.atanh": mathAtanh,
@@ -361,6 +437,8 @@ export const codemods = {
   "string.prototype.trimstart": stringPrototypeTrimstart,
   "string.raw": stringRaw,
   "strip-ansi": stripAnsi,
+  "strip-bom": stripBom,
+  "strip-bom-string": stripBomString,
   "symbol.prototype.description": symbolPrototypeDescription,
   "traverse": traverse,
   "typed-array-buffer": typedArrayBuffer,

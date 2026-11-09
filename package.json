@@ -44,6 +44,10 @@
       "types": "./types/codemods/abort-controller/index.d.ts",
       "default": "./codemods/abort-controller/index.js"
     },
+    "./codemods/arr-union/index.js": {
+      "types": "./types/codemods/arr-union/index.d.ts",
+      "default": "./codemods/arr-union/index.js"
+    },
     "./codemods/array-back/index.js": {
       "types": "./types/codemods/array-back/index.d.ts",
       "default": "./codemods/array-back/index.js"
@@ -67,6 +71,10 @@
     "./codemods/array-map/index.js": {
       "types": "./types/codemods/array-map/index.d.ts",
       "default": "./codemods/array-map/index.js"
+    },
+    "./codemods/array-union/index.js": {
+      "types": "./types/codemods/array-union/index.d.ts",
+      "default": "./codemods/array-union/index.js"
     },
     "./codemods/array-uniq/index.js": {
       "types": "./types/codemods/array-uniq/index.d.ts",

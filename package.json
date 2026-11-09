@@ -44,6 +44,10 @@
       "types": "./types/codemods/abort-controller/index.d.ts",
       "default": "./codemods/abort-controller/index.js"
     },
+    "./codemods/arr-union/index.js": {
+      "types": "./types/codemods/arr-union/index.d.ts",
+      "default": "./codemods/arr-union/index.js"
+    },
     "./codemods/array-back/index.js": {
       "types": "./types/codemods/array-back/index.d.ts",
       "default": "./codemods/array-back/index.js"
@@ -67,6 +71,10 @@
     "./codemods/array-map/index.js": {
       "types": "./types/codemods/array-map/index.d.ts",
       "default": "./codemods/array-map/index.js"
+    },
+    "./codemods/array-union/index.js": {
+      "types": "./types/codemods/array-union/index.d.ts",
+      "default": "./codemods/array-union/index.js"
     },
     "./codemods/array-uniq/index.js": {
       "types": "./types/codemods/array-uniq/index.d.ts",
@@ -408,6 +416,10 @@
       "types": "./types/codemods/is-even/index.d.ts",
       "default": "./codemods/is-even/index.js"
     },
+    "./codemods/is-function/index.js": {
+      "types": "./types/codemods/is-function/index.d.ts",
+      "default": "./codemods/is-function/index.js"
+    },
     "./codemods/is-generator-function/index.js": {
       "types": "./types/codemods/is-generator-function/index.d.ts",
       "default": "./codemods/is-generator-function/index.js"
@@ -435,6 +447,10 @@
     "./codemods/is-negative-zero/index.js": {
       "types": "./types/codemods/is-negative-zero/index.d.ts",
       "default": "./codemods/is-negative-zero/index.js"
+    },
+    "./codemods/is-nil/index.js": {
+      "types": "./types/codemods/is-nil/index.d.ts",
+      "default": "./codemods/is-nil/index.js"
     },
     "./codemods/is-negative/index.js": {
       "types": "./types/codemods/is-negative/index.d.ts",
@@ -559,6 +575,18 @@
     "./codemods/lodash.noop/index.js": {
       "types": "./types/codemods/lodash.noop/index.d.ts",
       "default": "./codemods/lodash.noop/index.js"
+    },
+    "./codemods/lodash.isnil/index.js": {
+      "types": "./types/codemods/lodash.isnil/index.d.ts",
+      "default": "./codemods/lodash.isnil/index.js"
+    },
+    "./codemods/lodash.isarraybuffer/index.js": {
+      "types": "./types/codemods/lodash.isarraybuffer/index.d.ts",
+      "default": "./codemods/lodash.isarraybuffer/index.js"
+    },
+    "./codemods/lodash.isfunction/index.js": {
+      "types": "./types/codemods/lodash.isfunction/index.d.ts",
+      "default": "./codemods/lodash.isfunction/index.js"
     },
     "./codemods/lodash.isobject/index.js": {
       "types": "./types/codemods/lodash.isobject/index.d.ts",
@@ -931,6 +959,10 @@
     "./codemods/uniq/index.js": {
       "types": "./types/codemods/uniq/index.d.ts",
       "default": "./codemods/uniq/index.js"
+    },
+    "./codemods/validate.io-function/index.js": {
+      "types": "./types/codemods/validate.io-function/index.d.ts",
+      "default": "./codemods/validate.io-function/index.js"
     },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",

@@ -1,7 +1,7 @@
 import { Lang, parse } from '@ast-grep/napi';
 import {
 	computePolyfillMethodCallReplacementEdits,
-	findDefaultImportIdentifier,
+	removeImport,
 } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.prototype.slice';
@@ -23,24 +23,16 @@ export default function (options) {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
-			const { imports, identifierName } = findDefaultImportIdentifier(
-				root,
-				MODULE_NAME,
-			);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (!identifierName) {
-				return file.source;
-			}
-
-			const edits = computePolyfillMethodCallReplacementEdits(
-				root,
-				identifierName,
-				'slice',
-				(args) => args.length >= 1,
-			);
-
-			for (const imp of imports) {
-				edits.push(imp.replace(''));
+			for (const name of localNames) {
+				const callEdits = computePolyfillMethodCallReplacementEdits(
+					root,
+					name,
+					'slice',
+					(args) => args.length >= 1,
+				);
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

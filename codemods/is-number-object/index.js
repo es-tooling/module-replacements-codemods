@@ -1,5 +1,10 @@
 import { Lang, parse } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
+
+const MODULE_NAME = 'is-number-object';
 
 /**
  * @typedef {import('../../types.js').Codemod} Codemod
@@ -12,28 +17,20 @@ import { removeImport } from '../shared-ast-grep.js';
  */
 export default function (options) {
 	return {
-		name: 'is-number-object',
+		name: MODULE_NAME,
 		to: 'native',
 		transform: ({ file }) => {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
-			const { edits, localNames } = removeImport(root, 'is-number-object');
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
 			for (const name of localNames) {
-				const calls = root.findAll({
-					rule: { pattern: `${name}($ARG)` },
+				const callEdits = computeCallReplacementEdits(root, name, (args) => {
+					if (args.length !== 1) return null;
+					return `Object.prototype.toString.call(${args[0]}) === '[object Number]'`;
 				});
-				for (const call of calls) {
-					const arg = call.getMatch('ARG');
-					if (arg) {
-						edits.push(
-							call.replace(
-								`Object.prototype.toString.call(${arg.text()}) === '[object Number]'`,
-							),
-						);
-					}
-				}
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

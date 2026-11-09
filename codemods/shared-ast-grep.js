@@ -4,6 +4,16 @@
  */
 
 /**
+ * Filter out comma tokens and comment trivia nodes from variadic matches.
+ *
+ * @param {SgNode[]} nodes - The matched AST nodes.
+ * @returns {SgNode[]}
+ */
+export function filterSyntaxNodes(nodes) {
+	return nodes.filter((m) => m.kind() !== ',' && m.kind() !== 'comment');
+}
+
+/**
  * Find named ESM imports and destructured CJS requires for a module.
  *
  * Handles:
@@ -33,9 +43,7 @@ export function findNamedImports(root, moduleName) {
 	});
 	for (const imp of namedEsm) {
 		imports.push(imp);
-		const specs = imp
-			.getMultipleMatches('SPECS')
-			.filter((m) => m.kind() !== ',');
+		const specs = filterSyntaxNodes(imp.getMultipleMatches('SPECS'));
 		for (const spec of specs) {
 			const alias = spec.field('alias');
 			const name = spec.field('name');
@@ -59,9 +67,7 @@ export function findNamedImports(root, moduleName) {
 		});
 		for (const imp of cjsDestruct) {
 			imports.push(imp);
-			const props = imp
-				.getMultipleMatches('PROPS')
-				.filter((m) => m.kind() !== ',');
+			const props = filterSyntaxNodes(imp.getMultipleMatches('PROPS'));
 			for (const prop of props) {
 				const key = prop.field('key');
 				const value = prop.field('value');
@@ -279,7 +285,7 @@ export function computeCallReplacementEdits(
 	for (const call of calls) {
 		const argsMatch = call.getMultipleMatches('ARGS');
 		const args = argsMatch
-			? argsMatch.filter((m) => m.kind() !== ',').map((m) => m.text())
+			? filterSyntaxNodes(argsMatch).map((m) => m.text())
 			: [];
 		const replacement = formatReplacement(args);
 		if (replacement === null) continue;
@@ -302,11 +308,19 @@ export function computeSimpleCallReplacementEdits(
 	fromIdentifier,
 	toCallee,
 ) {
-	return computeCallReplacementEdits(
-		root,
-		fromIdentifier,
-		(args) => `${toCallee}(${args.join(', ')})`,
-	);
+	/** @type {Edit[]} */
+	const edits = [];
+	const calls = root.findAll({
+		rule: {
+			pattern: `${fromIdentifier}($$$ARGS)`,
+		},
+	});
+	for (const call of calls) {
+		const fn = call.field('function');
+		if (!fn) continue;
+		edits.push(fn.replace(toCallee));
+	}
+	return edits;
 }
 
 /**
@@ -336,7 +350,7 @@ export function computePolyfillMethodCallReplacementEdits(
 		const argsMatch = call.getMultipleMatches('ARGS');
 		if (!argsMatch) continue;
 
-		const args = argsMatch.filter((m) => m.kind() !== ',');
+		const args = filterSyntaxNodes(argsMatch);
 
 		if (!shouldTransform(args)) continue;
 

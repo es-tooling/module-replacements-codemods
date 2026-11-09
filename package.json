@@ -572,6 +572,10 @@
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
     },
+    "./codemods/lodash.noop/index.js": {
+      "types": "./types/codemods/lodash.noop/index.d.ts",
+      "default": "./codemods/lodash.noop/index.js"
+    },
     "./codemods/lodash.isnil/index.js": {
       "types": "./types/codemods/lodash.isnil/index.d.ts",
       "default": "./codemods/lodash.isnil/index.js"
@@ -693,7 +697,7 @@
       "default": "./codemods/md5/index.js"
     },
     "./codemods/number.isfinite/index.js": {
-      "types": "./types/codemods/number.isfinite/index.d.ts",
+      "types": "./types/codemods/number.isfSinite/index.d.ts",
       "default": "./codemods/number.isfinite/index.js"
     },
     "./codemods/number.isinteger/index.js": {

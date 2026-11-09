@@ -1,0 +1,5 @@
+
+
+if (error) {
+  throw error;
+}

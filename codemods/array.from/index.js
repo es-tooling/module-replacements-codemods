@@ -1,7 +1,7 @@
 import { Lang, parse } from '@ast-grep/napi';
 import {
 	computeSimpleCallReplacementEdits,
-	findDefaultImportIdentifier,
+	removeImport,
 } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'array.from';
@@ -23,23 +23,15 @@ export default function (options) {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
 
-			const { imports, identifierName } = findDefaultImportIdentifier(
-				root,
-				MODULE_NAME,
-			);
+			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (!identifierName) {
-				return file.source;
-			}
-
-			const edits = computeSimpleCallReplacementEdits(
-				root,
-				identifierName,
-				'Array.from',
-			);
-
-			for (const imp of imports) {
-				edits.push(imp.replace(''));
+			for (const name of localNames) {
+				const callEdits = computeSimpleCallReplacementEdits(
+					root,
+					name,
+					'Array.from',
+				);
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

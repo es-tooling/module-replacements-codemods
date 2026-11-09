@@ -488,6 +488,10 @@
       "types": "./types/codemods/is-travis/index.d.ts",
       "default": "./codemods/is-travis/index.js"
     },
+    "./codemods/is-whitespace-character/index.js": {
+      "types": "./types/codemods/is-whitespace-character/index.d.ts",
+      "default": "./codemods/is-whitespace-character/index.js"
+    },
     "./codemods/is-typedarray/index.js": {
       "types": "./types/codemods/is-typedarray/index.d.ts",
       "default": "./codemods/is-typedarray/index.js"
@@ -499,6 +503,10 @@
     "./codemods/is-windows/index.js": {
       "types": "./types/codemods/is-windows/index.d.ts",
       "default": "./codemods/is-windows/index.js"
+    },
+    "./codemods/is-word-character/index.js": {
+      "types": "./types/codemods/is-word-character/index.d.ts",
+      "default": "./codemods/is-word-character/index.js"
     },
     "./codemods/iterate-iterator/index.js": {
       "types": "./types/codemods/iterate-iterator/index.d.ts",

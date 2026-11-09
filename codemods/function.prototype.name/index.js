@@ -1,5 +1,8 @@
 import { Lang, parse } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import {
+	computeCallReplacementEdits,
+	removeImport,
+} from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'function.prototype.name';
 
@@ -23,17 +26,11 @@ export default function (options) {
 			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
 			for (const name of localNames) {
-				const calls = root.findAll({
-					rule: {
-						pattern: `${name}($ARG)`,
-					},
+				const callEdits = computeCallReplacementEdits(root, name, (args) => {
+					if (args.length !== 1) return null;
+					return `(${args[0]}).name`;
 				});
-				for (const call of calls) {
-					const arg = call.getMatch('ARG');
-					if (arg) {
-						edits.push(call.replace(`(${arg.text()}).name`));
-					}
-				}
+				edits.push(...callEdits);
 			}
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;

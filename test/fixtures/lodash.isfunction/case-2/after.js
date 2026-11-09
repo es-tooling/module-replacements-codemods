@@ -1,0 +1,3 @@
+
+
+typeof Array.isArray === "function";

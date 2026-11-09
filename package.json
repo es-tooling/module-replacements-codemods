@@ -48,6 +48,10 @@
       "types": "./types/codemods/arr-union/index.d.ts",
       "default": "./codemods/arr-union/index.js"
     },
+    "./codemods/array-back/index.js": {
+      "types": "./types/codemods/array-back/index.d.ts",
+      "default": "./codemods/array-back/index.js"
+    },
     "./codemods/array-buffer-byte-length/index.js": {
       "types": "./types/codemods/array-buffer-byte-length/index.d.ts",
       "default": "./codemods/array-buffer-byte-length/index.js"
@@ -55,6 +59,10 @@
     "./codemods/array-every/index.js": {
       "types": "./types/codemods/array-every/index.d.ts",
       "default": "./codemods/array-every/index.js"
+    },
+    "./codemods/array-ify/index.js": {
+      "types": "./types/codemods/array-ify/index.d.ts",
+      "default": "./codemods/array-ify/index.js"
     },
     "./codemods/array-includes/index.js": {
       "types": "./types/codemods/array-includes/index.d.ts",
@@ -208,6 +216,18 @@
       "types": "./types/codemods/arraybuffer.prototype.slice/index.d.ts",
       "default": "./codemods/arraybuffer.prototype.slice/index.js"
     },
+    "./codemods/arrify/index.js": {
+      "types": "./types/codemods/arrify/index.d.ts",
+      "default": "./codemods/arrify/index.js"
+    },
+    "./codemods/as-array/index.js": {
+      "types": "./types/codemods/as-array/index.d.ts",
+      "default": "./codemods/as-array/index.js"
+    },
+    "./codemods/bail/index.js": {
+      "types": "./types/codemods/bail/index.d.ts",
+      "default": "./codemods/bail/index.js"
+    },
     "./codemods/buffer-equal/index.js": {
       "types": "./types/codemods/buffer-equal/index.d.ts",
       "default": "./codemods/buffer-equal/index.js"
@@ -360,9 +380,21 @@
       "types": "./types/codemods/is-alphabetical/index.d.ts",
       "default": "./codemods/is-alphabetical/index.js"
     },
+    "./codemods/is-arguments/index.js": {
+      "types": "./types/codemods/is-arguments/index.d.ts",
+      "default": "./codemods/is-arguments/index.js"
+    },
     "./codemods/is-array-buffer/index.js": {
       "types": "./types/codemods/is-array-buffer/index.d.ts",
       "default": "./codemods/is-array-buffer/index.js"
+    },
+    "./codemods/is-bigint/index.js": {
+      "types": "./types/codemods/is-bigint/index.d.ts",
+      "default": "./codemods/is-bigint/index.js"
+    },
+    "./codemods/is-async-function/index.js": {
+      "types": "./types/codemods/is-async-function/index.d.ts",
+      "default": "./codemods/is-async-function/index.js"
     },
     "./codemods/is-boolean-object/index.js": {
       "types": "./types/codemods/is-boolean-object/index.d.ts",
@@ -384,6 +416,14 @@
       "types": "./types/codemods/is-even/index.d.ts",
       "default": "./codemods/is-even/index.js"
     },
+    "./codemods/is-function/index.js": {
+      "types": "./types/codemods/is-function/index.d.ts",
+      "default": "./codemods/is-function/index.js"
+    },
+    "./codemods/is-generator-function/index.js": {
+      "types": "./types/codemods/is-generator-function/index.d.ts",
+      "default": "./codemods/is-generator-function/index.js"
+    },
     "./codemods/is-in-ci/index.js": {
       "types": "./types/codemods/is-in-ci/index.d.ts",
       "default": "./codemods/is-in-ci/index.js"
@@ -396,6 +436,10 @@
       "types": "./types/codemods/is-lambda/index.d.ts",
       "default": "./codemods/is-lambda/index.js"
     },
+    "./codemods/is-map/index.js": {
+      "types": "./types/codemods/is-map/index.d.ts",
+      "default": "./codemods/is-map/index.js"
+    },
     "./codemods/is-nan/index.js": {
       "types": "./types/codemods/is-nan/index.d.ts",
       "default": "./codemods/is-nan/index.js"
@@ -403,6 +447,10 @@
     "./codemods/is-negative-zero/index.js": {
       "types": "./types/codemods/is-negative-zero/index.d.ts",
       "default": "./codemods/is-negative-zero/index.js"
+    },
+    "./codemods/is-negative/index.js": {
+      "types": "./types/codemods/is-negative/index.d.ts",
+      "default": "./codemods/is-negative/index.js"
     },
     "./codemods/is-npm/index.js": {
       "types": "./types/codemods/is-npm/index.d.ts",
@@ -415,6 +463,14 @@
     "./codemods/is-number/index.js": {
       "types": "./types/codemods/is-number/index.d.ts",
       "default": "./codemods/is-number/index.js"
+    },
+    "./codemods/is-obj/index.js": {
+      "types": "./types/codemods/is-obj/index.d.ts",
+      "default": "./codemods/is-obj/index.js"
+    },
+    "./codemods/is-object/index.js": {
+      "types": "./types/codemods/is-object/index.d.ts",
+      "default": "./codemods/is-object/index.js"
     },
     "./codemods/is-odd/index.js": {
       "types": "./types/codemods/is-odd/index.d.ts",
@@ -432,13 +488,25 @@
       "types": "./types/codemods/is-png/index.d.ts",
       "default": "./codemods/is-png/index.js"
     },
+    "./codemods/is-posix-bracket/index.js": {
+      "types": "./types/codemods/is-posix-bracket/index.d.ts",
+      "default": "./codemods/is-posix-bracket/index.js"
+    },
     "./codemods/is-primitive/index.js": {
       "types": "./types/codemods/is-primitive/index.d.ts",
       "default": "./codemods/is-primitive/index.js"
     },
+    "./codemods/is-regex/index.js": {
+      "types": "./types/codemods/is-regex/index.d.ts",
+      "default": "./codemods/is-regex/index.js"
+    },
     "./codemods/is-regexp/index.js": {
       "types": "./types/codemods/is-regexp/index.d.ts",
       "default": "./codemods/is-regexp/index.js"
+    },
+    "./codemods/is-set/index.js": {
+      "types": "./types/codemods/is-set/index.d.ts",
+      "default": "./codemods/is-set/index.js"
     },
     "./codemods/is-string/index.js": {
       "types": "./types/codemods/is-string/index.d.ts",
@@ -448,9 +516,25 @@
       "types": "./types/codemods/is-supported-regexp-flag/index.d.ts",
       "default": "./codemods/is-supported-regexp-flag/index.js"
     },
+    "./codemods/is-symbol/index.js": {
+      "types": "./types/codemods/is-symbol/index.d.ts",
+      "default": "./codemods/is-symbol/index.js"
+    },
     "./codemods/is-travis/index.js": {
       "types": "./types/codemods/is-travis/index.d.ts",
       "default": "./codemods/is-travis/index.js"
+    },
+    "./codemods/is-unc-path/index.js": {
+      "types": "./types/codemods/is-unc-path/index.d.ts",
+      "default": "./codemods/is-unc-path/index.js"
+    },
+    "./codemods/is-whitespace-character/index.js": {
+      "types": "./types/codemods/is-whitespace-character/index.d.ts",
+      "default": "./codemods/is-whitespace-character/index.js"
+    },
+    "./codemods/is-typedarray/index.js": {
+      "types": "./types/codemods/is-typedarray/index.d.ts",
+      "default": "./codemods/is-typedarray/index.js"
     },
     "./codemods/is-whitespace/index.js": {
       "types": "./types/codemods/is-whitespace/index.d.ts",
@@ -459,6 +543,14 @@
     "./codemods/is-windows/index.js": {
       "types": "./types/codemods/is-windows/index.d.ts",
       "default": "./codemods/is-windows/index.js"
+    },
+    "./codemods/isobject/index.js": {
+      "types": "./types/codemods/isobject/index.d.ts",
+      "default": "./codemods/isobject/index.js"
+    },
+    "./codemods/is-word-character/index.js": {
+      "types": "./types/codemods/is-word-character/index.d.ts",
+      "default": "./codemods/is-word-character/index.js"
     },
     "./codemods/iterate-iterator/index.js": {
       "types": "./types/codemods/iterate-iterator/index.d.ts",
@@ -475,6 +567,70 @@
     "./codemods/left-pad/index.js": {
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/lodash.isfunction/index.js": {
+      "types": "./types/codemods/lodash.isfunction/index.d.ts",
+      "default": "./codemods/lodash.isfunction/index.js"
+    },
+    "./codemods/lodash.isobject/index.js": {
+      "types": "./types/codemods/lodash.isobject/index.d.ts",
+      "default": "./codemods/lodash.isobject/index.js"
+    },
+    "./codemods/lodash.isregexp/index.js": {
+      "types": "./types/codemods/lodash.isregexp/index.d.ts",
+      "default": "./codemods/lodash.isregexp/index.js"
+    },
+    "./codemods/lodash.castarray/index.js": {
+      "types": "./types/codemods/lodash.castarray/index.d.ts",
+      "default": "./codemods/lodash.castarray/index.js"
+    },
+    "./codemods/lodash.isboolean/index.js": {
+      "types": "./types/codemods/lodash.isboolean/index.d.ts",
+      "default": "./codemods/lodash.isboolean/index.js"
+    },
+    "./codemods/lodash.isnull/index.js": {
+      "types": "./types/codemods/lodash.isnull/index.d.ts",
+      "default": "./codemods/lodash.isnull/index.js"
+    },
+    "./codemods/lodash.isnumber/index.js": {
+      "types": "./types/codemods/lodash.isnumber/index.d.ts",
+      "default": "./codemods/lodash.isnumber/index.js"
+    },
+    "./codemods/lodash.isstring/index.js": {
+      "types": "./types/codemods/lodash.isstring/index.d.ts",
+      "default": "./codemods/lodash.isstring/index.js"
+    },
+    "./codemods/lodash.issymbol/index.js": {
+      "types": "./types/codemods/lodash.issymbol/index.d.ts",
+      "default": "./codemods/lodash.issymbol/index.js"
+    },
+    "./codemods/lodash.isundefined/index.js": {
+      "types": "./types/codemods/lodash.isundefined/index.d.ts",
+      "default": "./codemods/lodash.isundefined/index.js"
+    },
+    "./codemods/lodash.isdate/index.js": {
+      "types": "./types/codemods/lodash.isdate/index.d.ts",
+      "default": "./codemods/lodash.isdate/index.js"
+    },
+    "./codemods/lodash.ismap/index.js": {
+      "types": "./types/codemods/lodash.ismap/index.d.ts",
+      "default": "./codemods/lodash.ismap/index.js"
+    },
+    "./codemods/lodash.isset/index.js": {
+      "types": "./types/codemods/lodash.isset/index.d.ts",
+      "default": "./codemods/lodash.isset/index.js"
+    },
+    "./codemods/lodash.istypedarray/index.js": {
+      "types": "./types/codemods/lodash.istypedarray/index.d.ts",
+      "default": "./codemods/lodash.istypedarray/index.js"
+    },
+    "./codemods/lodash.isweakmap/index.js": {
+      "types": "./types/codemods/lodash.isweakmap/index.d.ts",
+      "default": "./codemods/lodash.isweakmap/index.js"
+    },
+    "./codemods/lodash.isweakset/index.js": {
+      "types": "./types/codemods/lodash.isweakset/index.d.ts",
+      "default": "./codemods/lodash.isweakset/index.js"
     },
     "./codemods/lodash.uniq/index.js": {
       "types": "./types/codemods/lodash.uniq/index.d.ts",
@@ -740,6 +896,14 @@
       "types": "./types/codemods/strip-ansi/node/index.d.ts",
       "default": "./codemods/strip-ansi/node/index.js"
     },
+    "./codemods/strip-bom-string/index.js": {
+      "types": "./types/codemods/strip-bom-string/index.d.ts",
+      "default": "./codemods/strip-bom-string/index.js"
+    },
+    "./codemods/strip-bom/index.js": {
+      "types": "./types/codemods/strip-bom/index.d.ts",
+      "default": "./codemods/strip-bom/index.js"
+    },
     "./codemods/symbol.prototype.description/index.js": {
       "types": "./types/codemods/symbol.prototype.description/index.d.ts",
       "default": "./codemods/symbol.prototype.description/index.js"
@@ -779,6 +943,10 @@
     "./codemods/uniq/index.js": {
       "types": "./types/codemods/uniq/index.d.ts",
       "default": "./codemods/uniq/index.js"
+    },
+    "./codemods/validate.io-function/index.js": {
+      "types": "./types/codemods/validate.io-function/index.d.ts",
+      "default": "./codemods/validate.io-function/index.js"
     },
     "./codemods/xtend/index.js": {
       "types": "./types/codemods/xtend/index.d.ts",

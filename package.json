@@ -380,6 +380,10 @@
       "types": "./types/codemods/is-array-buffer/index.d.ts",
       "default": "./codemods/is-array-buffer/index.js"
     },
+    "./codemods/is-bigint/index.js": {
+      "types": "./types/codemods/is-bigint/index.d.ts",
+      "default": "./codemods/is-bigint/index.js"
+    },
     "./codemods/is-async-function/index.js": {
       "types": "./types/codemods/is-async-function/index.d.ts",
       "default": "./codemods/is-async-function/index.js"
@@ -431,6 +435,10 @@
     "./codemods/is-negative-zero/index.js": {
       "types": "./types/codemods/is-negative-zero/index.d.ts",
       "default": "./codemods/is-negative-zero/index.js"
+    },
+    "./codemods/is-negative/index.js": {
+      "types": "./types/codemods/is-negative/index.d.ts",
+      "default": "./codemods/is-negative/index.js"
     },
     "./codemods/is-npm/index.js": {
       "types": "./types/codemods/is-npm/index.d.ts",
@@ -484,6 +492,10 @@
       "types": "./types/codemods/is-supported-regexp-flag/index.d.ts",
       "default": "./codemods/is-supported-regexp-flag/index.js"
     },
+    "./codemods/is-symbol/index.js": {
+      "types": "./types/codemods/is-symbol/index.d.ts",
+      "default": "./codemods/is-symbol/index.js"
+    },
     "./codemods/is-travis/index.js": {
       "types": "./types/codemods/is-travis/index.d.ts",
       "default": "./codemods/is-travis/index.js"
@@ -531,6 +543,30 @@
     "./codemods/lodash.castarray/index.js": {
       "types": "./types/codemods/lodash.castarray/index.d.ts",
       "default": "./codemods/lodash.castarray/index.js"
+    },
+    "./codemods/lodash.isboolean/index.js": {
+      "types": "./types/codemods/lodash.isboolean/index.d.ts",
+      "default": "./codemods/lodash.isboolean/index.js"
+    },
+    "./codemods/lodash.isnull/index.js": {
+      "types": "./types/codemods/lodash.isnull/index.d.ts",
+      "default": "./codemods/lodash.isnull/index.js"
+    },
+    "./codemods/lodash.isnumber/index.js": {
+      "types": "./types/codemods/lodash.isnumber/index.d.ts",
+      "default": "./codemods/lodash.isnumber/index.js"
+    },
+    "./codemods/lodash.isstring/index.js": {
+      "types": "./types/codemods/lodash.isstring/index.d.ts",
+      "default": "./codemods/lodash.isstring/index.js"
+    },
+    "./codemods/lodash.issymbol/index.js": {
+      "types": "./types/codemods/lodash.issymbol/index.d.ts",
+      "default": "./codemods/lodash.issymbol/index.js"
+    },
+    "./codemods/lodash.isundefined/index.js": {
+      "types": "./types/codemods/lodash.isundefined/index.d.ts",
+      "default": "./codemods/lodash.isundefined/index.js"
     },
     "./codemods/lodash.isdate/index.js": {
       "types": "./types/codemods/lodash.isdate/index.d.ts",

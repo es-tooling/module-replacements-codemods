@@ -106,6 +106,7 @@ import isPlainObject from './codemods/is-plain-object/index.js';
 import isPng from './codemods/is-png/index.js';
 import isPosixBracket from './codemods/is-posix-bracket/index.js';
 import isPrimitive from './codemods/is-primitive/index.js';
+import isRegex from './codemods/is-regex/index.js';
 import isRegexp from './codemods/is-regexp/index.js';
 import isSet from './codemods/is-set/index.js';
 import isString from './codemods/is-string/index.js';
@@ -122,6 +123,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashIsregexp from './codemods/lodash.isregexp/index.js';
 import lodashCastarray from './codemods/lodash.castarray/index.js';
 import lodashIsboolean from './codemods/lodash.isboolean/index.js';
 import lodashIsnull from './codemods/lodash.isnull/index.js';
@@ -329,6 +331,7 @@ export const codemods = {
   "is-png": isPng,
   "is-posix-bracket": isPosixBracket,
   "is-primitive": isPrimitive,
+  "is-regex": isRegex,
   "is-regexp": isRegexp,
   "is-set": isSet,
   "is-string": isString,
@@ -345,6 +348,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.isregexp": lodashIsregexp,
   "lodash.castarray": lodashCastarray,
   "lodash.isboolean": lodashIsboolean,
   "lodash.isnull": lodashIsnull,

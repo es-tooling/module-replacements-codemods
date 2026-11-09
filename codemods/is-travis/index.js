@@ -1,5 +1,5 @@
 import { Lang, parse } from '@ast-grep/napi';
-import { removeImport } from '../shared-ast-grep.js';
+import { replacePolyfillUsage } from '../shared-ast-grep.js';
 
 const MODULE_NAME = 'is-travis';
 
@@ -19,24 +19,12 @@ export default function (options) {
 		transform: ({ file }) => {
 			const ast = parse(Lang.TypeScript, file.source);
 			const root = ast.root();
-			const { edits, localNames } = removeImport(root, MODULE_NAME);
 
-			if (localNames.length === 0) {
-				return file.source;
-			}
-
-			for (const localName of localNames) {
-				const ids = root.findAll({
-					rule: {
-						kind: 'identifier',
-						pattern: localName,
-					},
-				});
-
-				for (const id of ids) {
-					edits.push(id.replace("('TRAVIS' in process.env)"));
-				}
-			}
+			const { edits } = replacePolyfillUsage(
+				root,
+				MODULE_NAME,
+				"('TRAVIS' in process.env)",
+			);
 
 			return edits.length > 0 ? root.commitEdits(edits) : file.source;
 		},

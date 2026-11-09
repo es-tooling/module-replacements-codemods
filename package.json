@@ -488,6 +488,10 @@
       "types": "./types/codemods/is-travis/index.d.ts",
       "default": "./codemods/is-travis/index.js"
     },
+    "./codemods/is-unc-path/index.js": {
+      "types": "./types/codemods/is-unc-path/index.d.ts",
+      "default": "./codemods/is-unc-path/index.js"
+    },
     "./codemods/is-whitespace-character/index.js": {
       "types": "./types/codemods/is-whitespace-character/index.d.ts",
       "default": "./codemods/is-whitespace-character/index.js"

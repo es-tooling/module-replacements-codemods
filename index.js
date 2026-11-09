@@ -109,6 +109,7 @@ import isSet from './codemods/is-set/index.js';
 import isString from './codemods/is-string/index.js';
 import isSupportedRegexpFlag from './codemods/is-supported-regexp-flag/index.js';
 import isTravis from './codemods/is-travis/index.js';
+import isUncPath from './codemods/is-unc-path/index.js';
 import isTypedarray from './codemods/is-typedarray/index.js';
 import isWhitespace from './codemods/is-whitespace/index.js';
 import isWhitespaceCharacter from './codemods/is-whitespace-character/index.js';
@@ -322,6 +323,7 @@ export const codemods = {
   "is-string": isString,
   "is-supported-regexp-flag": isSupportedRegexpFlag,
   "is-travis": isTravis,
+  "is-unc-path": isUncPath,
   "is-typedarray": isTypedarray,
   "is-whitespace": isWhitespace,
   "is-whitespace-character": isWhitespaceCharacter,

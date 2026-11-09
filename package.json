@@ -452,6 +452,14 @@
       "types": "./types/codemods/is-number/index.d.ts",
       "default": "./codemods/is-number/index.js"
     },
+    "./codemods/is-obj/index.js": {
+      "types": "./types/codemods/is-obj/index.d.ts",
+      "default": "./codemods/is-obj/index.js"
+    },
+    "./codemods/is-object/index.js": {
+      "types": "./types/codemods/is-object/index.d.ts",
+      "default": "./codemods/is-object/index.js"
+    },
     "./codemods/is-odd/index.js": {
       "types": "./types/codemods/is-odd/index.d.ts",
       "default": "./codemods/is-odd/index.js"
@@ -524,6 +532,10 @@
       "types": "./types/codemods/is-windows/index.d.ts",
       "default": "./codemods/is-windows/index.js"
     },
+    "./codemods/isobject/index.js": {
+      "types": "./types/codemods/isobject/index.d.ts",
+      "default": "./codemods/isobject/index.js"
+    },
     "./codemods/is-word-character/index.js": {
       "types": "./types/codemods/is-word-character/index.d.ts",
       "default": "./codemods/is-word-character/index.js"
@@ -543,6 +555,10 @@
     "./codemods/left-pad/index.js": {
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
+    },
+    "./codemods/lodash.isobject/index.js": {
+      "types": "./types/codemods/lodash.isobject/index.d.ts",
+      "default": "./codemods/lodash.isobject/index.js"
     },
     "./codemods/lodash.isregexp/index.js": {
       "types": "./types/codemods/lodash.isregexp/index.d.ts",

@@ -129,6 +129,7 @@ import iterateIterator from './codemods/iterate-iterator/index.js';
 import iterateValue from './codemods/iterate-value/index.js';
 import lastIndexOf from './codemods/last-index-of/index.js';
 import leftPad from './codemods/left-pad/index.js';
+import lodashIsarraybuffer from './codemods/lodash.isarraybuffer/index.js';
 import lodashIsfunction from './codemods/lodash.isfunction/index.js';
 import lodashIsobject from './codemods/lodash.isobject/index.js';
 import lodashIsregexp from './codemods/lodash.isregexp/index.js';
@@ -363,6 +364,7 @@ export const codemods = {
   "iterate-value": iterateValue,
   "last-index-of": lastIndexOf,
   "left-pad": leftPad,
+  "lodash.isarraybuffer": lodashIsarraybuffer,
   "lodash.isfunction": lodashIsfunction,
   "lodash.isobject": lodashIsobject,
   "lodash.isregexp": lodashIsregexp,

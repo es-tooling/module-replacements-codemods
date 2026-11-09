@@ -568,6 +568,10 @@
       "types": "./types/codemods/left-pad/index.d.ts",
       "default": "./codemods/left-pad/index.js"
     },
+    "./codemods/lodash.isarraybuffer/index.js": {
+      "types": "./types/codemods/lodash.isarraybuffer/index.d.ts",
+      "default": "./codemods/lodash.isarraybuffer/index.js"
+    },
     "./codemods/lodash.isfunction/index.js": {
       "types": "./types/codemods/lodash.isfunction/index.d.ts",
       "default": "./codemods/lodash.isfunction/index.js"

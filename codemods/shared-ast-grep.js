@@ -463,9 +463,71 @@ export function replacePolyfillUsage(root, moduleName, replacement) {
 		},
 	});
 	for (const usage of usages) {
-		edits.push(usage.replace(replacement));
+		const text = needsParentheses(usage, replacement)
+			? `(${replacement})`
+			: replacement;
+		edits.push(usage.replace(text));
 	}
 	return { edits };
+}
+
+/**
+ * Node kinds in which a function expression cannot appear without parentheses.
+ *
+ * @type {Set<string>}
+ */
+const UNSAFE_PARENT_KINDS = new Set([
+	'unary_expression',
+	'binary_expression',
+	'logical_expression',
+	'ternary_expression',
+	'conditional_expression',
+	'member_expression',
+	'tagged_template_expression',
+]);
+
+/**
+ * Check whether a replacement string is a function expression. Unlike
+ * identifiers and member accesses, function expressions have low precedence
+ * and need parentheses around operator or callee positions.
+ *
+ * @param {string} replacement - The replacement text for identifier references.
+ * @returns {boolean}
+ */
+function isFunctionExpressionReplacement(replacement) {
+	return (
+		replacement.trimStart().startsWith('function') || replacement.includes('=>')
+	);
+}
+
+/**
+ * Check whether substituting the replacement into the usage position requires
+ * parentheses for the result to stay syntactically valid.
+ *
+ * @param {SgNode} usageNode - The identifier usage node.
+ * @param {string} replacement - The replacement text for identifier references.
+ * @returns {boolean}
+ */
+function needsParentheses(usageNode, replacement) {
+	if (!isFunctionExpressionReplacement(replacement)) {
+		return false;
+	}
+	const parent = usageNode.parent();
+	if (!parent) return false;
+	const kind = parent.kind();
+	if (UNSAFE_PARENT_KINDS.has(String(kind))) {
+		return (
+			kind !== 'member_expression' ||
+			parent.field('object')?.id() === usageNode.id()
+		);
+	}
+	if (kind === 'call_expression') {
+		return parent.field('function')?.id() === usageNode.id();
+	}
+	if (kind === 'new_expression') {
+		return parent.field('callee')?.id() === usageNode.id();
+	}
+	return false;
 }
 
 /**
